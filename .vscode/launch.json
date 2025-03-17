@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-TareafctApplication<tareafct>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tareafct.tareafct.TareafctApplication",
+      "projectName": "tareafct",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
