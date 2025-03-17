@@ -1,4 +1,4 @@
-package com.tareafct.tareafct;
+package com.drones.fct;
 
 import java.util.Scanner;
 

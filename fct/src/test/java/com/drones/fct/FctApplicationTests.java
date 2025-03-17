@@ -1,10 +1,10 @@
-package com.tareafct.tareafct;
+package com.drones.fct;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TareafctApplicationTests {
+class FctApplicationTests {
 
 	@Test
 	void contextLoads() {

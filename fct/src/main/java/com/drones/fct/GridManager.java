@@ -1,4 +1,4 @@
-package com.tareafct.tareafct;
+package com.drones.fct;
 
 /* Un robot dron debe asegurar un vuelo autonomo continuio, evitando colisiones con otros drones en la misma formacio
  * la ubicacion y orientacion de cada dron se representan mediante coordenadas e e y, acompañadas de una letra que indica

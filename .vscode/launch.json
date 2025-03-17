@@ -2,6 +2,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "TareafctApplication",
+      "request": "launch",
+      "mainClass": "com.drones.fct.TareafctApplication",
+      "projectName": "fct"
+    },
+    {
+      "type": "java",
+      "name": "FctApplication",
+      "request": "launch",
+      "mainClass": "com.drones.fct.FctApplication",
+      "projectName": "fct"
+    },
+    {
+      "type": "java",
       "name": "Spring Boot-TareafctApplication<tareafct>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
