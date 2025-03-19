@@ -46,6 +46,7 @@ public class DroneController {
         request.getY(),
         request.getOrientation());
     return new ResponseEntity<>(toDto(drone), HttpStatus.CREATED);
+
   }
 
   @Operation(summary = "Get a drone by ID", responses = {
