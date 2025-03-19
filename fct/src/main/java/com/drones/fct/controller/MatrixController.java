@@ -29,21 +29,21 @@ public class MatrixController {
   private final MatrixService matrixService;
 
   @Operation(summary = "Create a flight matrix")
-  @PostMapping
+  @PostMapping("/create")
   public ResponseEntity<MatrixDto> createMatrix(@RequestBody CreateMatrixRequest request) {
     Matrix matrix = matrixService.createMatrix(request.getMaxX(), request.getMaxY());
     return new ResponseEntity<>(toDto(matrix), HttpStatus.CREATED);
   }
 
   @Operation(summary = "Get a matrix by ID")
-  @GetMapping("/{id}")
+  @GetMapping("/get/{id}")
   public MatrixDto getMatrix(@PathVariable Long id) {
     Matrix matrix = matrixService.getMatrix(id);
     return toDto(matrix);
   }
 
   @Operation(summary = "Update a matrix by ID")
-  @PutMapping("/{id}")
+  @PutMapping("/update/{id}")
   public MatrixDto updateMatrix(
       @PathVariable Long id,
       @RequestBody CreateMatrixRequest request) {
@@ -52,7 +52,7 @@ public class MatrixController {
   }
 
   @Operation(summary = "Delete a matrix by ID")
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/delete/{id}")
   public ResponseEntity<Void> deleteMatrix(@PathVariable Long id) {
     matrixService.deleteMatrix(id);
     return ResponseEntity.noContent().build();

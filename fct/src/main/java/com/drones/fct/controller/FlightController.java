@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Gestión de Vuelos", description = "Operaciones para gestionar vuelos de drones")
+@Tag(name = "Flight Management", description = "Operations to manage drone flights")
 @RestController
 @RequestMapping("/api/flights")
 @RequiredArgsConstructor
@@ -33,10 +33,10 @@ public class FlightController {
 
   private final FlightService flightService;
 
-  @Operation(summary = "Ejecutar una secuencia de órdenes en un dron", responses = {
-      @ApiResponse(responseCode = "200", description = "Órdenes ejecutadas", content = @Content(schema = @Schema(implementation = DroneDto.class))),
-      @ApiResponse(responseCode = "404", description = "Dron no encontrado"),
-      @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+  @Operation(summary = "Execute a sequence of commands on a drone", responses = {
+      @ApiResponse(responseCode = "200", description = "Commands executed", content = @Content(schema = @Schema(implementation = DroneDto.class))),
+      @ApiResponse(responseCode = "404", description = "Drone not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid request")
   })
   @PostMapping("/drone/{droneId}/commands")
   public DroneDto executeCommands(@Parameter(description = "ID del dron") @PathVariable Long droneId,
@@ -45,9 +45,9 @@ public class FlightController {
     return toDto(drone);
   }
 
-  @Operation(summary = "Ejecutar una misma secuencia de órdenes en varios drones a la vez", responses = {
-      @ApiResponse(responseCode = "200", description = "Órdenes ejecutadas"),
-      @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+  @Operation(summary = "Execute the same sequence of commands on multiple drones at once", responses = {
+      @ApiResponse(responseCode = "200", description = "Commands executed"),
+      @ApiResponse(responseCode = "400", description = "Invalid request")
   })
   @PostMapping("/drones/commands")
   public void executeCommandsInSequence(
@@ -56,9 +56,9 @@ public class FlightController {
     flightService.executeCommandsInSequence(droneIds, request.getCommands());
   }
 
-  @Operation(summary = "Ejecutar múltiples secuencias de ordenes distintas para múltiples drones distintos", responses = {
-      @ApiResponse(responseCode = "202", description = "Órdenes aceptadas"),
-      @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+  @Operation(summary = "Execute multiple different command sequences for multiple different drones", responses = {
+      @ApiResponse(responseCode = "202", description = "Commands accepted"),
+      @ApiResponse(responseCode = "400", description = "Invalid request")
   })
   @PostMapping("/drones/batch-commands")
   public ResponseEntity<Void> executeBatchCommands(
