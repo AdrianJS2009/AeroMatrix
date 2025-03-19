@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.drones.fct.model.Dron;
+import com.drones.fct.domain.Dron;
 import com.drones.fct.repository.DronRepository;
 
 import jakarta.validation.Valid;
