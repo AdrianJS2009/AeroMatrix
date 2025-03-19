@@ -1,5 +1,5 @@
 package com.drones.fct.services;
 
-public class FlightServiceTest {
+public class TestDroneService {
 
 }

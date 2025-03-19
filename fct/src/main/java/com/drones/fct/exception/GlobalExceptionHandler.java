@@ -1,7 +1,9 @@
 package com.drones.fct.exception;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -25,6 +27,17 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ApiError> handleBadRequest(IllegalArgumentException ex) {
     ApiError error = new ApiError("BAD_REQUEST", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    String errorMessage = ex.getBindingResult().getAllErrors().stream()
+        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+        .findFirst()
+        .orElse("Error de validación");
+
+    ApiError error = new ApiError("VALIDATION_ERROR", errorMessage);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 

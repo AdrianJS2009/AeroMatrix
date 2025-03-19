@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Drone Management", description = "CRUD operations for drones")
@@ -37,7 +38,7 @@ public class DroneController {
       @ApiResponse(responseCode = "400", description = "Invalid request")
   })
   @PostMapping
-  public ResponseEntity<DroneDto> createDrone(@RequestBody CreateDroneRequest request) {
+  public ResponseEntity<DroneDto> createDrone(@Valid @RequestBody CreateDroneRequest request) {
     Drone drone = droneService.createDrone(
         request.getMatrixId(),
         request.getName(),
@@ -89,6 +90,8 @@ public class DroneController {
   }
 
   private DroneDto toDto(Drone drone) {
+    if (drone == null)
+      return new DroneDto();
     DroneDto dto = new DroneDto();
     dto.setId(drone.getId());
     dto.setName(drone.getName());
