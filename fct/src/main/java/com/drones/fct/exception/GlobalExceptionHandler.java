@@ -37,8 +37,8 @@ public class GlobalExceptionHandler {
         .findFirst()
         .orElse("Error de validación");
 
-    ApiError error = new ApiError("VALIDATION_ERROR", errorMessage);
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ApiError("VALIDATION_ERROR", errorMessage));
   }
 
 }

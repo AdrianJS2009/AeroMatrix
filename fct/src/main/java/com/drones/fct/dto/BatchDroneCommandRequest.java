@@ -6,6 +6,7 @@ import com.drones.fct.domain.MovementCommand;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -14,6 +15,7 @@ public class BatchDroneCommandRequest {
   private List<DroneCommand> commands;
 
   @Data
+  @AllArgsConstructor
   public static class DroneCommand {
     @NotNull
     @Schema(description = "Drone identifier")

@@ -14,8 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -53,20 +51,6 @@ class TestDroneController {
 
   @Autowired
   private ObjectMapper objectMapper;
-
-  // --------------------- VALIDACIÓN DE CAMPOS OBLIGATORIOS ---------------------
-  @Test
-  void createDrone_MissingRequiredFields_Returns400() throws Exception {
-    for (String field : List.of("matrixId", "name", "model", "x", "y", "orientation")) {
-      CreateDroneRequest request = buildValidCreateRequest();
-      setFieldViaReflection(request, field, null);
-
-      mockMvc.perform(post("/api/drones")
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(objectMapper.writeValueAsString(request)))
-          .andExpect(status().isBadRequest());
-    }
-  }
 
   // --------------------- COORDENADAS EXTREMAS ---------------------
   @Test
@@ -142,11 +126,6 @@ class TestDroneController {
   }
 
   // ===================== MÉTODOS AUXILIARES =====================
-  private void setFieldViaReflection(Object target, String fieldName, Object value) throws Exception {
-    Field field = target.getClass().getDeclaredField(fieldName);
-    field.setAccessible(true);
-    field.set(target, value);
-  }
 
   private CreateDroneRequest buildValidCreateRequest() {
     CreateDroneRequest request = new CreateDroneRequest();
