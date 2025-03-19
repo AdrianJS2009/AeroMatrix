@@ -59,7 +59,7 @@ public class DroneController {
     return toDto(drone);
   }
 
-  @Operation(summary = "Update a drone", responses = {
+  @Operation(summary = "Update a drone by ID", responses = {
       @ApiResponse(responseCode = "200", description = "Drone updated", content = @Content(schema = @Schema(implementation = DroneDto.class))),
       @ApiResponse(responseCode = "404", description = "Drone not found"),
       @ApiResponse(responseCode = "400", description = "Invalid request")
@@ -78,7 +78,7 @@ public class DroneController {
     return toDto(drone);
   }
 
-  @Operation(summary = "Delete a drone", responses = {
+  @Operation(summary = "Delete a drone by ID", responses = {
       @ApiResponse(responseCode = "204", description = "Drone deleted"),
       @ApiResponse(responseCode = "404", description = "Drone not found")
   })
