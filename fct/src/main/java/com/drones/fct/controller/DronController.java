@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.drones.fct.domain.Dron;
-import com.drones.fct.repository.DronRepository;
+import com.drones.fct.repository.DroneRepository;
 
 import jakarta.validation.Valid;
 
@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 public class DronController {
 
   @Autowired
-  private DronRepository dronRepository;
+  private DroneRepository dronRepository;
 
   @PostMapping
   public ResponseEntity<Dron> createDron(@Valid @RequestBody Dron dron) {

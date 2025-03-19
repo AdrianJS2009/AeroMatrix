@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -16,38 +17,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "drone")
+@Getter
+@Setter
+
+// NoArgs crea el constructor sin argumentos
+// AllArgs crea el constructor con todos los argumentos
+
+@NoArgsConstructor
+@AllArgsConstructor
+
+@Builder
 public class Drone {
-  @Entity
-  @Table(name = "drones")
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
 
-  @Builder
-  public class Drone {
-    @id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(nullable = false)
-    private String model;
+  @Column(nullable = false)
+  private String model;
 
-    @Column(name = "pos_x", nullable = false)
-    private Integer x;
+  @Column(name = "pos_x", nullable = false)
+  private Integer x;
 
-    @Column(name = "pos_y", nullable = false)
-    private Integer y;
+  @Column(name = "pos_y", nullable = false)
+  private Integer y;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Orientation orientation;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Orientation orientation;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "matrix_id")
-    private Matrix matrix;
-  }
+  // El Lazy es para que no se cargue la matriz al cargar el dron
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "matrix_id")
+  private Matrix matrix;
 }

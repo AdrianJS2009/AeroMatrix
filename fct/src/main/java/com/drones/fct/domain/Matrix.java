@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -16,28 +17,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "matrix")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class Matrix {
-  @Entity
-  @Table(name = "matrix")
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
 
-  public class Matrix {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Column(name = "max_x", nullable = false)
+  private Integer maxX;
 
-    @Column(name = "max_x", nullable = false)
-    private Integer maxX;
+  @Column(name = "max_y", nullable = false)
+  private Integer maxY;
 
-    @Column(name = "max_y", nullable = false)
-    private Integer maxY;
-
-    @OneToMany(mappedBy = "matrix", fetch = FetchType.LAZY)
-    private List<Drone> drones = new ArrayList<>();
-  }
+  @OneToMany(mappedBy = "matrix", fetch = FetchType.LAZY)
+  private List<Drone> drones = new ArrayList<>();
 }
