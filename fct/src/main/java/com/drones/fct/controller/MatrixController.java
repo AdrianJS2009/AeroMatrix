@@ -18,6 +18,7 @@ import com.drones.fct.service.MatrixService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Flight Matrix Management", description = "CRUD operations for flight matrices")
@@ -30,7 +31,8 @@ public class MatrixController {
 
   @Operation(summary = "Create a flight matrix")
   @PostMapping("/create")
-  public ResponseEntity<MatrixDto> createMatrix(@RequestBody CreateMatrixRequest request) {
+  public ResponseEntity<MatrixDto> createMatrix(
+      @Valid @RequestBody CreateMatrixRequest request) {
     Matrix matrix = matrixService.createMatrix(request.getMaxX(), request.getMaxY());
     return new ResponseEntity<>(toDto(matrix), HttpStatus.CREATED);
   }
