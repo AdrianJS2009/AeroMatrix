@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.drones.fct.domain.Drone;
 
 public interface DroneRepository extends JpaRepository<Drone, Long> {
-  List<Drone> findByXAndMatrixId(Integer x, Integer y, Long matrixId);
+  List<Drone> findByXAndYAndMatrixId(Integer x, Integer y, Long matrixId);
 
   List<Drone> findByMatrixId(Long matrixId);
 }

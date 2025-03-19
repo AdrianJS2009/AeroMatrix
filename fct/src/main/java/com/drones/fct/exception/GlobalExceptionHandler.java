@@ -4,22 +4,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import jakarta.validation.ConstraintViolationException;
+import com.drones.fct.dto.ApiError;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<String> handleValidationExceptions(ConstraintViolationException ex) {
-    return ResponseEntity.badRequest().body(ex.getMessage());
+  @ExceptionHandler(NotFoundException.class)
+  public ResponseEntity<ApiError> handleNotFound(NotFoundException ex) {
+    ApiError error = new ApiError("NOT_FOUND", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
-  @ExceptionHandler(Exception.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ResponseEntity<String> handleOtherExceptions(Exception ex) {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + ex.getMessage());
+  @ExceptionHandler(ConflictException.class)
+  public ResponseEntity<ApiError> handleConflict(ConflictException ex) {
+    ApiError error = new ApiError("CONFLICT", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
   }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiError> handleBadRequest(IllegalArgumentException ex) {
+    ApiError error = new ApiError("BAD_REQUEST", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
 }

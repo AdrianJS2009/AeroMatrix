@@ -1,34 +1,35 @@
 package com.drones.fct.service;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.domain.Orientation;
+import com.drones.fct.exception.ConflictException;
+import com.drones.fct.exception.NotFoundException;
 import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.repository.MatrixRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-
 public class DroneService {
+
   private final DroneRepository droneRepository;
   private final MatrixRepository matrixRepository;
 
   public Drone createDrone(Long matrixId, String name, String model, int x, int y, Orientation orientation) {
     Matrix matrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new NotFoundException("Matrix not found"));
+        .orElseThrow(() -> new NotFoundException("Matriz no encontrada"));
 
     validatePosition(matrix, x, y);
 
-    // Checking collisions with other drones
-    if (droneRepository.findByXAndMatrixId(x, y, matrixId).IsEmpty()) {
-      throw new ConflictException("There is already a drone in that position");
+    // Check if there is a drone iin that position
+    if (droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isEmpty()) {
+      throw new ConflictException("Ya existe un dron en esa posición");
     }
 
     Drone drone = Drone.builder()
@@ -43,17 +44,16 @@ public class DroneService {
     return droneRepository.save(drone);
   }
 
-  public Drone updateDrone(Long droneId, int x, int y, String name, String model, Orientation orientation) {
+  public Drone updateDrone(Long droneId, String name, String model, int x, int y, Orientation orientation) {
     Drone drone = droneRepository.findById(droneId)
         .orElseThrow(() -> new NotFoundException("Drone not found"));
 
     Matrix matrix = drone.getMatrix();
-
     validatePosition(matrix, x, y);
 
-    // Checking collisions with other drones if the position changes
-    if ((drone.getX() != x || drone.getY() != y)
-        && droneRepository.findByXAndMatrixId(x, y, matrix.getId()).isEmpty()) {
+    // If pos changes check if there is a drone in the same position
+    if ((drone.getX() != x || drone.getY() != y) &&
+        droneRepository.findByXAndYAndMatrixId(x, y, matrix.getId()).isEmpty()) {
       throw new ConflictException("There is already a drone in that position");
     }
 
@@ -69,7 +69,6 @@ public class DroneService {
   public void deleteDrone(Long droneId) {
     Drone drone = droneRepository.findById(droneId)
         .orElseThrow(() -> new NotFoundException("Drone not found"));
-
     droneRepository.delete(drone);
   }
 
@@ -79,7 +78,7 @@ public class DroneService {
   }
 
   private void validatePosition(Matrix matrix, int x, int y) {
-    if (x < 0 || x >= matrix.getMaxX() || y < 0 || y >= matrix.getMaxY()) {
+    if (x < 0 || x > matrix.getMaxX() || y < 0 || y > matrix.getMaxY()) {
       throw new IllegalArgumentException("Coords out of bounds");
     }
   }
