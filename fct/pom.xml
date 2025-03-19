@@ -84,13 +84,26 @@
             <version>${jacoco.version}</version>
             <executions>
                 <execution>
+                    <id>prepare-agent</id>
                     <goals>
                         <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <goals>
                         <goal>report</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>check</id>
+                    <goals>
+                        <goal>check</goal>
                     </goals>
                     <configuration>
                         <rules>
                             <rule>
+                                <element>BUNDLE</element>
                                 <limits>
                                     <limit>
                                         <counter>LINE</counter>
@@ -101,6 +114,12 @@
                             </rule>
                         </rules>
                     </configuration>
+                </execution>
+                <execution>
+                    <id>report-aggregate</id>
+                    <goals>
+                        <goal>report-aggregate</goal>
+                    </goals>
                 </execution>
             </executions>
         </plugin>

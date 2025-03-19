@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put; // Importación faltante
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,7 +30,7 @@ import com.drones.fct.service.DroneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(DroneController.class)
-class DroneControllerTest {
+class TestDroneController {
 
   @Autowired
   private MockMvc mockMvc;
@@ -55,7 +56,13 @@ class DroneControllerTest {
 
     Drone mockDrone = new Drone();
     mockDrone.setId(1L);
+    mockDrone.setName("Drone1");
+    mockDrone.setModel("X200");
+    mockDrone.setX(0);
+    mockDrone.setY(0);
+    mockDrone.setOrientation(Orientation.N);
     mockDrone.setMatrix(mockMatrix);
+
     when(droneService.createDrone(anyLong(), anyString(), anyString(), anyInt(), anyInt(), any()))
         .thenReturn(mockDrone);
 
@@ -63,7 +70,10 @@ class DroneControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(1));
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("Drone1"))
+        .andExpect(jsonPath("$.model").value("X200"))
+        .andExpect(jsonPath("$.matrixId").value(1));
   }
 
   @Test
@@ -79,5 +89,39 @@ class DroneControllerTest {
     mockMvc.perform(delete("/api/drones/1"))
         .andExpect(status().isNoContent());
     verify(droneService).deleteDrone(1L);
+  }
+
+  @Test
+  void updateDrone_ValidRequest_ReturnsOk() throws Exception {
+    CreateDroneRequest request = new CreateDroneRequest();
+    request.setName("Drone1-Updated");
+    request.setModel("X200v2");
+    request.setX(5);
+    request.setY(5);
+    request.setOrientation(Orientation.E);
+
+    Matrix mockMatrix = new Matrix();
+    mockMatrix.setId(1L);
+
+    Drone mockDrone = new Drone();
+    mockDrone.setId(1L);
+    mockDrone.setName("Drone1-Updated");
+    mockDrone.setModel("X200v2");
+    mockDrone.setX(5);
+    mockDrone.setY(5);
+    mockDrone.setOrientation(Orientation.E);
+    mockDrone.setMatrix(mockMatrix);
+
+    when(droneService.updateDrone(anyLong(), anyString(), anyString(), anyInt(), anyInt(), any()))
+        .thenReturn(mockDrone);
+
+    mockMvc.perform(put("/api/drones/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Drone1-Updated"))
+        .andExpect(jsonPath("$.model").value("X200v2"))
+        .andExpect(jsonPath("$.x").value(5))
+        .andExpect(jsonPath("$.y").value(5));
   }
 }

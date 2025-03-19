@@ -28,7 +28,7 @@ public class DroneService {
     validatePosition(matrix, x, y);
 
     // Check if there is a drone iin that position
-    if (droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isEmpty()) {
+    if (droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isPresent()) {
       throw new ConflictException("Ya existe un dron en esa posición");
     }
 
@@ -53,8 +53,8 @@ public class DroneService {
 
     // If pos changes check if there is a drone in the same position
     if ((drone.getX() != x || drone.getY() != y) &&
-        droneRepository.findByXAndYAndMatrixId(x, y, matrix.getId()).isEmpty()) {
-      throw new ConflictException("There is already a drone in that position");
+        droneRepository.findByXAndYAndMatrixId(x, y, matrix.getId()).isPresent()) {
+      throw new ConflictException("Ya existe un dron en esa posición");
     }
 
     drone.setName(name);

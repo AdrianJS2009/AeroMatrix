@@ -1,5 +1,5 @@
 package com.drones.fct.controllers;
 
-public class FlightControllerTest {
+public class TestMatrixController {
 
 }
