@@ -12,13 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.drones.fct.controller.MatrixController;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.dto.CreateMatrixRequest;
 import com.drones.fct.exception.ConflictException;
@@ -26,7 +26,7 @@ import com.drones.fct.exception.NotFoundException;
 import com.drones.fct.service.MatrixService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(MatrixController.class)
+@ExtendWith(MockitoExtension.class)
 class TestMatrixController {
 
   private static final Long VALID_MATRIX_ID = 1L;
@@ -36,7 +36,7 @@ class TestMatrixController {
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
+  @Mock
   private MatrixService matrixService;
 
   @Autowired
@@ -129,7 +129,7 @@ class TestMatrixController {
         .andExpect(status().isConflict());
   }
 
-  // ============================ Helper Methods ============================
+  // ============================ HELPER METHODS ============================
   private Matrix buildMatrix(Long id, int maxX, int maxY) {
     return Matrix.builder()
         .id(id)
