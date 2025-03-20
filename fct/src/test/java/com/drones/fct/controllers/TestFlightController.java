@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.drones.fct.controller.FlightController;
 import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.domain.MovementCommand;
@@ -30,7 +30,7 @@ import com.drones.fct.exception.ConflictException;
 import com.drones.fct.service.FlightService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(FlightController.class)
 class TestFlightController {
 
     private static final Long VALID_DRONE_ID = 1L;
@@ -39,7 +39,7 @@ class TestFlightController {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private FlightService flightService;
 
     @Autowired
@@ -124,7 +124,7 @@ class TestFlightController {
         request.setCommands(IntStream.rangeClosed(1, 1000)
                 .mapToObj(i -> new BatchDroneCommandRequest.DroneCommand(
                         (long) i,
-                        List.of(MovementCommand.MOVE_FORWARD))) // <--- Paréntesis de cierre correcto
+                        List.of(MovementCommand.MOVE_FORWARD)))
                 .toList());
 
         mockMvc.perform(post("/api/flights/drones/batch-commands")

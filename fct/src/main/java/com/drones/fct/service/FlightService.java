@@ -93,7 +93,7 @@ public class FlightService {
     drone.setY(y);
   }
 
-  private void checkGlobalCollisions(Drone drone) {
+  public void checkGlobalCollisions(Drone drone) {
     List<Drone> dronesInSamePosition = droneRepository.findByXAndYAndMatrixId(
         drone.getX(), drone.getY(), drone.getMatrix().getId());
     dronesInSamePosition.forEach(other -> {

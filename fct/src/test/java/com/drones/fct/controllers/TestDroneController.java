@@ -17,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.drones.fct.controller.DroneController;
 import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.domain.Orientation;
@@ -33,7 +33,7 @@ import com.drones.fct.exception.NotFoundException;
 import com.drones.fct.service.DroneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(DroneController.class)
 class TestDroneController {
 
   private static final Long VALID_DRONE_ID = 1L;
@@ -46,13 +46,13 @@ class TestDroneController {
   @Autowired
   private MockMvc mockMvc;
 
-  @Mock
+  @MockBean
   private DroneService droneService;
 
   @Autowired
   private ObjectMapper objectMapper;
 
-  // --------------------- COORDENATES ---------------------
+  // --------------------- COORDENADAS EXTREMAS ---------------------
   @Test
   void createDrone_EdgeCoordinates_ReturnsCreated() throws Exception {
     CreateDroneRequest request = buildValidCreateRequest();
@@ -76,7 +76,7 @@ class TestDroneController {
     request.setY(INVALID_POSITION);
 
     when(droneService.createDrone(anyLong(), any(), any(), anyInt(), anyInt(), any()))
-        .thenThrow(new IllegalArgumentException("Position out of bounds"));
+        .thenThrow(new IllegalArgumentException("Posición fuera de límites"));
 
     mockMvc.perform(post("/api/drones")
         .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ class TestDroneController {
         .andExpect(status().isBadRequest());
   }
 
-  // --------------------- INVALID ORIENTATIONS ---------------------
+  // --------------------- ORIENTACIONES VÁLIDAS ---------------------
   @Test
   void createDrone_AllValidOrientations_ReturnsCreated() throws Exception {
     for (Orientation orientation : Orientation.values()) {
@@ -103,9 +103,9 @@ class TestDroneController {
     }
   }
 
-  // --------------------- PERFORMANCE ---------------------
+  // --------------------- PRUEBAS DE RENDIMIENTO ---------------------
   @Test
-  void createMultipleDrones_StressTest_ReturnsAllCreated() {
+  void createMultipleDrones_StressTest_ReturnsAllCreated() throws Exception {
     IntStream.range(0, 100).parallel().forEach(i -> {
       try {
         CreateDroneRequest request = buildValidCreateRequest();
@@ -125,7 +125,7 @@ class TestDroneController {
     });
   }
 
-  // ===================== HELPER METHODS =====================
+  // ===================== MÉTODOS AUXILIARES =====================
 
   private CreateDroneRequest buildValidCreateRequest() {
     CreateDroneRequest request = new CreateDroneRequest();
@@ -155,7 +155,7 @@ class TestDroneController {
         .build();
   }
 
-  // --------------------- CREATION OF DRONES ---------------------
+  // --------------------- TESTS PARA CREACIÓN DE DRONES ---------------------
   @Test
   void createDrone_ValidRequest_ReturnsCreated() throws Exception {
     CreateDroneRequest request = buildValidCreateRequest();
@@ -206,7 +206,7 @@ class TestDroneController {
         .andExpect(status().isBadRequest());
   }
 
-  // --------------------- GETTING DRONES ---------------------
+  // --------------------- TESTS PARA OBTENER DRONES ---------------------
   @Test
   void getDrone_Success_ReturnsDroneDetails() throws Exception {
     Drone mockDrone = buildDrone(VALID_DRONE_ID, "Drone1", Orientation.N, 0, 0);
@@ -228,7 +228,7 @@ class TestDroneController {
         .andExpect(status().isNotFound());
   }
 
-  // --------------------- UPDATING DRONES ---------------------
+  // --------------------- TESTS PARA ACTUALIZAR DRONES ---------------------
   @Test
   void updateDrone_ValidRequest_ReturnsOk() throws Exception {
     CreateDroneRequest request = buildValidUpdateRequest();
@@ -249,7 +249,7 @@ class TestDroneController {
 
   @Test
   void updateDrone_DroneNotFound_Returns404() throws Exception {
-    CreateDroneRequest request = buildValidUpdateRequest();
+    CreateDroneRequest request = buildValidUpdateRequest(); // Request completo
 
     when(droneService.updateDrone(anyLong(), any(), any(), anyInt(), anyInt(), any()))
         .thenThrow(new NotFoundException("Dron no encontrado"));
@@ -262,7 +262,7 @@ class TestDroneController {
 
   @Test
   void updateDrone_PositionConflict_Returns409() throws Exception {
-    CreateDroneRequest request = buildValidUpdateRequest();
+    CreateDroneRequest request = buildValidUpdateRequest(); // Request completo
 
     when(droneService.updateDrone(anyLong(), any(), any(), anyInt(), anyInt(), any()))
         .thenThrow(new ConflictException("Posición ocupada"));
@@ -273,7 +273,7 @@ class TestDroneController {
         .andExpect(status().isConflict());
   }
 
-  // --------------------- DELETING DRONES ---------------------
+  // --------------------- TESTS PARA ELIMINAR DRONES ---------------------
   @Test
   void deleteDrone_Success_Returns204() throws Exception {
     mockMvc.perform(delete("/api/drones/{id}", VALID_DRONE_ID))
@@ -290,7 +290,7 @@ class TestDroneController {
         .andExpect(status().isNotFound());
   }
 
-  // --------------------- HELPER METHODS ---------------------
+  // --------------------- MÉTODOS AUXILIARES ---------------------
   private CreateDroneRequest buildValidUpdateRequest() {
     CreateDroneRequest request = new CreateDroneRequest();
     request.setName("Drone1-Updated");
