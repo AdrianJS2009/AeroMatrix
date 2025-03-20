@@ -42,10 +42,10 @@ public class Drone {
   private String model;
 
   @Column(name = "pos_x", nullable = false)
-  private Integer x;
+  private int x;
 
   @Column(name = "pos_y", nullable = false)
-  private Integer y;
+  private int y;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

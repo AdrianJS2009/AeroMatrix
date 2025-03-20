@@ -14,9 +14,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
@@ -27,7 +28,7 @@ import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.repository.MatrixRepository;
 import com.drones.fct.service.DroneService;
 
-@WebMvcTest(DroneService.class)
+@ExtendWith(MockitoExtension.class)
 class TestDroneService {
 
   @Mock
@@ -113,7 +114,8 @@ class TestDroneService {
         .thenReturn(Collections.emptyList());
     when(droneRepository.save(any(Drone.class))).thenReturn(drone);
 
-    Drone updatedDrone = droneService.updateDrone(VALID_DRONE_ID, "UpdatedName", "X300", 7, 7, Orientation.E);
+    Drone updatedDrone = droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7,
+        Orientation.E);
 
     assertNotNull(updatedDrone);
     assertEquals("UpdatedName", updatedDrone.getName());
@@ -125,7 +127,7 @@ class TestDroneService {
     when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class,
-        () -> droneService.updateDrone(VALID_DRONE_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
+        () -> droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
   }
 
   @Test
@@ -135,7 +137,7 @@ class TestDroneService {
         .thenReturn(Collections.singletonList(new Drone()));
 
     assertThrows(ConflictException.class,
-        () -> droneService.updateDrone(VALID_DRONE_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
+        () -> droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
   }
 
   // ------------------ DELETE DRONE ------------------

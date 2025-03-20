@@ -18,8 +18,6 @@ import com.drones.fct.service.FlightService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,10 +31,11 @@ public class FlightController {
 
   private final FlightService flightService;
 
-  @Operation(summary = "Execute a sequence of commands on a drone", responses = {
-      @ApiResponse(responseCode = "200", description = "Commands executed", content = @Content(schema = @Schema(implementation = DroneDto.class))),
+  @Operation(summary = "Execute a sequence of commands on a single drone", responses = {
+      @ApiResponse(responseCode = "200", description = "Commands executed successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid command sequence"),
       @ApiResponse(responseCode = "404", description = "Drone not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid request")
+      @ApiResponse(responseCode = "409", description = "Collision detected or out of bounds")
   })
   @PostMapping("/drone/{droneId}/commands")
   public DroneDto executeCommands(@Parameter(description = "ID del dron") @PathVariable Long droneId,

@@ -1,5 +1,7 @@
 package com.drones.fct.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,12 +13,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.dto.CreateMatrixRequest;
+import com.drones.fct.dto.DroneDto;
 import com.drones.fct.dto.MatrixDto;
+import com.drones.fct.exception.ConflictException;
+import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.service.MatrixService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class MatrixController {
 
   private final MatrixService matrixService;
+  private final DroneRepository droneRepository;
 
   @Operation(summary = "Create a flight matrix")
   @PostMapping("/create")
@@ -53,11 +61,19 @@ public class MatrixController {
     return toDto(matrix);
   }
 
-  @Operation(summary = "Delete a matrix by ID")
+  @Operation(summary = "Delete a matrix by ID", responses = {
+      @ApiResponse(responseCode = "204", description = "Matrix deleted"),
+      @ApiResponse(responseCode = "404", description = "Matrix not found"),
+      @ApiResponse(responseCode = "409", description = "Matrix contains drones")
+  })
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<Void> deleteMatrix(@PathVariable Long id) {
-    matrixService.deleteMatrix(id);
-    return ResponseEntity.noContent().build();
+    try {
+      matrixService.deleteMatrix(id);
+      return ResponseEntity.noContent().build();
+    } catch (IllegalArgumentException ex) {
+      throw new ConflictException(ex.getMessage());
+    }
   }
 
   private MatrixDto toDto(Matrix matrix) {
@@ -65,6 +81,22 @@ public class MatrixController {
     dto.setId(matrix.getId());
     dto.setMaxX(matrix.getMaxX());
     dto.setMaxY(matrix.getMaxY());
+
+    List<Drone> drones = droneRepository.findByMatrixId(matrix.getId());
+    dto.setDrones(drones.stream().map(this::toDroneDto).toList());
+
+    return dto;
+  }
+
+  private DroneDto toDroneDto(Drone drone) {
+    DroneDto dto = new DroneDto();
+    dto.setId(drone.getId());
+    dto.setName(drone.getName());
+    dto.setModel(drone.getModel());
+    dto.setX(drone.getX());
+    dto.setY(drone.getY());
+    dto.setOrientation(drone.getOrientation());
+    dto.setMatrixId(drone.getMatrix().getId());
     return dto;
   }
 

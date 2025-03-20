@@ -1,5 +1,7 @@
 package com.drones.fct.dto;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -13,4 +15,7 @@ public class MatrixDto {
 
   @Schema(description = "Maximum value of the Y coordinate")
   private Integer maxY;
+
+  @Schema(description = "List of drones in the matrix")
+  private List<DroneDto> drones;
 }

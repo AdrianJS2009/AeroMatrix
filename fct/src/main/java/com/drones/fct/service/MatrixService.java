@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.drones.fct.domain.Drone;
 import com.drones.fct.domain.Matrix;
+import com.drones.fct.exception.ConflictException;
+import com.drones.fct.exception.NotFoundException;
 import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.repository.MatrixRepository;
 
@@ -55,7 +57,13 @@ public class MatrixService {
 
   public void deleteMatrix(Long matrixId) {
     Matrix matrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new IllegalArgumentException("Matrix not found"));
+        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
+
+    List<Drone> drones = droneRepository.findByMatrixId(matrixId);
+    if (!drones.isEmpty()) {
+      throw new ConflictException("Cannot delete matrix - " + drones.size() + "  active drones found");
+    }
+
     matrixRepository.delete(matrix);
   }
 

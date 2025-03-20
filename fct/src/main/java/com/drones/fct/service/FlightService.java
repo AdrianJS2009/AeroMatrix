@@ -80,13 +80,19 @@ public class FlightService {
 
     // Matrix limits validation
     if (x < 0 || x > matrix.getMaxX() || y < 0 || y > matrix.getMaxY()) {
-      throw new ConflictException("The drone would go out of the matrix limits");
+      throw new ConflictException(
+          "Drone " + drone.getId() + " would exit matrix boundaries. " +
+              "Current position: (" + x + "," + y + "), " +
+              "Matrix limits: (0-" + matrix.getMaxX() + ", 0-" + matrix.getMaxY() + ")");
     }
 
     // Drone collision validation
     List<Drone> others = droneRepository.findByXAndYAndMatrixId(x, y, matrix.getId());
     if (!others.isEmpty() && (others.size() > 1 || !others.get(0).getId().equals(drone.getId()))) {
-      throw new ConflictException("Collision detected at position (" + x + "," + y + ")");
+      throw new ConflictException(
+          "Collision detected between drone " + drone.getId() +
+              " and drone " + others.get(0).getId() +
+              " at position (" + x + "," + y + ")");
     }
 
     drone.setX(x);
