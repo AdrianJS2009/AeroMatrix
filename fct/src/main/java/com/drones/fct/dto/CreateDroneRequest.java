@@ -3,6 +3,7 @@ package com.drones.fct.dto;
 import com.drones.fct.domain.Orientation;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,14 +24,16 @@ public class CreateDroneRequest {
   private String model;
 
   @NotNull
+  @Min(value = 0, message = "X can not be negative")
   @Schema(description = "Initial X coordinate of the drone")
   private Integer x;
 
   @NotNull
+  @Min(value = 0, message = "Y can not be negative")
   @Schema(description = "Initial Y coordinate of the drone")
   private Integer y;
 
-  @NotNull
+  @NotNull(message = "Orientation is required")
   @Schema(description = "Initial orientation of the drone")
   private Orientation orientation;
 }
