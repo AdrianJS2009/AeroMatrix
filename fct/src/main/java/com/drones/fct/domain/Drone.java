@@ -18,12 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "drone")
+@Table(name = "drones")
 @Getter
 @Setter
-
-// NoArgs crea el constructor sin argumentos
-// AllArgs crea el constructor con todos los argumentos
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,10 +32,10 @@ public class Drone {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 50)
   private String name;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 50)
   private String model;
 
   @Column(name = "pos_x", nullable = false)
@@ -48,7 +45,7 @@ public class Drone {
   private int y;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(nullable = false, length = 1)
   private Orientation orientation;
 
   // El Lazy es para que no se cargue la matriz al cargar el dron
