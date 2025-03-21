@@ -62,34 +62,33 @@ public class DroneController {
       @ApiResponse(responseCode = "404", description = "Drone not found")
   })
   @GetMapping("/{droneId}")
-  public DroneDto getDrone(@Parameter(description = "Drone ID") @PathVariable Long droneId) {
-    Drone drone = droneService.getDrone(droneId);
-    return toDto(drone);
+  public DroneDto getDrone(@PathVariable Long droneId) {
+    return toDto(droneService.getDrone(droneId));
   }
 
-  @Operation(summary = "Update a drone", responses = {
+  @Operation(summary = "Update drone", responses = {
       @ApiResponse(responseCode = "200", description = "Drone updated"),
-      @ApiResponse(responseCode = "400", description = "Invalid input"),
       @ApiResponse(responseCode = "404", description = "Drone or Matrix not found"),
       @ApiResponse(responseCode = "409", description = "Position conflict")
   })
+
   @PutMapping("/{droneId}")
   public DroneDto updateDrone(
-      @Parameter(description = "Drone ID") @PathVariable Long droneId,
-      @RequestBody CreateDroneRequest request) {
-    Drone drone = droneService.updateDrone(
+      @PathVariable Long droneId,
+      @Valid @RequestBody UpdateDroneRequest request) {
+    return toDto(droneService.updateDrone(
         droneId,
         request.getMatrixId(),
         request.getName(),
         request.getModel(),
         request.getX(),
         request.getY(),
-        request.getOrientation());
-    return toDto(drone);
+        request.getOrientation()));
   }
 
-  @Operation(summary = "Delete a drone by ID", responses = {
-      @ApiResponse(responseCode = "200", description = "Drone deleted successfully", content = @Content(schema = @Schema(implementation = String.class)))
+  @Operation(summary = "Delete drone", responses = {
+      @ApiResponse(responseCode = "200", description = "Drone deleted"),
+      @ApiResponse(responseCode = "404", description = "Drone not found")
   })
   @DeleteMapping("/{droneId}")
   public ResponseEntity<Map<String, String>> deleteDrone(
@@ -104,6 +103,12 @@ public class DroneController {
     return ResponseEntity.ok(response);
   }
 
+  @Operation(summary = "List all drones")
+  @GetMapping
+  public List<DroneDto> listDrones() {
+    return droneService.listDrones().stream().map(this::toDto).toList();
+  }
+
   private DroneDto toDto(Drone drone) {
     if (drone == null)
       return new DroneDto();
@@ -116,11 +121,5 @@ public class DroneController {
     dto.setOrientation(drone.getOrientation());
     dto.setMatrixId(drone.getMatrix().getId());
     return dto;
-  }
-
-  @Operation(summary = "List all drones")
-  @GetMapping
-  public List<DroneDto> listDrones() {
-    return droneService.listDrones().stream().map(this::toDto).toList();
   }
 }

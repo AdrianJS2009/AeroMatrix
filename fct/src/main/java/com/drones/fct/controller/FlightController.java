@@ -31,17 +31,17 @@ public class FlightController {
 
   private final FlightService flightService;
 
-  @Operation(summary = "Execute a sequence of commands on a single drone", responses = {
-      @ApiResponse(responseCode = "200", description = "Commands executed successfully"),
-      @ApiResponse(responseCode = "400", description = "Invalid command sequence"),
+  @Operation(summary = "Execute commands on a drone", responses = {
+      @ApiResponse(responseCode = "200", description = "Commands executed"),
+      @ApiResponse(responseCode = "400", description = "Invalid command"),
       @ApiResponse(responseCode = "404", description = "Drone not found"),
-      @ApiResponse(responseCode = "409", description = "Collision detected or out of bounds")
+      @ApiResponse(responseCode = "409", description = "Collision/Out of bounds")
   })
-  @PostMapping("/drone/{droneId}/commands")
-  public DroneDto executeCommands(@Parameter(description = "ID del dron") @PathVariable Long droneId,
-      @RequestBody CommandsRequest request) {
-    Drone drone = flightService.executeCommands(droneId, request.getCommands());
-    return toDto(drone);
+  @PostMapping("/drones/{droneId}/commands")
+  public DroneDto executeCommands(
+      @PathVariable Long droneId,
+      @Valid @RequestBody CommandsRequest request) {
+    return toDto(flightService.executeCommands(droneId, request.getCommands()));
   }
 
   @Operation(summary = "Execute the same sequence of commands on multiple drones at once", responses = {
@@ -59,7 +59,7 @@ public class FlightController {
       @ApiResponse(responseCode = "202", description = "Commands accepted"),
       @ApiResponse(responseCode = "400", description = "Invalid request")
   })
-  @PostMapping("/drones/batch-commands")
+  @PostMapping("/batch-commands")
   public ResponseEntity<Void> executeBatchCommands(
       @Valid @RequestBody BatchDroneCommandRequest request) {
     flightService.executeBatchCommands(request.getCommands());
