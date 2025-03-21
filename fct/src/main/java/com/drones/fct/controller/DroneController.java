@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.drones.fct.domain.Drone;
 import com.drones.fct.dto.CreateDroneRequest;
 import com.drones.fct.dto.DroneDto;
+import com.drones.fct.dto.UpdateDroneRequest;
 import com.drones.fct.service.DroneService;
 
 import io.swagger.v3.oas.annotations.Operation;

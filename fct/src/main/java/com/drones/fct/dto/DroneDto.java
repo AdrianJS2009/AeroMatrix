@@ -17,10 +17,10 @@ public class DroneDto {
   private String model;
 
   @Schema(description = "Coord X of the drone")
-  private Integer x;
+  private int x;
 
   @Schema(description = "Coord Y of the drone")
-  private Integer y;
+  private int y;
 
   @Schema(description = "Drone orientation")
   private Orientation orientation;

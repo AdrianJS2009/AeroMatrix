@@ -1,7 +1,6 @@
 package com.drones.fct.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ import com.drones.fct.domain.Matrix;
 import com.drones.fct.dto.CreateMatrixRequest;
 import com.drones.fct.dto.DroneDto;
 import com.drones.fct.dto.MatrixDto;
-import com.drones.fct.exception.ConflictException;
+import com.drones.fct.dto.UpdateMatrixRequest;
 import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.service.MatrixService;
 
@@ -31,57 +30,55 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Flight Matrix Management", description = "CRUD operations for flight matrices")
 @RestController
-@RequestMapping("/api/matrices-flight")
+@RequestMapping("/api/matrices")
 @RequiredArgsConstructor
 public class MatrixController {
 
   private final MatrixService matrixService;
   private final DroneRepository droneRepository;
 
-  @Operation(summary = "Create a flight matrix")
-  @PostMapping("/create")
-  public ResponseEntity<MatrixDto> createMatrix(
-      @Valid @RequestBody CreateMatrixRequest request) {
-    Matrix matrix = matrixService.createMatrix(request.getMaxX(), request.getMaxY());
-    return new ResponseEntity<>(toDto(matrix), HttpStatus.CREATED);
+  @PostMapping
+  public ResponseEntity<MatrixDto> createMatrix(@Valid @RequestBody CreateMatrixRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(toDto(matrixService.createMatrix(request.getMaxX(), request.getMaxY())));
   }
 
-  @Operation(summary = "Get a matrix by ID")
-  @GetMapping("/get/{id}")
-  public MatrixDto getMatrix(@PathVariable Long id) {
-    Matrix matrix = matrixService.getMatrix(id);
-    return toDto(matrix);
+  @Operation(summary = "Get matrix details", responses = {
+      @ApiResponse(responseCode = "200", description = "Matrix found"),
+      @ApiResponse(responseCode = "404", description = "Matrix not found")
+  })
+  @GetMapping("/{matrixId}")
+  public MatrixDto getMatrix(@PathVariable Long matrixId) {
+    return toDto(matrixService.getMatrix(matrixId));
   }
 
-  @Operation(summary = "Update a matrix by ID")
-  @PutMapping("/update/{id}")
+  @Operation(summary = "Update matrix", responses = {
+      @ApiResponse(responseCode = "200", description = "Matrix updated"),
+      @ApiResponse(responseCode = "404", description = "Matrix not found"),
+      @ApiResponse(responseCode = "409", description = "Invalid dimensions for drones")
+  })
+  @PutMapping("/{matrixId}")
   public MatrixDto updateMatrix(
-      @PathVariable Long id,
-      @RequestBody CreateMatrixRequest request) {
-    Matrix matrix = matrixService.updateMatrix(id, request.getMaxX(), request.getMaxY());
-    return toDto(matrix);
+      @PathVariable Long matrixId,
+      @Valid @RequestBody UpdateMatrixRequest request) {
+    return toDto(matrixService.updateMatrix(
+        matrixId,
+        request.getMaxX(),
+        request.getMaxY()));
   }
 
-  @Operation(summary = "Delete a matrix by ID", responses = {
+  @Operation(summary = "Delete matrix", responses = {
       @ApiResponse(responseCode = "204", description = "Matrix deleted"),
       @ApiResponse(responseCode = "404", description = "Matrix not found"),
       @ApiResponse(responseCode = "409", description = "Matrix contains drones")
   })
-  @DeleteMapping("/delete/{id}")
-  public ResponseEntity<String> deleteMatrix(@PathVariable Long id) {
-    try {
-      matrixService.deleteMatrix(id);
-      return ResponseEntity.noContent().header("Message", "Matrix with " + id + " deleted").build();
-    } catch (IllegalArgumentException ex) {
-      List<Drone> drones = droneRepository.findByMatrixId(id);
-      String droneIds = drones.stream().map(drone -> String.valueOf(drone.getId())).collect(Collectors.joining(", "));
-      String message = "Cannot delete the matrix with " + id + " because it has drones working on it. Active drones: "
-          + droneIds;
-      throw new ConflictException(message);
-    }
+  @DeleteMapping("/{matrixId}")
+  public ResponseEntity<Void> deleteMatrix(@PathVariable Long matrixId) {
+    matrixService.deleteMatrix(matrixId);
+    return ResponseEntity.noContent().build();
   }
 
-  @Operation(summary = "List all matrices with their drones")
+  @Operation(summary = "List all matrices")
   @GetMapping
   public List<MatrixDto> listMatrices() {
     return matrixService.listMatrices().stream().map(this::toDto).toList();

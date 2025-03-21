@@ -15,11 +15,11 @@ public class CreateMatrixRequest {
   @NotNull
   @Min(1)
   @Schema(description = "Maximum value of the X coordinate")
-  private Integer maxX;
+  private int maxX;
 
   @NotNull
   @Min(1)
   @Schema(description = "Maximum value of the Y coordinate")
-  private Integer maxY;
+  private int maxY;
 
 }

@@ -26,12 +26,12 @@ public class CreateDroneRequest {
   @NotNull
   @Min(value = 0, message = "X can not be negative")
   @Schema(description = "Initial X coordinate of the drone")
-  private Integer x;
+  private int x;
 
   @NotNull
   @Min(value = 0, message = "Y can not be negative")
   @Schema(description = "Initial Y coordinate of the drone")
-  private Integer y;
+  private int y;
 
   @NotNull(message = "Orientation is required")
   @Schema(description = "Initial orientation of the drone")

@@ -11,10 +11,10 @@ public class MatrixDto {
   private Long id;
 
   @Schema(description = "Maximum value of the X coordinate")
-  private Integer maxX;
+  private int maxX;
 
   @Schema(description = "Maximum value of the Y coordinate")
-  private Integer maxY;
+  private int maxY;
 
   @Schema(description = "List of drones in the matrix")
   private List<DroneDto> drones;
