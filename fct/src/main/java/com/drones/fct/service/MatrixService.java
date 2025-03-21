@@ -1,6 +1,7 @@
 package com.drones.fct.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class MatrixService {
 
   public Matrix createMatrix(Integer maxX, Integer maxY) {
     if (maxX <= 0 || maxY <= 0) {
-      throw new IllegalArgumentException("Invalid matrix size");
+      throw new ConflictException("Matrix dimensions must be positive (maxX: " + maxX + ", maxY: " + maxY + ")");
     }
     Matrix matrix = Matrix.builder()
         .maxX(maxX)
@@ -35,13 +36,14 @@ public class MatrixService {
 
   public Matrix updateMatrix(Long matrixId, Integer maxX, Integer maxY) {
     Matrix matrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new IllegalArgumentException("Matrix not found"));
+        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
 
-    // Check current drones
     List<Drone> drones = droneRepository.findByMatrixId(matrixId);
     for (Drone drone : drones) {
       if (drone.getX() >= maxX || drone.getY() >= maxY) {
-        throw new IllegalArgumentException("Invalid matrix size");
+        throw new ConflictException(
+            "Drone " + drone.getId() + " is out of bounds for new matrix size (maxX: " + maxX + ", maxY: " + maxY
+                + ")");
       }
     }
 
@@ -52,7 +54,7 @@ public class MatrixService {
 
   public Matrix getMatrix(Long matrixId) {
     return matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new IllegalArgumentException("Matrix not found"));
+        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
   }
 
   public void deleteMatrix(Long matrixId) {
@@ -61,10 +63,18 @@ public class MatrixService {
 
     List<Drone> drones = droneRepository.findByMatrixId(matrixId);
     if (!drones.isEmpty()) {
-      throw new ConflictException("Cannot delete matrix - " + drones.size() + "  active drones found");
+      String droneIds = drones.stream()
+          .map(d -> String.valueOf(d.getId()))
+          .collect(Collectors.joining(", "));
+      throw new ConflictException(
+          "Cannot delete matrix " + matrixId + ". Active drones: " + droneIds);
     }
 
     matrixRepository.delete(matrix);
+  }
+
+  public List<Matrix> listMatrices() {
+    return matrixRepository.findAll();
   }
 
 }

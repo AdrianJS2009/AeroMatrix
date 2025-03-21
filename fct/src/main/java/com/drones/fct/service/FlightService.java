@@ -12,6 +12,7 @@ import com.drones.fct.domain.MovementCommand;
 import com.drones.fct.dto.BatchDroneCommandRequest;
 import com.drones.fct.exception.ConflictException;
 import com.drones.fct.exception.NotFoundException;
+import com.drones.fct.exception.UnsupportedCommandException;
 import com.drones.fct.repository.DroneRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,14 +26,14 @@ public class FlightService {
 
   public Drone executeCommands(Long droneId, List<MovementCommand> commands) {
     Drone drone = droneRepository.findById(droneId)
-        .orElseThrow(() -> new NotFoundException("Drone not found"));
+        .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 
     for (MovementCommand cmd : commands) {
       switch (cmd) {
         case TURN_LEFT -> turnLeft(drone);
         case TURN_RIGHT -> turnRight(drone);
         case MOVE_FORWARD -> moveForward(drone);
-        default -> throw new IllegalArgumentException("Unsupported command: " + cmd);
+        default -> throw new UnsupportedCommandException("Unsupported command: " + cmd);
       }
     }
 
@@ -40,7 +41,6 @@ public class FlightService {
   }
 
   public void executeCommandsInSequence(List<Long> droneIds, List<MovementCommand> commands) {
-
     for (Long droneId : droneIds) {
       executeCommands(droneId, commands);
     }
@@ -81,18 +81,18 @@ public class FlightService {
     // Matrix limits validation
     if (x < 0 || x > matrix.getMaxX() || y < 0 || y > matrix.getMaxY()) {
       throw new ConflictException(
-          "Drone " + drone.getId() + " would exit matrix boundaries. " +
-              "Current position: (" + x + "," + y + "), " +
-              "Matrix limits: (0-" + matrix.getMaxX() + ", 0-" + matrix.getMaxY() + ")");
+          "Drone " + drone.getId() + " would exit matrix boundaries. "
+              + "New position: (" + x + "," + y + "), "
+              + "Matrix limits: (0-" + matrix.getMaxX() + ", 0-" + matrix.getMaxY() + ")");
     }
 
     // Drone collision validation
     List<Drone> others = droneRepository.findByXAndYAndMatrixId(x, y, matrix.getId());
     if (!others.isEmpty() && (others.size() > 1 || !others.get(0).getId().equals(drone.getId()))) {
       throw new ConflictException(
-          "Collision detected between drone " + drone.getId() +
-              " and drone " + others.get(0).getId() +
-              " at position (" + x + "," + y + ")");
+          "Collision detected between drone " + drone.getId()
+              + " and drone " + others.get(0).getId()
+              + " at position (" + x + "," + y + ")");
     }
 
     drone.setX(x);
@@ -104,7 +104,9 @@ public class FlightService {
         drone.getX(), drone.getY(), drone.getMatrix().getId());
     dronesInSamePosition.forEach(other -> {
       if (!other.getId().equals(drone.getId())) {
-        throw new ConflictException("Collision between drone " + drone.getId() + " and " + other.getId());
+        throw new ConflictException(
+            "Collision detected between drone " + drone.getId()
+                + " and drone " + other.getId());
       }
     });
   }

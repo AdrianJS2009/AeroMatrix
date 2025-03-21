@@ -1,6 +1,7 @@
 package com.drones.fct.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,13 +68,23 @@ public class MatrixController {
       @ApiResponse(responseCode = "409", description = "Matrix contains drones")
   })
   @DeleteMapping("/delete/{id}")
-  public ResponseEntity<Void> deleteMatrix(@PathVariable Long id) {
+  public ResponseEntity<String> deleteMatrix(@PathVariable Long id) {
     try {
       matrixService.deleteMatrix(id);
-      return ResponseEntity.noContent().build();
+      return ResponseEntity.noContent().header("Message", "Matrix with " + id + " deleted").build();
     } catch (IllegalArgumentException ex) {
-      throw new ConflictException(ex.getMessage());
+      List<Drone> drones = droneRepository.findByMatrixId(id);
+      String droneIds = drones.stream().map(drone -> String.valueOf(drone.getId())).collect(Collectors.joining(", "));
+      String message = "Cannot delete the matrix with " + id + " because it has drones working on it. Active drones: "
+          + droneIds;
+      throw new ConflictException(message);
     }
+  }
+
+  @Operation(summary = "List all matrices with their drones")
+  @GetMapping
+  public List<MatrixDto> listMatrices() {
+    return matrixService.listMatrices().stream().map(this::toDto).toList();
   }
 
   private MatrixDto toDto(Matrix matrix) {

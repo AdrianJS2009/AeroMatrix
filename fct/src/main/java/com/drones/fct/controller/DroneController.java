@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.drones.fct.domain.Drone;
 import com.drones.fct.dto.CreateDroneRequest;
 import com.drones.fct.dto.DroneDto;
-import com.drones.fct.exception.NotFoundException;
 import com.drones.fct.service.DroneService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,18 +45,16 @@ public class DroneController {
   })
   @PostMapping
   public ResponseEntity<DroneDto> createDrone(@Valid @RequestBody CreateDroneRequest request) {
-    try {
-      Drone drone = droneService.createDrone(
-          request.getMatrixId(),
-          request.getName(),
-          request.getModel(),
-          request.getX(),
-          request.getY(),
-          request.getOrientation());
-      return new ResponseEntity<>(toDto(drone), HttpStatus.CREATED);
-    } catch (NotFoundException ex) {
-      throw new NotFoundException("Matrix ID " + request.getMatrixId() + " not found");
-    }
+
+    Drone drone = droneService.createDrone(
+        request.getMatrixId(),
+        request.getName(),
+        request.getModel(),
+        request.getX(),
+        request.getY(),
+        request.getOrientation());
+    return new ResponseEntity<>(toDto(drone), HttpStatus.CREATED);
+
   }
 
   @Operation(summary = "Get a drone by ID", responses = {

@@ -45,26 +45,20 @@ public class DroneService {
     return droneRepository.save(drone);
   }
 
-  public Drone updateDrone(
-      Long droneId,
-      Long matrixId,
-      String name,
-      String model,
-      int x,
-      int y,
+  public Drone updateDrone(Long droneId, Long matrixId, String name, String model, int x, int y,
       Orientation orientation) {
-
     Drone drone = droneRepository.findById(droneId)
-        .orElseThrow(() -> new NotFoundException("Drone not found"));
+        .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 
     Matrix newMatrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new NotFoundException("Matriz no encontrada"));
+        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
 
     validatePosition(newMatrix, x, y);
 
+    // Check if new position is occupied by another drone
     if ((drone.getX() != x || drone.getY() != y || !drone.getMatrix().getId().equals(matrixId))
         && !droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isEmpty()) {
-      throw new ConflictException("Ya existe un dron en esa posición");
+      throw new ConflictException("Position (" + x + "," + y + ") in matrix " + matrixId + " is occupied");
     }
 
     drone.setMatrix(newMatrix);
@@ -79,15 +73,14 @@ public class DroneService {
 
   public Drone deleteDrone(Long droneId) {
     Drone drone = droneRepository.findById(droneId)
-        .orElseThrow(() -> new NotFoundException("Drone not found"));
-
+        .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
     droneRepository.delete(drone);
     return drone;
   }
 
   public Drone getDrone(Long droneId) {
     return droneRepository.findById(droneId)
-        .orElseThrow(() -> new NotFoundException("Drone not found"));
+        .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
   }
 
   public List<Drone> listDrones() {
@@ -97,8 +90,8 @@ public class DroneService {
   private void validatePosition(Matrix matrix, int x, int y) {
     if (x < 0 || x > matrix.getMaxX() || y < 0 || y > matrix.getMaxY()) {
       throw new ConflictException(
-          "Invalid coordinates (" + x + "," + y + ") for matrix " + matrix.getId() +
-              " (Max X: " + matrix.getMaxX() + ", Max Y: " + matrix.getMaxY() + ")");
+          "Invalid coordinates (" + x + "," + y + ") for matrix " + matrix.getId()
+              + " (Max X: " + matrix.getMaxX() + ", Max Y: " + matrix.getMaxY() + ")");
     }
   }
 }
