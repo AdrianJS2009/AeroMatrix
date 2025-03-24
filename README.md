@@ -47,7 +47,7 @@
 
 El proyecto sigue una combinación de **Domain-Driven Design (DDD)** y **Arquitectura Hexagonal**, organizado en capas con responsabilidades:
 
-### 1. **Domain-Driven Design (DDD)**
+### 1. Domain-Driven Design (DDD)
 
 - **Dominio Central**:
   - Entidades como `Drone` y `Matrix` (en `domain/`) encapsulan la lógica crítica del negocio.
