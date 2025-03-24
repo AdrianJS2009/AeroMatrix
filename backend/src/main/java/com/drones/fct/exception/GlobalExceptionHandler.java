@@ -41,4 +41,10 @@ public class GlobalExceptionHandler {
         .body(new ApiError("VALIDATION_ERROR", errorMessage));
   }
 
+  @ExceptionHandler(UnsupportedCommandException.class)
+  public ResponseEntity<ApiError> handleUnsupportedCommand(UnsupportedCommandException ex) {
+    ApiError error = new ApiError("BAD_REQUEST", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
 }
