@@ -83,18 +83,25 @@ El proyecto sigue una combinación de **Domain-Driven Design (DDD)** y **Arquite
 ```plaintext
 src/
 ├── main/
-│   ├── java/com/drones/
-│   │   ├── domain/         # 🧠 Entidades y reglas de negocio
-│   │   ├── application/    # ⚙️ Servicios y casos de uso
-│   │   ├── infrastructure/ # 🔌 Adaptadores externos
-│   │   ├── api/            # 🌍 Controladores y DTOs para la API REST
-│   └── resources/          # Configuración y propiedades
+│   ├── java/com/drones/fct/
+│   │   ├── config/              # ⚙️ Configuración global (Swagger, CORS, etc.)
+│   │   ├── controller/          # 🌍 Controladores REST (Drone, Vuelo, Matriz)
+│   │   ├── domain/              # 🧠 Entidades (Drone, Matrix, etc.)
+│   │   ├── dto/                 # 📦 Clases DTO
+│   │   ├── exception/           # 🚨 Excepciones personalizadas y handler global
+│   │   ├── repository/          # 🗃️ Repositorios JPA
+│   │   ├── service/             # 🔧 Lógica principal
+│   │   └── FctApplication.java  # 🚀 Main
+│   └── resources/               # ⚙️ Configuración (application.properties, etc.)
+│      
+│       
 └── test/
     └── java/com/drones/fct/
-        ├── service/            # Pruebas unitarias de servicios
-        ├── controller/         # Pruebas de integración de controladores
-        ├── repository/         # Pruebas de repositorios JPA
-        ├── exception/          # Pruebas de manejo de errores
+        ├── service/             # 🧪 Pruebas unitarias de servicios
+        ├── controller/          # 🧪 Pruebas de integración de controladores
+        ├── repository/          # 🧪 Pruebas de repositorios
+        └── exception/           # 🧪 Pruebas de manejo de errores
+
 ```
 
 ---
