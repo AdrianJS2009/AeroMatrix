@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
 import { droneApi } from "../api/droneApi";
 import { flightApi } from "../api/flightApi";
 import { matrixApi } from "../api/matrixApi";
@@ -49,25 +55,26 @@ const ApiContext = createContext<ApiContextType | undefined>(undefined);
 export const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
 
-  const value: ApiContextType = {
-    // Drone operations
-    getAllDrones: async () => {
-      setLoading(true);
-      try {
-        return await droneApi.getAllDrones();
-      } finally {
-        setLoading(false);
-      }
-    },
-    getDroneById: async (id) => {
-      setLoading(true);
-      try {
-        return await droneApi.getDroneById(id);
-      } finally {
-        setLoading(false);
-      }
-    },
-    createDrone: async (drone) => {
+  const getAllDrones = useCallback(async (): Promise<Drone[]> => {
+    setLoading(true);
+    try {
+      return await droneApi.getAllDrones();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getDroneById = useCallback(async (id: number): Promise<Drone> => {
+    setLoading(true);
+    try {
+      return await droneApi.getDroneById(id);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createDrone = useCallback(
+    async (drone: CreateDroneRequest): Promise<Drone> => {
       setLoading(true);
       try {
         return await droneApi.createDrone(drone);
@@ -75,7 +82,11 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    updateDrone: async (id, drone) => {
+    []
+  );
+
+  const updateDrone = useCallback(
+    async (id: number, drone: UpdateDroneRequest): Promise<Drone> => {
       setLoading(true);
       try {
         return await droneApi.updateDrone(id, drone);
@@ -83,7 +94,11 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    deleteDrone: async (id) => {
+    []
+  );
+
+  const deleteDrone = useCallback(
+    async (id: number): Promise<{ message: string }> => {
       setLoading(true);
       try {
         return await droneApi.deleteDrone(id);
@@ -91,25 +106,29 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
+    []
+  );
 
-    // Matrix operations
-    getAllMatrices: async () => {
-      setLoading(true);
-      try {
-        return await matrixApi.getAllMatrices();
-      } finally {
-        setLoading(false);
-      }
-    },
-    getMatrixById: async (id) => {
-      setLoading(true);
-      try {
-        return await matrixApi.getMatrixById(id);
-      } finally {
-        setLoading(false);
-      }
-    },
-    createMatrix: async (matrix) => {
+  const getAllMatrices = useCallback(async (): Promise<Matrix[]> => {
+    setLoading(true);
+    try {
+      return await matrixApi.getAllMatrices();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getMatrixById = useCallback(async (id: number): Promise<Matrix> => {
+    setLoading(true);
+    try {
+      return await matrixApi.getMatrixById(id);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createMatrix = useCallback(
+    async (matrix: CreateMatrixRequest): Promise<Matrix> => {
       setLoading(true);
       try {
         return await matrixApi.createMatrix(matrix);
@@ -117,7 +136,11 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    updateMatrix: async (id, matrix) => {
+    []
+  );
+
+  const updateMatrix = useCallback(
+    async (id: number, matrix: UpdateMatrixRequest): Promise<Matrix> => {
       setLoading(true);
       try {
         return await matrixApi.updateMatrix(id, matrix);
@@ -125,17 +148,20 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    deleteMatrix: async (id) => {
-      setLoading(true);
-      try {
-        await matrixApi.deleteMatrix(id);
-      } finally {
-        setLoading(false);
-      }
-    },
+    []
+  );
 
-    // Flight operations
-    executeCommands: async (droneId, commands) => {
+  const deleteMatrix = useCallback(async (id: number): Promise<void> => {
+    setLoading(true);
+    try {
+      await matrixApi.deleteMatrix(id);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const executeCommands = useCallback(
+    async (droneId: number, commands: string): Promise<Drone> => {
       setLoading(true);
       try {
         return await flightApi.executeCommands(droneId, commands);
@@ -143,7 +169,11 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    executeCommandsInSequence: async (droneIds, commands) => {
+    []
+  );
+
+  const executeCommandsInSequence = useCallback(
+    async (droneIds: number[], commands: string): Promise<void> => {
       setLoading(true);
       try {
         await flightApi.executeCommandsInSequence(droneIds, commands);
@@ -151,7 +181,11 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
-    executeBatchCommands: async (batchCommands) => {
+    []
+  );
+
+  const executeBatchCommands = useCallback(
+    async (batchCommands: BatchDroneCommandRequest): Promise<void> => {
       setLoading(true);
       try {
         await flightApi.executeBatchCommands(batchCommands);
@@ -159,7 +193,23 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     },
+    []
+  );
 
+  const value: ApiContextType = {
+    getAllDrones,
+    getDroneById,
+    createDrone,
+    updateDrone,
+    deleteDrone,
+    getAllMatrices,
+    getMatrixById,
+    createMatrix,
+    updateMatrix,
+    deleteMatrix,
+    executeCommands,
+    executeCommandsInSequence,
+    executeBatchCommands,
     loading,
     setLoading,
   };

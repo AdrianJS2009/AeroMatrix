@@ -49,6 +49,16 @@ const Navbar = () => {
                 Matrices
               </Link>
               <Link
+                to="/matrix-management"
+                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                  isActive("/matrix-management")
+                    ? "border-blue-500 text-gray-900"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                }`}
+              >
+                Matrix Management
+              </Link>
+              <Link
                 to="/flight-control"
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                   isActive("/flight-control")
@@ -95,6 +105,16 @@ const Navbar = () => {
             }`}
           >
             Matrices
+          </Link>
+          <Link
+            to="/matrix-management"
+            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+              isActive("/matrix-management")
+                ? "bg-blue-50 border-blue-500 text-blue-700"
+                : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+            }`}
+          >
+            Matrix Management
           </Link>
           <Link
             to="/flight-control"

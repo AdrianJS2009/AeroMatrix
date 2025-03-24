@@ -6,8 +6,10 @@ import Dashboard from "./pages/Dashboard";
 import DroneDetail from "./pages/DroneDetail";
 import DroneList from "./pages/DroneList";
 import FlightControl from "./pages/FlightControl";
+import MatrixCreate from "./pages/MatrixCreate";
 import MatrixDetail from "./pages/MatrixDetail";
-import MatrixList from "./pages/MatrixList";
+import MatrixEdit from "./pages/MatrixEdit";
+import MatrixManagement from "./pages/MatrixManagement";
 
 function App() {
   return (
@@ -20,8 +22,10 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/drones" element={<DroneList />} />
               <Route path="/drones/:id" element={<DroneDetail />} />
-              <Route path="/matrices" element={<MatrixList />} />
               <Route path="/matrices/:id" element={<MatrixDetail />} />
+              <Route path="/matrix-management" element={<MatrixManagement />} />
+              <Route path="/matrix/create" element={<MatrixCreate />} />
+              <Route path="/matrix/edit/:id" element={<MatrixEdit />} />
               <Route path="/flight-control" element={<FlightControl />} />
             </Routes>
           </main>

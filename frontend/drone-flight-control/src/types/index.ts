@@ -8,6 +8,7 @@ export interface Drone {
   y: number;
   orientation: Orientation;
   matrixId: number;
+  camera?: DroneCamera;
 }
 
 export interface Matrix {
@@ -56,4 +57,56 @@ export interface BatchDroneCommand {
 
 export interface BatchDroneCommandRequest {
   commands: BatchDroneCommand[];
+}
+
+export interface DroneConfiguration {
+  id: string;
+  name: string;
+  drones: Drone[];
+  commands: Record<number, string>;
+  createdAt: string;
+  maxSpeed?: number;
+  maxAltitude?: number;
+  defaultOrientation?: Orientation;
+  cameraSettings?: DroneCamera;
+}
+
+export interface SavedConfiguration {
+  id: string;
+  name: string;
+  date: string;
+  configuration: DroneConfiguration;
+}
+
+export interface DroneStatus {
+  batteryLevel: number;
+  signalStrength: number;
+  isFlying: boolean;
+  altitude: number;
+  speed: number;
+  temperature: number;
+  lastUpdated: string;
+}
+
+export interface DroneCamera {
+  angle: number;
+  zoom: number;
+  isRecording: boolean;
+  resolution: string;
+}
+
+export interface CameraAction {
+  type:
+    | "ADJUST_ANGLE"
+    | "ADJUST_ZOOM"
+    | "START_RECORDING"
+    | "STOP_RECORDING"
+    | "TAKE_PHOTO";
+  value?: number;
+}
+
+export interface DroneAction {
+  type: "TAKEOFF" | "LAND" | "HOVER" | "RETURN_HOME" | "EMERGENCY_STOP";
+  altitude?: number;
+  speed?: number;
 }

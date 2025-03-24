@@ -4,17 +4,28 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import BatchCommandInput from "../components/BatchCommandInput";
 import CommandInput from "../components/CommandInput";
+import ConfigurationManager from "../components/ConfigurationManager";
+import DroneDirectionalIcon from "../components/DronEDirectionalIcon";
 import MatrixGrid from "../components/MatrixGrid";
 import { useApi } from "../context/ApiContext";
-import type { Drone, Matrix } from "../types";
+import type { BatchDroneCommand, Drone, Matrix } from "../types";
 
 const FlightControl = () => {
-  const { getAllMatrices, getMatrixById } = useApi();
+  const {
+    getAllMatrices,
+    getMatrixById,
+    executeCommands,
+    executeBatchCommands,
+  } = useApi();
   const [matrices, setMatrices] = useState<Matrix[]>([]);
   const [selectedMatrix, setSelectedMatrix] = useState<Matrix | null>(null);
   const [selectedDrone, setSelectedDrone] = useState<Drone | null>(null);
-  const [controlMode, setControlMode] = useState<"single" | "batch">("single");
+  const [controlMode, setControlMode] = useState<"single" | "batch" | "config">(
+    "single"
+  );
   const [loading, setLoading] = useState(true);
+  const [executingCommands, setExecutingCommands] = useState(false);
+  const [showOrientationLabels, setShowOrientationLabels] = useState(true);
 
   useEffect(() => {
     fetchMatrices();
@@ -65,6 +76,46 @@ const FlightControl = () => {
       } catch (error) {
         toast.error("Failed to refresh matrix data");
       }
+    }
+  };
+
+  const handleLoadConfiguration = async (
+    drones: Drone[],
+    commands: Record<number, string>
+  ) => {
+    if (!selectedMatrix || Object.keys(commands).length === 0) return;
+
+    setExecutingCommands(true);
+
+    try {
+      // Create batch commands from the configuration
+      const batchCommands: BatchDroneCommand[] = Object.entries(commands)
+        .filter(([_, cmd]) => cmd.trim() !== "")
+        .map(([droneId, cmd]) => ({
+          droneId: Number(droneId),
+          commands: cmd,
+        }));
+
+      if (batchCommands.length === 0) {
+        toast.error("No valid commands found in configuration");
+        return;
+      }
+
+      // Execute batch commands
+      await executeBatchCommands({ commands: batchCommands });
+      toast.success("Configuration commands executed successfully");
+
+      // Refresh matrix data
+      const matrix = await getMatrixById(selectedMatrix.id);
+      setSelectedMatrix(matrix);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to execute configuration commands"
+      );
+    } finally {
+      setExecutingCommands(false);
     }
   };
 
@@ -120,33 +171,64 @@ const FlightControl = () => {
                 </select>
               </div>
 
-              <div className="md:w-1/3">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Control Mode
-                </label>
-                <div className="flex space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      className="form-radio"
-                      name="control-mode"
-                      value="single"
-                      checked={controlMode === "single"}
-                      onChange={() => setControlMode("single")}
-                    />
-                    <span className="ml-2">Single Drone</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      className="form-radio"
-                      name="control-mode"
-                      value="batch"
-                      checked={controlMode === "batch"}
-                      onChange={() => setControlMode("batch")}
-                    />
-                    <span className="ml-2">Batch Control</span>
-                  </label>
+              <div className="md:w-2/3">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Control Mode
+                    </label>
+                    <div className="flex space-x-4">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          className="form-radio"
+                          name="control-mode"
+                          value="single"
+                          checked={controlMode === "single"}
+                          onChange={() => setControlMode("single")}
+                        />
+                        <span className="ml-2">Single Drone</span>
+                      </label>
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          className="form-radio"
+                          name="control-mode"
+                          value="batch"
+                          checked={controlMode === "batch"}
+                          onChange={() => setControlMode("batch")}
+                        />
+                        <span className="ml-2">Batch Control</span>
+                      </label>
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          className="form-radio"
+                          name="control-mode"
+                          value="config"
+                          checked={controlMode === "config"}
+                          onChange={() => setControlMode("config")}
+                        />
+                        <span className="ml-2">Configurations</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={showOrientationLabels}
+                        onChange={() =>
+                          setShowOrientationLabels(!showOrientationLabels)
+                        }
+                        className="form-checkbox h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        Show orientation labels
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -163,6 +245,9 @@ const FlightControl = () => {
                     matrix={selectedMatrix}
                     selectedDrone={selectedDrone}
                     onSelectDrone={handleSelectDrone}
+                    cellSize={36}
+                    showCoordinates={true}
+                    showOrientationLabels={showOrientationLabels}
                   />
                 </div>
                 <div className="md:w-1/3">
@@ -179,6 +264,37 @@ const FlightControl = () => {
                       {selectedMatrix.drones.length}
                     </p>
                   </div>
+
+                  {selectedDrone && (
+                    <div className="bg-gray-50 p-4 rounded-md mt-4">
+                      <h4 className="text-md font-medium text-gray-700 mb-2">
+                        Selected Drone
+                      </h4>
+                      <div className="flex items-center mb-2">
+                        <span className="font-medium mr-2">Orientation:</span>
+                        <DroneDirectionalIcon
+                          orientation={selectedDrone.orientation}
+                          size="md"
+                          showLabel={true}
+                        />
+                        <span className="ml-2">
+                          {selectedDrone.orientation}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Name:</span>{" "}
+                        {selectedDrone.name}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Position:</span> (
+                        {selectedDrone.x}, {selectedDrone.y})
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Model:</span>{" "}
+                        {selectedDrone.model}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -189,7 +305,9 @@ const FlightControl = () => {
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
                 {controlMode === "single"
                   ? "Single Drone Control"
-                  : "Batch Drone Control"}
+                  : controlMode === "batch"
+                  ? "Batch Drone Control"
+                  : "Configuration Management"}
               </h3>
 
               {controlMode === "single" ? (
@@ -199,6 +317,17 @@ const FlightControl = () => {
                       <h4 className="text-md font-medium text-gray-700 mb-2">
                         Selected Drone
                       </h4>
+                      <div className="flex items-center mb-2">
+                        <span className="font-medium mr-2">Orientation:</span>
+                        <DroneDirectionalIcon
+                          orientation={selectedDrone.orientation}
+                          size="md"
+                          showLabel={true}
+                        />
+                        <span className="ml-2">
+                          {selectedDrone.orientation}
+                        </span>
+                      </div>
                       <p className="text-sm text-gray-600">
                         <span className="font-medium">Name:</span>{" "}
                         {selectedDrone.name}
@@ -207,14 +336,11 @@ const FlightControl = () => {
                         <span className="font-medium">Position:</span> (
                         {selectedDrone.x}, {selectedDrone.y})
                       </p>
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Orientation:</span>{" "}
-                        {selectedDrone.orientation}
-                      </p>
                     </div>
 
                     <CommandInput
                       drone={selectedDrone}
+                      matrix={selectedMatrix}
                       onCommandExecuted={handleCommandExecuted}
                     />
                   </div>
@@ -223,10 +349,16 @@ const FlightControl = () => {
                     Select a drone from the grid to control it.
                   </p>
                 )
-              ) : (
+              ) : controlMode === "batch" ? (
                 <BatchCommandInput
                   drones={selectedMatrix.drones}
                   onCommandsExecuted={() => handleCommandExecuted()}
+                />
+              ) : (
+                <ConfigurationManager
+                  drones={selectedMatrix.drones}
+                  matrix={selectedMatrix}
+                  onLoadConfiguration={handleLoadConfiguration}
                 />
               )}
             </div>

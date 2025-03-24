@@ -2,11 +2,30 @@ import type { BatchDroneCommandRequest, Drone } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
+const mapCommand = (letter: string): string | null => {
+  switch (letter) {
+    case "F":
+      return "MOVE_FORWARD";
+    case "L":
+      return "TURN_LEFT";
+    case "R":
+      return "TURN_RIGHT";
+    default:
+      return null;
+  }
+};
+
 export const flightApi = {
   executeCommands: async (
     droneId: number,
     commands: string
   ): Promise<Drone> => {
+    const commandArray = commands
+      .toUpperCase()
+      .split("")
+      .map(mapCommand)
+      .filter((cmd): cmd is string => cmd !== null);
+
     const response = await fetch(
       `${API_URL}/api/flights/drones/${droneId}/commands`,
       {
@@ -14,7 +33,8 @@ export const flightApi = {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ commands }),
+
+        body: JSON.stringify({ commands: commandArray }),
       }
     );
     if (!response.ok) {
@@ -28,6 +48,12 @@ export const flightApi = {
     droneIds: number[],
     commands: string
   ): Promise<void> => {
+    const commandArray = commands
+      .toUpperCase()
+      .split("")
+      .map(mapCommand)
+      .filter((cmd): cmd is string => cmd !== null);
+
     const response = await fetch(
       `${API_URL}/api/flights/drones/commands?droneIds=${droneIds.join(",")}`,
       {
@@ -35,7 +61,7 @@ export const flightApi = {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ commands }),
+        body: JSON.stringify({ commands: commandArray }),
       }
     );
     if (!response.ok) {

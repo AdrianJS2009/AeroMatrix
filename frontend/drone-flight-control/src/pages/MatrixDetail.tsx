@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import DroneDirectionalIcon from "../components/DroneDirectionalIcon";
 import MatrixGrid from "../components/MatrixGrid";
 import { useApi } from "../context/ApiContext";
 import type { Drone, Matrix } from "../types";
@@ -14,6 +15,7 @@ const MatrixDetail = () => {
   const [matrix, setMatrix] = useState<Matrix | null>(null);
   const [selectedDrone, setSelectedDrone] = useState<Drone | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showOrientationLabels, setShowOrientationLabels] = useState(true);
 
   useEffect(() => {
     if (id === "new") {
@@ -146,15 +148,35 @@ const MatrixDetail = () => {
       </div>
 
       <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-          Matrix Grid
-        </h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Matrix Grid
+          </h3>
+          <div className="flex items-center">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={showOrientationLabels}
+                onChange={() =>
+                  setShowOrientationLabels(!showOrientationLabels)
+                }
+                className="form-checkbox h-4 w-4 text-blue-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                Show orientation labels
+              </span>
+            </label>
+          </div>
+        </div>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-2/3">
             <MatrixGrid
               matrix={matrix}
               selectedDrone={selectedDrone}
               onSelectDrone={handleSelectDrone}
+              cellSize={36}
+              showCoordinates={true}
+              showOrientationLabels={showOrientationLabels}
             />
           </div>
           <div className="md:w-1/3">
@@ -164,6 +186,15 @@ const MatrixDetail = () => {
               </h4>
               {selectedDrone ? (
                 <div className="space-y-2">
+                  <div className="flex items-center mb-2">
+                    <span className="font-medium mr-2">Orientation:</span>
+                    <DroneDirectionalIcon
+                      orientation={selectedDrone.orientation}
+                      size="md"
+                      showLabel={true}
+                    />
+                    <span className="ml-2">{selectedDrone.orientation}</span>
+                  </div>
                   <p className="text-sm text-gray-600">
                     <span className="font-medium">Name:</span>{" "}
                     {selectedDrone.name}
@@ -175,10 +206,6 @@ const MatrixDetail = () => {
                   <p className="text-sm text-gray-600">
                     <span className="font-medium">Position:</span> (
                     {selectedDrone.x}, {selectedDrone.y})
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Orientation:</span>{" "}
-                    {selectedDrone.orientation}
                   </p>
                   <div className="pt-2">
                     <Link
@@ -269,7 +296,13 @@ const MatrixDetail = () => {
                       ({drone.x}, {drone.y})
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {drone.orientation}
+                      <div className="flex items-center">
+                        <DroneDirectionalIcon
+                          orientation={drone.orientation}
+                          size="sm"
+                        />
+                        <span className="ml-2">{drone.orientation}</span>
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm font-medium">
                       <Link

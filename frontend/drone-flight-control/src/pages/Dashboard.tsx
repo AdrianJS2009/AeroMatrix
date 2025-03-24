@@ -1,5 +1,6 @@
 "use client";
 
+import { Grid, PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "../context/ApiContext";
@@ -119,6 +120,7 @@ const Dashboard = () => {
                 to="/drones/new"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
+                <PlusCircle className="mr-2 h-4 w-4" />
                 Add Drone
               </Link>
             </div>
@@ -128,12 +130,20 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium text-gray-900">Matrices</h2>
-            <Link
-              to="/matrices"
-              className="text-sm font-medium text-blue-600 hover:text-blue-500"
-            >
-              View All
-            </Link>
+            <div className="flex space-x-4">
+              <Link
+                to="/matrices"
+                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+              >
+                View All
+              </Link>
+              <Link
+                to="/matrix-management"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Manage
+              </Link>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -188,12 +198,20 @@ const Dashboard = () => {
               </div>
             )}
 
-            <div className="mt-4">
+            <div className="mt-4 flex space-x-4">
               <Link
-                to="/matrices/new"
+                to="/matrix/create"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Add Matrix
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create Matrix
+              </Link>
+              <Link
+                to="/matrix-management"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <Grid className="mr-2 h-4 w-4" />
+                Matrix Management
               </Link>
             </div>
           </div>
