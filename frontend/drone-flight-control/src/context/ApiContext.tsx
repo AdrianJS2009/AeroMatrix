@@ -21,21 +21,18 @@ import type {
 } from "../types";
 
 interface ApiContextType {
-  // Drone operations
   getAllDrones: () => Promise<Drone[]>;
   getDroneById: (id: number) => Promise<Drone>;
   createDrone: (drone: CreateDroneRequest) => Promise<Drone>;
   updateDrone: (id: number, drone: UpdateDroneRequest) => Promise<Drone>;
   deleteDrone: (id: number) => Promise<{ message: string }>;
 
-  // Matrix operations
   getAllMatrices: () => Promise<Matrix[]>;
   getMatrixById: (id: number) => Promise<Matrix>;
   createMatrix: (matrix: CreateMatrixRequest) => Promise<Matrix>;
   updateMatrix: (id: number, matrix: UpdateMatrixRequest) => Promise<Matrix>;
   deleteMatrix: (id: number) => Promise<void>;
 
-  // Flight operations
   executeCommands: (droneId: number, commands: string) => Promise<Drone>;
   executeCommandsInSequence: (
     droneIds: number[],
@@ -45,7 +42,6 @@ interface ApiContextType {
     batchCommands: BatchDroneCommandRequest
   ) => Promise<void>;
 
-  // Loading state
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }

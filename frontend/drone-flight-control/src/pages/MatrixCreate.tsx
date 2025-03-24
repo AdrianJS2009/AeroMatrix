@@ -52,7 +52,6 @@ const MatrixCreate = () => {
       [name]: isNaN(numValue) ? 0 : numValue,
     }));
 
-    // Update preview grid when dimensions change
     if (
       name === "maxX" &&
       !isNaN(numValue) &&

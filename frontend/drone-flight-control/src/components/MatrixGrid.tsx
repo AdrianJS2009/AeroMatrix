@@ -25,16 +25,13 @@ const MatrixGrid = ({
   interactive = true,
   showOrientationLabels = false,
 }: MatrixGridProps) => {
-  // Calculamos la cuadrícula solo cuando cambian los parámetros relevantes
   const grid = useMemo(() => {
     const newGrid: JSX.Element[][] = [];
 
-    // Se crean las filas; se recorre de arriba abajo para que el (0,0) quede en la esquina inferior izquierda
     for (let y = matrix.maxY - 1; y >= 0; y--) {
       const row: JSX.Element[] = [];
-      // Se crean las celdas de cada fila (eje x)
+
       for (let x = 0; x < matrix.maxX; x++) {
-        // Buscamos si hay un dron en la posición (x,y)
         const drone = matrix.drones.find((d) => d.x === x && d.y === y);
         const isHighlighted = highlightedCells.some(
           (cell) => cell.x === x && cell.y === y
@@ -108,7 +105,7 @@ const MatrixGrid = ({
           Width: {matrix.maxX}, Height: {matrix.maxY}
         </div>
       </div>
-      {/* Leyenda de orientación */}
+
       <div className="flex flex-wrap gap-4 justify-center">
         <div className="flex items-center gap-2">
           <DroneDirectionalIcon orientation="NORTH" size="sm" />

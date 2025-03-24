@@ -39,7 +39,6 @@ const DroneDetail = () => {
       const data = await getDroneById(Number(id));
       setDrone(data);
 
-      // Fetch the matrix for this drone
       const matrixData = await getMatrixById(data.matrixId);
       setMatrix(matrixData);
     } catch (error) {
@@ -69,7 +68,6 @@ const DroneDetail = () => {
   const handleCommandExecuted = async (updatedDrone: Drone) => {
     setDrone(updatedDrone);
 
-    // Refresh the matrix data to show updated drone position
     if (updatedDrone.matrixId) {
       try {
         const matrixData = await getMatrixById(updatedDrone.matrixId);
@@ -84,7 +82,6 @@ const DroneDetail = () => {
     setDrone(updatedDrone);
     setIsEditing(false);
 
-    // Refresh the matrix data if the matrix ID changed
     if (updatedDrone.matrixId !== drone?.matrixId) {
       fetchDrone();
     }

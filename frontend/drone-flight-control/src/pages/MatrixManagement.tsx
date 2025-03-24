@@ -37,7 +37,6 @@ const MatrixManagement = () => {
 
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation === null) return;
-
     try {
       await deleteMatrix(deleteConfirmation);
       toast.success("Matrix deleted successfully");
@@ -123,32 +122,9 @@ const MatrixManagement = () => {
                   Size: {matrix.maxX} x {matrix.maxY}
                 </p>
 
-                <div className="mt-4 grid grid-cols-4 gap-2 border border-gray-200 rounded-md p-2 bg-gray-50">
-                  {Array.from({ length: Math.min(4, 4) }).map((_, y) => (
-                    <div key={y} className="flex">
-                      {Array.from({ length: Math.min(4, 4) }).map((_, x) => {
-                        const drone = matrix.drones.find(
-                          (d) => d.x === x && matrix.maxY - 1 - y === d.y
-                        );
-                        return (
-                          <div
-                            key={`${x}-${y}`}
-                            className={`w-5 h-5 border border-gray-300 ${
-                              drone ? "bg-blue-500" : "bg-white"
-                            }`}
-                            title={
-                              drone
-                                ? `Drone: ${drone.name} at (${drone.x}, ${drone.y})`
-                                : `Position (${x}, ${matrix.maxY - 1 - y})`
-                            }
-                          />
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-1 text-xs text-gray-500 text-right">
-                  Matrix preview (4x4)
+                {/* Preview dinámico de la matriz */}
+                <div className="mt-4">
+                  <MatrixPreview matrix={matrix} />
                 </div>
               </div>
 
@@ -182,7 +158,7 @@ const MatrixManagement = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Modal de confirmación de eliminación */}
       {deleteConfirmation !== null && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
@@ -221,6 +197,55 @@ const MatrixManagement = () => {
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+interface MatrixPreviewProps {
+  matrix: Matrix;
+}
+
+const MatrixPreview: React.FC<MatrixPreviewProps> = ({ matrix }) => {
+  const previewCols = matrix.maxX > 4 ? 4 : matrix.maxX;
+  const previewRows = matrix.maxY > 4 ? 4 : matrix.maxY;
+
+  const stepX = matrix.maxX / previewCols;
+  const stepY = matrix.maxY / previewRows;
+
+  return (
+    <div>
+      <div
+        className="grid gap-1"
+        style={{ gridTemplateColumns: `repeat(${previewCols}, 1fr)` }}
+      >
+        {Array.from({ length: previewRows }).map((_, rowIndex) => (
+          <div key={rowIndex} className="flex">
+            {Array.from({ length: previewCols }).map((_, colIndex) => {
+              const actualX = Math.floor(colIndex * stepX);
+              const actualY = matrix.maxY - 1 - Math.floor(rowIndex * stepY);
+              const drone = matrix.drones.find(
+                (d) => d.x === actualX && d.y === actualY
+              );
+              return (
+                <div
+                  key={`${colIndex}-${rowIndex}`}
+                  className={`w-4 h-4 border ${
+                    drone ? "bg-blue-500" : "bg-white"
+                  }`}
+                  title={
+                    drone
+                      ? `Drone: ${drone.name} at (${drone.x}, ${drone.y})`
+                      : `Position (${actualX}, ${actualY})`
+                  }
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="mt-1 text-xs text-gray-500 text-right">
+        Matrix preview ({previewCols}x{previewRows})
+      </div>
     </div>
   );
 };

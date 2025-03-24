@@ -12,7 +12,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
   size = "md",
   showLabel = false,
 }) => {
-  // Size mapping
   const sizeMap = {
     sm: {
       width: 16,
@@ -33,7 +32,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
 
   const { width, height, fontSize } = sizeMap[size];
 
-  // Color based on orientation
   const getOrientationColor = () => {
     switch (orientation) {
       case "NORTH":
@@ -49,7 +47,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
     }
   };
 
-  // Get rotation angle based on orientation
   const getRotationAngle = () => {
     switch (orientation) {
       case "NORTH":
@@ -65,7 +62,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
     }
   };
 
-  // Get short label for orientation
   const getOrientationLabel = () => {
     switch (orientation) {
       case "NORTH":

@@ -33,7 +33,6 @@ const ConfigurationManager = ({
   }, []);
 
   useEffect(() => {
-    // Initialize selected commands for each drone
     const initialCommands: Record<number, string> = {};
     drones.forEach((drone) => {
       initialCommands[drone.id] = "";

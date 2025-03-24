@@ -27,7 +27,6 @@ const CommandInput = ({
   );
 
   useEffect(() => {
-    // Reset preview when drone changes
     setPreviewPath([]);
   }, [drone]);
 
@@ -46,7 +45,7 @@ const CommandInput = ({
 
     for (const command of commandString) {
       switch (command) {
-        case "F": // Forward
+        case "F":
           switch (orientation) {
             case "NORTH":
               y = Math.min(y + 1, matrix.maxY - 1);
@@ -62,7 +61,7 @@ const CommandInput = ({
               break;
           }
           break;
-        case "B": // Backward
+        case "B":
           switch (orientation) {
             case "NORTH":
               y = Math.max(y - 1, 0);
@@ -78,7 +77,7 @@ const CommandInput = ({
               break;
           }
           break;
-        case "L": // Left
+        case "L":
           switch (orientation) {
             case "NORTH":
               orientation = "WEST";
@@ -94,7 +93,7 @@ const CommandInput = ({
               break;
           }
           break;
-        case "R": // Right
+        case "R":
           switch (orientation) {
             case "NORTH":
               orientation = "EAST";
@@ -112,7 +111,6 @@ const CommandInput = ({
           break;
       }
 
-      // Only add to path if position changed (not for rotations)
       if (command === "F" || command === "B") {
         path.push({ x, y });
       }
@@ -148,7 +146,6 @@ const CommandInput = ({
       const updatedDrone = await executeCommands(drone.id, commands);
       toast.success("Commands executed successfully");
 
-      // Add to command history
       setCommandHistory((prev) => [commands, ...prev].slice(0, 10));
 
       if (onCommandExecuted) {
@@ -318,7 +315,6 @@ const CommandInput = ({
   );
 };
 
-// Import MatrixGrid component for path preview
 import MatrixGrid from "./MatrixGrid";
 
 export default CommandInput;

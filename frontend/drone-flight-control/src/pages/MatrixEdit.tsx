@@ -35,12 +35,10 @@ const MatrixEdit = () => {
           maxY: data.maxY,
         });
 
-        // Initialize preview grid
         const initialGrid = Array(data.maxY)
           .fill(null)
           .map(() => Array(data.maxX).fill(false));
 
-        // Mark cells with drones
         data.drones.forEach((drone) => {
           if (drone.x < data.maxX && drone.y < data.maxY) {
             initialGrid[data.maxY - drone.y - 1][drone.x] = true;
@@ -74,7 +72,6 @@ const MatrixEdit = () => {
       newErrors.maxY = "Height cannot exceed 100";
     }
 
-    // Check if any drones would be outside the new dimensions
     if (matrix) {
       const outOfBoundsDrones = matrix.drones.filter(
         (drone) => drone.x >= formData.maxX || drone.y >= formData.maxY
@@ -98,7 +95,6 @@ const MatrixEdit = () => {
       [name]: isNaN(numValue) ? 0 : numValue,
     }));
 
-    // Update preview grid when dimensions change
     if (
       name === "maxX" &&
       !isNaN(numValue) &&

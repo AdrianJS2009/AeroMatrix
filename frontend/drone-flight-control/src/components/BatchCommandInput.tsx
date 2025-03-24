@@ -22,20 +22,17 @@ const BatchCommandInput = ({
   >({});
 
   useEffect(() => {
-    // Inicializamos los batch commands con los drones disponibles
     const initialBatchCommands = drones.map((drone) => ({
       droneId: drone.id,
       commands: "",
     }));
     setBatchCommands(initialBatchCommands);
 
-    // Inicializamos el historial de comandos
     const initialHistory: Record<number, string[]> = {};
     drones.forEach((drone) => {
       initialHistory[drone.id] = [];
     });
 
-    // Intentamos cargar el historial desde localStorage
     try {
       const savedHistory = localStorage.getItem("droneCommandHistory");
       if (savedHistory) {
@@ -89,7 +86,6 @@ const BatchCommandInput = ({
     setBatchCommands(updatedBatchCommands);
   };
 
-  // Función para mapear cada letra a su comando correspondiente
   const mapCommandLetter = (letter: string): string => {
     switch (letter) {
       case "F":
@@ -98,17 +94,13 @@ const BatchCommandInput = ({
         return "TURN_LEFT";
       case "R":
         return "TURN_RIGHT";
-      case "B":
-        // Si el comando B no está soportado en el backend, puedes omitirlo o decidir cómo manejarlo.
-        // Aquí lo omitimos (podrías mostrar un error o mapearlo a otro comando si fuera necesario)
-        return "";
+
       default:
         return "";
     }
   };
 
   const handleExecute = async () => {
-    // Filtramos los comandos vacíos
     const commandsToExecute = batchCommands.filter(
       (cmd) => cmd.commands.trim() !== ""
     );
@@ -118,12 +110,11 @@ const BatchCommandInput = ({
       return;
     }
 
-    // Transformamos la cadena de comandos en un arreglo de comandos válidos para cada dron
     const transformedCommands = commandsToExecute.map((cmd) => {
       const commandArray = cmd.commands
         .split("")
         .map(mapCommandLetter)
-        .filter((c) => c !== ""); // eliminamos comandos vacíos (como los que se mapeen de "B" si no se desea)
+        .filter((c) => c !== "");
       return {
         droneId: cmd.droneId,
         commands: commandArray,
@@ -136,7 +127,6 @@ const BatchCommandInput = ({
       await executeBatchCommands({ commands: transformedCommands });
       toast.success("Batch commands executed successfully");
 
-      // Actualizamos el historial de comandos
       const updatedHistory = { ...commandHistory };
       commandsToExecute.forEach((cmd) => {
         if (!updatedHistory[cmd.droneId]) {
@@ -156,7 +146,6 @@ const BatchCommandInput = ({
         JSON.stringify(updatedHistory)
       );
 
-      // Reiniciamos los comandos
       const resetBatchCommands = batchCommands.map((cmd) => ({
         ...cmd,
         commands: "",

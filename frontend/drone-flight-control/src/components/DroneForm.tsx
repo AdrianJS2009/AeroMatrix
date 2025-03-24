@@ -29,21 +29,19 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     model: "",
     x: 0,
     y: 0,
-    orientation: "N", // Cambia según tus enums o valores ("N", "E", "S", "O")
+    orientation: "N",
     matrixId: null,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Al montar, obtenemos la lista de matrices
   useEffect(() => {
     const fetchMatrices = async () => {
       try {
         const data = await getAllMatrices();
         setMatrices(data);
 
-        // Si no hay drone y existe al menos una matriz, seleccionamos la primera
         if (!drone && data.length > 0 && !formData.matrixId) {
           setFormData((prev) => ({ ...prev, matrixId: data[0].id }));
         }
@@ -55,7 +53,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     fetchMatrices();
   }, [getAllMatrices, drone, formData.matrixId]);
 
-  // Ajusta x e y cuando cambia la matrix seleccionada
   useEffect(() => {
     const selectedMatrix = matrices.find((m) => m.id === formData.matrixId);
     if (selectedMatrix) {
@@ -67,7 +64,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     }
   }, [formData.matrixId, matrices]);
 
-  // Si recibimos un drone para editar, inicializamos el formulario
   useEffect(() => {
     if (drone) {
       setFormData({
@@ -81,7 +77,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     }
   }, [drone]);
 
-  // Validaciones del formulario
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -109,7 +104,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
       newErrors.orientation = "Orientation is required";
     }
 
-    // Revisamos si la posición excede los límites de la matriz seleccionada
     const selectedMatrix = matrices.find((m) => m.id === formData.matrixId);
     if (selectedMatrix) {
       if (formData.x >= selectedMatrix.maxX) {
@@ -124,7 +118,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Manejamos el cambio de valores en el formulario
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -136,7 +129,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
     }));
   };
 
-  // Al enviar el formulario, creamos o actualizamos el drone
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -147,11 +139,10 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
       let result: Drone;
 
       if (drone) {
-        // Modo edición
         result = await updateDrone(drone.id, formData);
         toast.success("Drone updated successfully");
       } else {
-        // Modo creación
+        n;
         result = await createDrone(formData as CreateDroneRequest);
         toast.success("Drone created successfully");
       }
@@ -159,7 +150,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
       if (onSubmit) {
         onSubmit(result);
       } else {
-        // Redirigimos a la vista del drone creado/actualizado
         navigate(`/drones/${result.id}`);
       }
     } catch (error) {
@@ -176,7 +166,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Nombre */}
         <div>
           <label
             htmlFor="name"
@@ -199,7 +188,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
           )}
         </div>
 
-        {/* Modelo */}
         <div>
           <label
             htmlFor="model"
@@ -222,7 +210,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
           )}
         </div>
 
-        {/* Selección de la matriz */}
         <div>
           <label
             htmlFor="matrixId"
@@ -251,7 +238,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
           )}
         </div>
 
-        {/* Orientación */}
         <div>
           <label
             htmlFor="orientation"
@@ -278,7 +264,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
           )}
         </div>
 
-        {/* Posición X */}
         <div>
           <label
             htmlFor="x"
@@ -310,7 +295,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
           )}
         </div>
 
-        {/* Posición Y */}
         <div>
           <label
             htmlFor="y"
@@ -343,7 +327,6 @@ const DroneForm = ({ drone, onSubmit }: DroneFormProps) => {
         </div>
       </div>
 
-      {/* Botones de acción */}
       <div className="flex justify-end space-x-3">
         <button
           type="button"

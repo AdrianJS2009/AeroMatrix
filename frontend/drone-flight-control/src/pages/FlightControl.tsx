@@ -88,7 +88,6 @@ const FlightControl = () => {
     setExecutingCommands(true);
 
     try {
-      // Create batch commands from the configuration
       const batchCommands: BatchDroneCommand[] = Object.entries(commands)
         .filter(([_, cmd]) => cmd.trim() !== "")
         .map(([droneId, cmd]) => ({
@@ -101,11 +100,9 @@ const FlightControl = () => {
         return;
       }
 
-      // Execute batch commands
       await executeBatchCommands({ commands: batchCommands });
       toast.success("Configuration commands executed successfully");
 
-      // Refresh matrix data
       const matrix = await getMatrixById(selectedMatrix.id);
       setSelectedMatrix(matrix);
     } catch (error) {
