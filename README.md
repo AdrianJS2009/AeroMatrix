@@ -15,7 +15,7 @@
 1. **Clonar el repositorio:**
 
    ```bash
-   git clone https://github.com/AdrianJS2009/proyecto-drones.git
+   git clone https://github.com/AdrianJS2009/Proyecto-FCT.git
    cd proyecto-drones
    ```
 
@@ -53,12 +53,12 @@ El proyecto sigue una combinación de **Domain-Driven Design (DDD)** y **Arquite
   - Entidades como `Drone` y `Matrix` (en `domain/`) encapsulan la lógica crítica del negocio.
   - Enums como `Orientation` y `MovementCommand` definen reglas del dominio (ej: direcciones válidas).
 - **Agregados**:
-  - `Matrix` actúa como raíz de agregado, gestionando la relación con los drones asociados.
+  - `Matrix` actúa como raíz, gestionando la relación con los drones asociados.
 
 ### 2. **Arquitectura Hexagonal **
 
 - **Núcleo del Dominio**:
-  - Las entidades y servicios de dominio (`DroneService`, `FlightService`) son independientes de infraestructura.
+  - Las entidades y servicios de dominio (`DroneService`, `FlightService`) son independientes de la infraestructura.
 - **Repositories**:
   - Interfaces como `DroneRepository` definen cómo interactúa el núcleo con el exterior.
 - **Adaptadores**:
@@ -238,15 +238,5 @@ src/
 
 ---
 
-## 🗄️ Configuración de la Base de Datos
 
-MySQL instalado y en ejecución. 
-Configura las credenciales de la base de datos en el archivo `src/main/resources/application.properties`:
-
-```properties
-# MYSQL
-spring.datasource.url=jdbc:mysql://localhost:3306/dronesdb
-spring.datasource.username=root
-spring.datasource.password=tu_contraseña
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
