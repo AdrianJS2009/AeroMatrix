@@ -1,12 +1,10 @@
 "use client";
 
-import type React from "react";
-
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import MatrixGrid from "../components/MatrixGrid";
 import { useApi } from "../context/ApiContext";
 import type { Drone, Matrix } from "../types";
-
 interface CommandInputProps {
   drone: Drone;
   matrix?: Matrix;
@@ -38,7 +36,6 @@ const CommandInput = ({
   ) => {
     if (!matrix) return [];
 
-    // Normalizar la orientación
     const normalizeOrientation = (ori: string): string => {
       switch (ori) {
         case "N":
@@ -50,7 +47,7 @@ const CommandInput = ({
         case "O":
           return "WEST";
         default:
-          return ori; // Si ya viene en formato largo
+          return ori;
       }
     };
 
@@ -77,22 +74,7 @@ const CommandInput = ({
               break;
           }
           break;
-        case "B":
-          switch (orientation) {
-            case "NORTH":
-              y = Math.max(y - 1, 0);
-              break;
-            case "EAST":
-              x = Math.max(x - 1, 0);
-              break;
-            case "SOUTH":
-              y = Math.min(y + 1, matrix.maxY - 1);
-              break;
-            case "WEST":
-              x = Math.min(x + 1, matrix.maxX - 1);
-              break;
-          }
-          break;
+
         case "L":
           switch (orientation) {
             case "NORTH":
@@ -127,7 +109,7 @@ const CommandInput = ({
           break;
       }
 
-      if (command === "F" || command === "B") {
+      if (command === "F") {
         path.push({ x, y });
       }
     }
@@ -136,7 +118,7 @@ const CommandInput = ({
   };
 
   const handleCommandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newCommands = e.target.value.toUpperCase().replace(/[^FBLR]/g, "");
+    const newCommands = e.target.value.toUpperCase().replace(/[^FLR]/g, "");
     setCommands(newCommands);
 
     if (matrix) {
@@ -247,13 +229,6 @@ const CommandInput = ({
         </button>
         <button
           type="button"
-          onClick={() => handleQuickCommand("B")}
-          className="px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          Backward (B)
-        </button>
-        <button
-          type="button"
           onClick={() => handleQuickCommand("L")}
           className="px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
@@ -284,7 +259,7 @@ const CommandInput = ({
             />
           </div>
           <p className="mt-2 text-xs text-gray-500">
-            Yellow cells show the predicted path based on your commands
+            Highlighted cells show the predicted path based on your commands.
           </p>
         </div>
       )}
@@ -317,9 +292,6 @@ const CommandInput = ({
             <strong>F</strong> - Move forward one step
           </li>
           <li>
-            <strong>B</strong> - Move backward one step
-          </li>
-          <li>
             <strong>L</strong> - Turn left (90 degrees)
           </li>
           <li>
@@ -330,7 +302,5 @@ const CommandInput = ({
     </div>
   );
 };
-
-import MatrixGrid from "./MatrixGrid";
 
 export default CommandInput;

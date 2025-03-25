@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import ThemeToggle from "./ThemeToggle";
 
 const Footer = () => {
-  const { theme } = useTheme();
+  const {} = useTheme();
 
   return (
     <footer className="bg-white dark:bg-gray-800 shadow-inner py-6 mt-auto">
@@ -27,19 +27,19 @@ const Footer = () => {
 
             <nav className="flex space-x-4">
               <a
-                href="#"
+                href="/privacy-policy"
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
               >
                 Privacy Policy
               </a>
               <a
-                href="#"
+                href="/terms-of-service"
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
               >
                 Terms of Service
               </a>
               <a
-                href="#"
+                href="/contact"
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
               >
                 Contact
