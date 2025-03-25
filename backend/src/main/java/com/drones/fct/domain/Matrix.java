@@ -40,7 +40,6 @@ public class Matrix {
   @OneToMany(mappedBy = "matrix", fetch = FetchType.LAZY)
   private List<Drone> drones = new ArrayList<>();
 
-  // Constructor with maxX and maxY,, i need a public constructor
   public Matrix(int maxX, int maxY) {
     this.maxX = maxX;
     this.maxY = maxY;

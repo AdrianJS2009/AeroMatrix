@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     String errorMessage = ex.getBindingResult().getAllErrors().stream()
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
         .findFirst()
-        .orElse("Error de validación");
+        .orElse("Validation error");
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ApiError("VALIDATION_ERROR", errorMessage));
