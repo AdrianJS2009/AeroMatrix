@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.drones.fct.dto.DroneDto;
 
+//TODO: Implementar WS en la logica de negocio y front
+
 @RestController
 public class DroneNotificationController {
 
