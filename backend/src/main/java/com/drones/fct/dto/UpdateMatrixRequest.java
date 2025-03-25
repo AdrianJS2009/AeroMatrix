@@ -4,6 +4,6 @@ import lombok.Value;
 
 @Value
 public class UpdateMatrixRequest {
-  Integer maxX;
-  Integer maxY;
+  int maxX;
+  int maxY;
 }

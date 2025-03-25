@@ -13,34 +13,22 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
   showLabel = false,
 }) => {
   const sizeMap = {
-    sm: {
-      width: 16,
-      height: 16,
-      fontSize: 6,
-    },
-    md: {
-      width: 24,
-      height: 24,
-      fontSize: 8,
-    },
-    lg: {
-      width: 32,
-      height: 32,
-      fontSize: 10,
-    },
+    sm: { width: 16, height: 16, fontSize: 6 },
+    md: { width: 24, height: 24, fontSize: 8 },
+    lg: { width: 32, height: 32, fontSize: 10 },
   };
 
   const { width, height, fontSize } = sizeMap[size];
 
   const getOrientationColor = () => {
     switch (orientation) {
-      case "NORTH":
+      case "N":
         return "#34D399"; // green
-      case "EAST":
+      case "E":
         return "#60A5FA"; // blue
-      case "SOUTH":
+      case "S":
         return "#F87171"; // red
-      case "WEST":
+      case "O":
         return "#FBBF24"; // yellow
       default:
         return "#60A5FA"; // default blue
@@ -49,13 +37,13 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
 
   const getRotationAngle = () => {
     switch (orientation) {
-      case "NORTH":
+      case "N":
         return 0;
-      case "EAST":
+      case "E":
         return 90;
-      case "SOUTH":
+      case "S":
         return 180;
-      case "WEST":
+      case "O":
         return 270;
       default:
         return 0;
@@ -64,16 +52,16 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
 
   const getOrientationLabel = () => {
     switch (orientation) {
-      case "NORTH":
+      case "N":
         return "N";
-      case "EAST":
+      case "E":
         return "E";
-      case "SOUTH":
+      case "S":
         return "S";
-      case "WEST":
-        return "W";
+      case "O":
+        return "O"; // o podrías mostrar "W" si prefieres representar "Oeste" con la W
       default:
-        return "N";
+        return "?";
     }
   };
 
@@ -99,7 +87,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
           opacity="0.2"
         />
         <circle cx="12" cy="12" r="6" fill={getOrientationColor()} />
-
         {/* Direction indicator */}
         <path
           d="M12 2L16 8H8L12 2Z"
@@ -109,7 +96,6 @@ const DroneDirectionalIcon: React.FC<DroneDirectionalIconProps> = ({
         />
       </svg>
 
-      {/* Optional orientation label */}
       {showLabel && (
         <div
           className="absolute inset-0 flex items-center justify-center text-white font-bold"

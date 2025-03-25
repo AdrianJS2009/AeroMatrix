@@ -236,7 +236,7 @@ const DroneDetail = () => {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="md:w-2/3">
                   <MatrixGrid
-                    matrix={matrix}
+                    matrix={matrix || undefined}
                     selectedDrone={drone}
                     cellSize={36}
                     showCoordinates={true}
@@ -277,7 +277,7 @@ const DroneDetail = () => {
             </h3>
             <CommandInput
               drone={drone}
-              matrix={matrix}
+              matrix={matrix || undefined}
               onCommandExecuted={handleCommandExecuted}
             />
           </div>

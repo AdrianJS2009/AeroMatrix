@@ -40,14 +40,14 @@ const MatrixGrid = ({
         row.push(
           <div
             key={`${x}-${y}`}
-            className={`border border-gray-200 flex items-center justify-center ${
-              drone ? "bg-blue-50 cursor-pointer" : ""
+            className={`border border-gray-200 dark:border-gray-700 flex items-center justify-center ${
+              drone ? "bg-blue-50 dark:bg-blue-900/30 cursor-pointer" : ""
             } ${
               selectedDrone && drone?.id === selectedDrone.id
-                ? "ring-2 ring-blue-500"
+                ? "ring-2 ring-blue-500 dark:ring-blue-400"
                 : ""
-            } ${isHighlighted ? "bg-yellow-100" : ""} ${
-              interactive ? "hover:bg-gray-50" : ""
+            } ${isHighlighted ? "bg-yellow-100 dark:bg-yellow-900/30" : ""} ${
+              interactive ? "hover:bg-gray-50 dark:hover:bg-gray-800" : ""
             }`}
             style={{ width: `${cellSize}px`, height: `${cellSize}px` }}
             onClick={() =>
@@ -65,33 +65,33 @@ const MatrixGrid = ({
               />
             )}
             {showCoordinates && !drone && (
-              <span className="text-[8px] text-gray-400">
+              <span className="text-[8px] text-gray-400 dark:text-gray-600">
                 {x},{y}
               </span>
             )}
           </div>
         );
       }
+
       newGrid.push(row);
     }
+
     return newGrid;
   }, [
-    matrix.maxX,
-    matrix.maxY,
-    matrix.drones,
+    matrix,
     selectedDrone,
+    onSelectDrone,
     highlightedCells,
     cellSize,
-    interactive,
     showCoordinates,
+    interactive,
     showOrientationLabels,
-    onSelectDrone,
   ]);
 
   return (
     <div className="space-y-4">
       <div className="overflow-auto">
-        <div className="inline-block border border-gray-300 bg-white">
+        <div className="inline-block border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800">
           {grid.map((row, index) => (
             <div key={index} className="flex">
               {row}
@@ -99,29 +99,35 @@ const MatrixGrid = ({
           ))}
         </div>
       </div>
-      <div className="flex justify-between text-xs text-gray-500">
+
+      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
         <div>Origin (0,0) is at bottom-left</div>
         <div>
           Width: {matrix.maxX}, Height: {matrix.maxY}
         </div>
       </div>
 
+      {/* Orientations leyend */}
       <div className="flex flex-wrap gap-4 justify-center">
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="NORTH" size="sm" />
-          <span className="text-xs text-gray-600">North</span>
+          <DroneDirectionalIcon orientation="N" size="sm" />
+          <span className="text-xs text-gray-600 dark:text-gray-400">
+            North
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="EAST" size="sm" />
-          <span className="text-xs text-gray-600">East</span>
+          <DroneDirectionalIcon orientation="E" size="sm" />
+          <span className="text-xs text-gray-600 dark:text-gray-400">East</span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="SOUTH" size="sm" />
-          <span className="text-xs text-gray-600">South</span>
+          <DroneDirectionalIcon orientation="S" size="sm" />
+          <span className="text-xs text-gray-600 dark:text-gray-400">
+            South
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="WEST" size="sm" />
-          <span className="text-xs text-gray-600">West</span>
+          <DroneDirectionalIcon orientation="O" size="sm" />
+          <span className="text-xs text-gray-600 dark:text-gray-400">West</span>
         </div>
       </div>
     </div>

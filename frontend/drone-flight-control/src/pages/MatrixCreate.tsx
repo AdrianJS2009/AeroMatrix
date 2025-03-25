@@ -52,6 +52,7 @@ const MatrixCreate = () => {
       [name]: isNaN(numValue) ? 0 : numValue,
     }));
 
+    // Update preview grid when dimensions change
     if (
       name === "maxX" &&
       !isNaN(numValue) &&
@@ -119,20 +120,23 @@ const MatrixCreate = () => {
       <div className="flex items-center">
         <button
           onClick={() => navigate("/matrix-management")}
-          className="mr-4 p-2 rounded-full hover:bg-gray-200 transition-colors"
+          className="mr-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          title="Go back to matrix management"
         >
-          <ArrowLeft className="h-5 w-5 text-gray-600" />
+          <ArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Create New Matrix</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Create New Matrix
+        </h1>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label
                 htmlFor="maxX"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Width (X dimension)
               </label>
@@ -144,19 +148,25 @@ const MatrixCreate = () => {
                 max="100"
                 value={formData.maxX}
                 onChange={handleChange}
-                className={`mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
-                  errors.maxX ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 
+                  ${
+                    errors.maxX
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  } 
+                  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
               />
               {errors.maxX && (
-                <p className="mt-1 text-sm text-red-600">{errors.maxX}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.maxX}
+                </p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="maxY"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Height (Y dimension)
               </label>
@@ -168,21 +178,27 @@ const MatrixCreate = () => {
                 max="100"
                 value={formData.maxY}
                 onChange={handleChange}
-                className={`mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
-                  errors.maxY ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 
+                  ${
+                    errors.maxY
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-gray-600"
+                  } 
+                  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
               />
               {errors.maxY && (
-                <p className="mt-1 text-sm text-red-600">{errors.maxY}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.maxY}
+                </p>
               )}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Matrix Preview
             </h3>
-            <div className="border border-gray-300 rounded-md p-4 bg-gray-50 overflow-auto max-h-80">
+            <div className="border border-gray-300 dark:border-gray-600 rounded-md p-4 bg-gray-50 dark:bg-gray-900 overflow-auto max-h-80">
               <div className="inline-block">
                 {previewGrid
                   .slice(0, Math.min(formData.maxY, 20))
@@ -193,8 +209,10 @@ const MatrixCreate = () => {
                         .map((cell, colIndex) => (
                           <div
                             key={colIndex}
-                            className={`w-6 h-6 border border-gray-300 m-0.5 cursor-pointer ${
-                              cell ? "bg-blue-500" : "bg-white"
+                            className={`w-6 h-6 border m-0.5 cursor-pointer ${
+                              cell
+                                ? "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500"
+                                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                             }`}
                             onClick={() => toggleCell(rowIndex, colIndex)}
                             title={`Position (${colIndex}, ${
@@ -206,12 +224,12 @@ const MatrixCreate = () => {
                   ))}
               </div>
               {(formData.maxX > 20 || formData.maxY > 20) && (
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   Preview limited to 20x20. Full matrix will be {formData.maxX}x
                   {formData.maxY}.
                 </p>
               )}
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Click on cells to toggle them (for visualization only).
               </p>
             </div>
@@ -221,14 +239,14 @@ const MatrixCreate = () => {
             <button
               type="button"
               onClick={() => navigate("/matrix-management")}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 transition-colors"
             >
               {isSubmitting ? "Creating..." : "Create Matrix"}
             </button>
