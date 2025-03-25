@@ -23,7 +23,7 @@ public class MatrixService {
   private final MatrixRepository matrixRepository;
   private final DroneRepository droneRepository;
 
-  public Matrix createMatrix(Integer maxX, Integer maxY) {
+  public Matrix createMatrix(int maxX, int maxY) {
     if (maxX <= 0 || maxY <= 0) {
       throw new ConflictException("Matrix dimensions must be positive (maxX: " + maxX + ", maxY: " + maxY + ")");
     }
@@ -34,7 +34,7 @@ public class MatrixService {
     return matrixRepository.save(matrix);
   }
 
-  public Matrix updateMatrix(Long matrixId, Integer maxX, Integer maxY) {
+  public Matrix updateMatrix(Long matrixId, int maxX, int maxY) {
     Matrix matrix = matrixRepository.findById(matrixId)
         .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
 

@@ -32,16 +32,16 @@ public class Matrix {
   private Long id;
 
   @Column(name = "max_x", nullable = false)
-  private Integer maxX;
+  private int maxX;
 
   @Column(name = "max_y", nullable = false)
-  private Integer maxY;
+  private int maxY;
 
   @OneToMany(mappedBy = "matrix", fetch = FetchType.LAZY)
   private List<Drone> drones = new ArrayList<>();
 
   // Constructor with maxX and maxY,, i need a public constructor
-  public Matrix(Integer maxX, Integer maxY) {
+  public Matrix(int maxX, int maxY) {
     this.maxX = maxX;
     this.maxY = maxY;
   }
