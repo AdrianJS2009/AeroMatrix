@@ -128,7 +128,6 @@ const MatrixManagement = () => {
         return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
 
-      // Fallback for non-numeric fields
       return sortDirection === "asc"
         ? String(aValue).localeCompare(String(bValue))
         : String(bValue).localeCompare(String(aValue));

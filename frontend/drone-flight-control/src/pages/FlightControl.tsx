@@ -127,12 +127,14 @@ const FlightControl = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Flight Control</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Flight Control
+        </h1>
       </div>
 
       {matrices.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-6 text-center">
-          <p className="text-gray-500 mb-4">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
             No matrices available. Create a matrix to get started.
           </p>
           <a
@@ -144,12 +146,12 @@ const FlightControl = () => {
         </div>
       ) : (
         <>
-          <div className="bg-white shadow rounded-lg p-6">
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <div className="flex flex-col md:flex-row gap-6">
               <div className="md:w-1/3">
                 <label
                   htmlFor="matrix-select"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
                   Select Matrix
                 </label>
@@ -157,7 +159,7 @@ const FlightControl = () => {
                   id="matrix-select"
                   value={selectedMatrix?.id || ""}
                   onChange={(e) => handleMatrixChange(Number(e.target.value))}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 >
                   {matrices.map((matrix) => (
                     <option key={matrix.id} value={matrix.id}>
@@ -171,7 +173,7 @@ const FlightControl = () => {
               <div className="md:w-2/3">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Control Mode
                     </label>
                     <div className="flex space-x-4">
@@ -221,7 +223,7 @@ const FlightControl = () => {
                         }
                         className="form-checkbox h-4 w-4 text-blue-600"
                       />
-                      <span className="ml-2 text-sm text-gray-700">
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                         Show orientation labels
                       </span>
                     </label>
@@ -232,8 +234,8 @@ const FlightControl = () => {
           </div>
 
           {selectedMatrix && (
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4">
                 Matrix Grid
               </h3>
               <div className="flex flex-col md:flex-row gap-6">
@@ -248,23 +250,23 @@ const FlightControl = () => {
                   />
                 </div>
                 <div className="md:w-1/3">
-                  <div className="bg-gray-50 p-4 rounded-md">
-                    <h4 className="text-md font-medium text-gray-700 mb-2">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                    <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Matrix Info
                     </h4>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       <span className="font-medium">Size:</span>{" "}
                       {selectedMatrix.maxX} x {selectedMatrix.maxY}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       <span className="font-medium">Drones:</span>{" "}
                       {selectedMatrix.drones.length}
                     </p>
                   </div>
 
                   {selectedDrone && (
-                    <div className="bg-gray-50 p-4 rounded-md mt-4">
-                      <h4 className="text-md font-medium text-gray-700 mb-2">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md mt-4">
+                      <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Selected Drone
                       </h4>
                       <div className="flex items-center mb-2">
@@ -278,15 +280,15 @@ const FlightControl = () => {
                           {selectedDrone.orientation}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         <span className="font-medium">Name:</span>{" "}
                         {selectedDrone.name}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         <span className="font-medium">Position:</span> (
                         {selectedDrone.x}, {selectedDrone.y})
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         <span className="font-medium">Model:</span>{" "}
                         {selectedDrone.model}
                       </p>
@@ -298,8 +300,8 @@ const FlightControl = () => {
           )}
 
           {selectedMatrix && (
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4">
                 {controlMode === "single"
                   ? "Single Drone Control"
                   : controlMode === "batch"
@@ -310,8 +312,8 @@ const FlightControl = () => {
               {controlMode === "single" ? (
                 selectedDrone ? (
                   <div className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-md mb-4">
-                      <h4 className="text-md font-medium text-gray-700 mb-2">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md mb-4">
+                      <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Selected Drone
                       </h4>
                       <div className="flex items-center mb-2">
@@ -325,11 +327,11 @@ const FlightControl = () => {
                           {selectedDrone.orientation}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         <span className="font-medium">Name:</span>{" "}
                         {selectedDrone.name}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         <span className="font-medium">Position:</span> (
                         {selectedDrone.x}, {selectedDrone.y})
                       </p>
@@ -342,7 +344,7 @@ const FlightControl = () => {
                     />
                   </div>
                 ) : (
-                  <p className="text-gray-500">
+                  <p className="text-gray-500 dark:text-gray-400">
                     Select a drone from the grid to control it.
                   </p>
                 )
