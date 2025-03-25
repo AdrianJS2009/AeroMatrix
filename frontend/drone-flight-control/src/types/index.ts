@@ -1,4 +1,4 @@
-export type Orientation = "NORTH" | "EAST" | "SOUTH" | "WEST";
+export type Orientation = "N" | "E" | "S" | "O";
 
 export interface Drone {
   id: number;

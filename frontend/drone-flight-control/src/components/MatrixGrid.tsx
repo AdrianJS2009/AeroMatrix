@@ -110,23 +110,23 @@ const MatrixGrid = ({
       {/* Orientations leyend */}
       <div className="flex flex-wrap gap-4 justify-center">
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="NORTH" size="sm" />
+          <DroneDirectionalIcon orientation="N" size="sm" />
           <span className="text-xs text-gray-600 dark:text-gray-400">
             North
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="EAST" size="sm" />
+          <DroneDirectionalIcon orientation="E" size="sm" />
           <span className="text-xs text-gray-600 dark:text-gray-400">East</span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="SOUTH" size="sm" />
+          <DroneDirectionalIcon orientation="S" size="sm" />
           <span className="text-xs text-gray-600 dark:text-gray-400">
             South
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <DroneDirectionalIcon orientation="WEST" size="sm" />
+          <DroneDirectionalIcon orientation="O" size="sm" />
           <span className="text-xs text-gray-600 dark:text-gray-400">West</span>
         </div>
       </div>
