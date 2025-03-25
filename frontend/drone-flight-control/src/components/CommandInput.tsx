@@ -38,10 +38,26 @@ const CommandInput = ({
   ) => {
     if (!matrix) return [];
 
+    // Normalizar la orientación
+    const normalizeOrientation = (ori: string): string => {
+      switch (ori) {
+        case "N":
+          return "NORTH";
+        case "S":
+          return "SOUTH";
+        case "E":
+          return "EAST";
+        case "O":
+          return "WEST";
+        default:
+          return ori; // Si ya viene en formato largo
+      }
+    };
+
     const path: { x: number; y: number }[] = [{ x: droneX, y: droneY }];
     let x = droneX;
     let y = droneY;
-    let orientation = droneOrientation;
+    let orientation = normalizeOrientation(droneOrientation);
 
     for (const command of commandString) {
       switch (command) {
