@@ -29,6 +29,9 @@ public class FlightService {
         .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 
     for (MovementCommand cmd : commands) {
+      if (cmd == null) {
+        throw new UnsupportedCommandException("Unsupported command: null");
+      }
       switch (cmd) {
         case TURN_LEFT -> turnLeft(drone);
         case TURN_RIGHT -> turnRight(drone);
@@ -36,7 +39,6 @@ public class FlightService {
         default -> throw new UnsupportedCommandException("Unsupported command: " + cmd);
       }
     }
-
     return drone;
   }
 

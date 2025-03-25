@@ -146,18 +146,17 @@ class DroneServiceTest {
 
   @Test
   void updateDrone_PositionConflict() {
-
     Drone otherDrone = Drone.builder().id(101L).build();
 
     when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
     when(matrixRepository.findById(1L)).thenReturn(Optional.of(matrix));
 
-    when(droneRepository.findByXAndYAndMatrixId(5, 5, 1L))
+    when(droneRepository.findByXAndYAndMatrixId(6, 6, 1L))
         .thenReturn(List.of(otherDrone));
 
     ConflictException exception = assertThrows(ConflictException.class,
-        () -> droneService.updateDrone(100L, 1L, "Drone A", "Model X", 5, 5, Orientation.N));
-    assertTrue(exception.getMessage().contains("Position (5,5) in matrix 1 is occupied"));
+        () -> droneService.updateDrone(100L, 1L, "Drone A", "Model X", 6, 6, Orientation.N));
+    assertTrue(exception.getMessage().contains("Position (6,6) in matrix 1 is occupied"));
   }
 
   // --- deleteDrone, getDrone y listDrones ---

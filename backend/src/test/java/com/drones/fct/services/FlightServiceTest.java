@@ -96,11 +96,10 @@ class FlightServiceTest {
 
     @Test
     void executeCommands_UnsupportedCommand() {
-
         when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
 
         UnsupportedCommandException exception = assertThrows(UnsupportedCommandException.class,
-                () -> flightService.executeCommands(100L, List.of(null)));
+                () -> flightService.executeCommands(100L, Collections.singletonList(null)));
         assertTrue(exception.getMessage().contains("Unsupported command"));
     }
 

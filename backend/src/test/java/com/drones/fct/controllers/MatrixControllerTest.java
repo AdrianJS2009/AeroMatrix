@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.drones.fct.controller.MatrixController;
 import com.drones.fct.domain.Matrix;
 import com.drones.fct.dto.CreateMatrixRequest;
+import com.drones.fct.repository.DroneRepository;
 import com.drones.fct.service.MatrixService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,6 +32,9 @@ class MatrixControllerTest {
 
   @MockBean
   private MatrixService matrixService;
+
+  @MockBean
+  private DroneRepository droneRepository;
 
   @Autowired
   private ObjectMapper objectMapper;
