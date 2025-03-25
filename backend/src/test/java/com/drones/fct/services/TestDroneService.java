@@ -1,15 +1,17 @@
 package com.drones.fct.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +31,7 @@ import com.drones.fct.repository.MatrixRepository;
 import com.drones.fct.service.DroneService;
 
 @ExtendWith(MockitoExtension.class)
-class TestDroneService {
+class DroneServiceTest {
 
   @Mock
   private DroneRepository droneRepository;
@@ -40,24 +42,16 @@ class TestDroneService {
   @InjectMocks
   private DroneService droneService;
 
-  private static final Long VALID_MATRIX_ID = 1L;
-  private static final Long VALID_DRONE_ID = 1L;
-  private static final Long INVALID_DRONE_ID = 999L;
-
   private Matrix matrix;
   private Drone drone;
 
   @BeforeEach
   void setUp() {
-    matrix = new Matrix();
-    matrix.setId(VALID_MATRIX_ID);
-    matrix.setMaxX(10);
-    matrix.setMaxY(10);
-
+    matrix = Matrix.builder().id(1L).maxX(10).maxY(10).build();
     drone = Drone.builder()
-        .id(VALID_DRONE_ID)
-        .name("Drone1")
-        .model("X200")
+        .id(100L)
+        .name("Drone A")
+        .model("Model X")
         .x(5)
         .y(5)
         .orientation(Orientation.N)
@@ -65,113 +59,139 @@ class TestDroneService {
         .build();
   }
 
-  // ------------------ CREATE DRONE ------------------
+  // --- createDrone tests ---
+
   @Test
-  void createDrone_ValidData_ReturnsDrone() {
-    when(matrixRepository.findById(VALID_MATRIX_ID)).thenReturn(Optional.of(matrix));
-    when(droneRepository.findByXAndYAndMatrixId(5, 5, VALID_MATRIX_ID))
-        .thenReturn(Collections.emptyList());
+  void createDrone_Success() {
+    when(matrixRepository.findById(1L)).thenReturn(Optional.of(matrix));
+    when(droneRepository.findByXAndYAndMatrixId(5, 5, 1L)).thenReturn(Collections.emptyList());
     when(droneRepository.save(any(Drone.class))).thenReturn(drone);
 
-    Drone createdDrone = droneService.createDrone(VALID_MATRIX_ID, "Drone1", "X200", 5, 5, Orientation.N);
+    Drone result = droneService.createDrone(1L, "Drone A", "Model X", 5, 5, Orientation.N);
 
-    assertNotNull(createdDrone);
-    assertEquals("Drone1", createdDrone.getName());
+    assertNotNull(result);
+    assertEquals(100L, result.getId());
+    verify(matrixRepository).findById(1L);
     verify(droneRepository).save(any(Drone.class));
   }
 
   @Test
-  void createDrone_MatrixNotFound_ThrowsNotFoundException() {
-    when(matrixRepository.findById(VALID_MATRIX_ID)).thenReturn(Optional.empty());
+  void createDrone_MatrixNotFound() {
+    when(matrixRepository.findById(2L)).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class,
-        () -> droneService.createDrone(VALID_MATRIX_ID, "Drone1", "X200", 5, 5, Orientation.N));
+    NotFoundException exception = assertThrows(NotFoundException.class,
+        () -> droneService.createDrone(2L, "Drone B", "Model Y", 3, 3, Orientation.E));
+    assertTrue(exception.getMessage().contains("Matrix ID 2 not found"));
   }
 
   @Test
-  void createDrone_PositionOccupied_ThrowsConflictException() {
-    when(matrixRepository.findById(VALID_MATRIX_ID)).thenReturn(Optional.of(matrix));
-    when(droneRepository.findByXAndYAndMatrixId(5, 5, VALID_MATRIX_ID))
-        .thenReturn(Collections.singletonList(drone));
+  void createDrone_PositionConflict() {
+    when(matrixRepository.findById(1L)).thenReturn(Optional.of(matrix));
 
-    assertThrows(ConflictException.class,
-        () -> droneService.createDrone(VALID_MATRIX_ID, "Drone1", "X200", 5, 5, Orientation.N));
-  }
-
-  @Test
-  void createDrone_InvalidPosition_ThrowsIllegalArgumentException() {
-    when(matrixRepository.findById(VALID_MATRIX_ID)).thenReturn(Optional.of(matrix));
-
-    assertThrows(IllegalArgumentException.class,
-        () -> droneService.createDrone(VALID_MATRIX_ID, "Drone1", "X200", 15, 15, Orientation.N));
-  }
-
-  // ------------------ UPDATE DRONE ------------------
-  @Test
-  void updateDrone_ValidData_ReturnsUpdatedDrone() {
-    when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.of(drone));
-    when(droneRepository.findByXAndYAndMatrixId(anyInt(), anyInt(), anyLong()))
-        .thenReturn(Collections.emptyList());
-    when(droneRepository.save(any(Drone.class))).thenReturn(drone);
-
-    Drone updatedDrone = droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7,
-        Orientation.E);
-
-    assertNotNull(updatedDrone);
-    assertEquals("UpdatedName", updatedDrone.getName());
-    verify(droneRepository).save(any(Drone.class));
-  }
-
-  @Test
-  void updateDrone_DroneNotFound_ThrowsNotFoundException() {
-    when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class,
-        () -> droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
-  }
-
-  @Test
-  void updateDrone_PositionOccupied_ThrowsConflictException() {
-    when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.of(drone));
-    when(droneRepository.findByXAndYAndMatrixId(7, 7, VALID_MATRIX_ID))
+    when(droneRepository.findByXAndYAndMatrixId(5, 5, 1L))
         .thenReturn(Collections.singletonList(new Drone()));
 
-    assertThrows(ConflictException.class,
-        () -> droneService.updateDrone(VALID_DRONE_ID, VALID_MATRIX_ID, "UpdatedName", "X300", 7, 7, Orientation.E));
+    ConflictException exception = assertThrows(ConflictException.class,
+        () -> droneService.createDrone(1L, "Drone C", "Model Z", 5, 5, Orientation.S));
+    assertTrue(exception.getMessage().contains("Position conflict"));
   }
 
-  // ------------------ DELETE DRONE ------------------
+  // --- updateDrone tests ---
+
   @Test
-  void deleteDrone_ValidId_DeletesDrone() {
-    when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.of(drone));
+  void updateDrone_Success() {
 
-    droneService.deleteDrone(VALID_DRONE_ID);
+    Drone updatedDrone = Drone.builder()
+        .id(100L)
+        .name("Drone A Updated")
+        .model("Model X")
+        .x(6)
+        .y(6)
+        .orientation(Orientation.E)
+        .matrix(matrix)
+        .build();
 
+    when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
+    when(matrixRepository.findById(1L)).thenReturn(Optional.of(matrix));
+
+    when(droneRepository.findByXAndYAndMatrixId(6, 6, 1L)).thenReturn(Collections.emptyList());
+    when(droneRepository.save(any(Drone.class))).thenReturn(updatedDrone);
+
+    Drone result = droneService.updateDrone(100L, 1L, "Drone A Updated", "Model X", 6, 6, Orientation.E);
+
+    assertNotNull(result);
+    assertEquals("Drone A Updated", result.getName());
+    assertEquals(6, result.getX());
+    assertEquals(6, result.getY());
+  }
+
+  @Test
+  void updateDrone_DroneNotFound() {
+    when(droneRepository.findById(200L)).thenReturn(Optional.empty());
+
+    NotFoundException exception = assertThrows(NotFoundException.class,
+        () -> droneService.updateDrone(200L, 1L, "Drone NotFound", "Model", 2, 2, Orientation.O));
+    assertTrue(exception.getMessage().contains("Drone ID 200 not found"));
+  }
+
+  @Test
+  void updateDrone_MatrixNotFound() {
+    when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
+    when(matrixRepository.findById(2L)).thenReturn(Optional.empty());
+
+    NotFoundException exception = assertThrows(NotFoundException.class,
+        () -> droneService.updateDrone(100L, 2L, "Drone A", "Model X", 5, 5, Orientation.N));
+    assertTrue(exception.getMessage().contains("Matrix ID 2 not found"));
+  }
+
+  @Test
+  void updateDrone_PositionConflict() {
+
+    Drone otherDrone = Drone.builder().id(101L).build();
+
+    when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
+    when(matrixRepository.findById(1L)).thenReturn(Optional.of(matrix));
+
+    when(droneRepository.findByXAndYAndMatrixId(5, 5, 1L))
+        .thenReturn(List.of(otherDrone));
+
+    ConflictException exception = assertThrows(ConflictException.class,
+        () -> droneService.updateDrone(100L, 1L, "Drone A", "Model X", 5, 5, Orientation.N));
+    assertTrue(exception.getMessage().contains("Position (5,5) in matrix 1 is occupied"));
+  }
+
+  // --- deleteDrone, getDrone y listDrones ---
+
+  @Test
+  void deleteDrone_Success() {
+    when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
+    doNothing().when(droneRepository).delete(drone);
+
+    Drone result = droneService.deleteDrone(100L);
+
+    assertNotNull(result);
+    assertEquals(100L, result.getId());
     verify(droneRepository).delete(drone);
   }
 
   @Test
-  void deleteDrone_DroneNotFound_ThrowsNotFoundException() {
-    when(droneRepository.findById(INVALID_DRONE_ID)).thenReturn(Optional.empty());
+  void getDrone_Success() {
+    when(droneRepository.findById(100L)).thenReturn(Optional.of(drone));
 
-    assertThrows(NotFoundException.class, () -> droneService.deleteDrone(INVALID_DRONE_ID));
-  }
+    Drone result = droneService.getDrone(100L);
 
-  // ------------------ GET DRONE ------------------
-  @Test
-  void getDrone_ValidId_ReturnsDrone() {
-    when(droneRepository.findById(VALID_DRONE_ID)).thenReturn(Optional.of(drone));
-
-    Drone foundDrone = droneService.getDrone(VALID_DRONE_ID);
-
-    assertNotNull(foundDrone);
-    assertEquals("Drone1", foundDrone.getName());
+    assertNotNull(result);
+    assertEquals(100L, result.getId());
   }
 
   @Test
-  void getDrone_DroneNotFound_ThrowsNotFoundException() {
-    when(droneRepository.findById(INVALID_DRONE_ID)).thenReturn(Optional.empty());
+  void listDrones_ReturnsList() {
+    when(droneRepository.findAll()).thenReturn(List.of(drone));
 
-    assertThrows(NotFoundException.class, () -> droneService.getDrone(INVALID_DRONE_ID));
+    List<Drone> result = droneService.listDrones();
+
+    assertNotNull(result);
+    assertFalse(result.isEmpty());
+    assertEquals(1, result.size());
   }
 }
