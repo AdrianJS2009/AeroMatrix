@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import BatchCommandInput from "../components/BatchCommandInput";
 import CommandInput from "../components/CommandInput";
 import ConfigurationManager from "../components/ConfigurationManager";
-import DroneDirectionalIcon from "../components/DronEDirectionalIcon";
+import DroneDirectionalIcon from "../components/DroneDirectionalIcon";
 import MatrixGrid from "../components/MatrixGrid";
 import { useApi } from "../context/ApiContext";
 import type { BatchDroneCommand, Drone, Matrix } from "../types";

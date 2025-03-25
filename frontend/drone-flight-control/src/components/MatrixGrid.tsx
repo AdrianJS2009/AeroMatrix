@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { Drone, Matrix } from "../types";
 import DroneDirectionalIcon from "./DroneDirectionalIcon";
 
@@ -25,66 +25,58 @@ const MatrixGrid = ({
   interactive = true,
   showOrientationLabels = false,
 }: MatrixGridProps) => {
-  const [grid, setGrid] = useState<JSX.Element[][]>([]);
+  const grid = useMemo(() => {
+    const newGrid: JSX.Element[][] = [];
 
-  useEffect(() => {
-    const createGrid = () => {
-      const newGrid: JSX.Element[][] = [];
+    for (let y = matrix.maxY - 1; y >= 0; y--) {
+      const row: JSX.Element[] = [];
 
-      for (let y = matrix.maxY - 1; y >= 0; y--) {
-        const row: JSX.Element[] = [];
+      for (let x = 0; x < matrix.maxX; x++) {
+        const drone = matrix.drones.find((d) => d.x === x && d.y === y);
+        const isHighlighted = highlightedCells.some(
+          (cell) => cell.x === x && cell.y === y
+        );
 
-        for (let x = 0; x < matrix.maxX; x++) {
-          const drone = matrix.drones.find((d) => d.x === x && d.y === y);
-          const isHighlighted = highlightedCells.some(
-            (cell) => cell.x === x && cell.y === y
-          );
-
-          const cellSizeClass = `w-${cellSize} h-${cellSize}`;
-
-          row.push(
-            <div
-              key={`${x}-${y}`}
-              className={`border border-gray-200 dark:border-gray-700 flex items-center justify-center ${
-                drone ? "bg-blue-50 dark:bg-blue-900/30 cursor-pointer" : ""
-              } ${
-                selectedDrone && drone?.id === selectedDrone.id
-                  ? "ring-2 ring-blue-500 dark:ring-blue-400"
-                  : ""
-              } ${isHighlighted ? "bg-yellow-100 dark:bg-yellow-900/30" : ""} ${
-                interactive ? "hover:bg-gray-50 dark:hover:bg-gray-800" : ""
-              }`}
-              style={{ width: `${cellSize}px`, height: `${cellSize}px` }}
-              onClick={() =>
-                interactive && drone && onSelectDrone && onSelectDrone(drone)
-              }
-              title={`Position: (${x}, ${y})${
-                drone ? ` - Drone: ${drone.name} (${drone.orientation})` : ""
-              }`}
-            >
-              {drone && (
-                <DroneDirectionalIcon
-                  orientation={drone.orientation}
-                  size={cellSize >= 32 ? "lg" : cellSize >= 24 ? "md" : "sm"}
-                  showLabel={showOrientationLabels}
-                />
-              )}
-              {showCoordinates && !drone && (
-                <span className="text-[8px] text-gray-400 dark:text-gray-600">
-                  {x},{y}
-                </span>
-              )}
-            </div>
-          );
-        }
-
-        newGrid.push(row);
+        row.push(
+          <div
+            key={`${x}-${y}`}
+            className={`border border-gray-200 dark:border-gray-700 flex items-center justify-center ${
+              drone ? "bg-blue-50 dark:bg-blue-900/30 cursor-pointer" : ""
+            } ${
+              selectedDrone && drone?.id === selectedDrone.id
+                ? "ring-2 ring-blue-500 dark:ring-blue-400"
+                : ""
+            } ${isHighlighted ? "bg-yellow-100 dark:bg-yellow-900/30" : ""} ${
+              interactive ? "hover:bg-gray-50 dark:hover:bg-gray-800" : ""
+            }`}
+            style={{ width: `${cellSize}px`, height: `${cellSize}px` }}
+            onClick={() =>
+              interactive && drone && onSelectDrone && onSelectDrone(drone)
+            }
+            title={`Position: (${x}, ${y})${
+              drone ? ` - Drone: ${drone.name} (${drone.orientation})` : ""
+            }`}
+          >
+            {drone && (
+              <DroneDirectionalIcon
+                orientation={drone.orientation}
+                size={cellSize >= 32 ? "lg" : cellSize >= 24 ? "md" : "sm"}
+                showLabel={showOrientationLabels}
+              />
+            )}
+            {showCoordinates && !drone && (
+              <span className="text-[8px] text-gray-400 dark:text-gray-600">
+                {x},{y}
+              </span>
+            )}
+          </div>
+        );
       }
 
-      setGrid(newGrid);
-    };
+      newGrid.push(row);
+    }
 
-    createGrid();
+    return newGrid;
   }, [
     matrix,
     selectedDrone,
@@ -115,7 +107,7 @@ const MatrixGrid = ({
         </div>
       </div>
 
-      {/* Orientation legend */}
+      {/* Orientations leyend */}
       <div className="flex flex-wrap gap-4 justify-center">
         <div className="flex items-center gap-2">
           <DroneDirectionalIcon orientation="NORTH" size="sm" />
