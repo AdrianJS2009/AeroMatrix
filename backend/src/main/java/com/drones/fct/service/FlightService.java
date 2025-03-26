@@ -25,10 +25,16 @@ public class FlightService {
   private final DroneRepository droneRepository;
 
   public Drone executeCommands(Long droneId, List<MovementCommand> commands) {
+    if (commands == null || commands.isEmpty()) {
+      throw new IllegalArgumentException("Command list must not be empty.");
+    }
     Drone drone = droneRepository.findById(droneId)
         .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 
     for (MovementCommand cmd : commands) {
+      if (cmd == null) {
+        throw new UnsupportedCommandException("Unsupported command: null");
+      }
       switch (cmd) {
         case TURN_LEFT -> turnLeft(drone);
         case TURN_RIGHT -> turnRight(drone);
@@ -36,7 +42,6 @@ public class FlightService {
         default -> throw new UnsupportedCommandException("Unsupported command: " + cmd);
       }
     }
-
     return drone;
   }
 
@@ -49,6 +54,12 @@ public class FlightService {
   @Transactional
   public void executeBatchCommands(List<BatchDroneCommandRequest.DroneCommand> commands) {
     for (BatchDroneCommandRequest.DroneCommand cmd : commands) {
+      if (cmd.getCommands() == null || cmd.getCommands().isEmpty()) {
+        throw new IllegalArgumentException("Drone " + cmd.getDroneId() + " has no commands to execute.");
+      }
+      if (!droneRepository.existsById(cmd.getDroneId())) {
+        throw new NotFoundException("Drone ID " + cmd.getDroneId() + " not found in batch request.");
+      }
       try {
         Drone drone = executeCommands(cmd.getDroneId(), cmd.getCommands());
         checkGlobalCollisions(drone);

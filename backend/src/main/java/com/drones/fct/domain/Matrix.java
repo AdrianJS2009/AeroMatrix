@@ -38,6 +38,7 @@ public class Matrix {
   private int maxY;
 
   @OneToMany(mappedBy = "matrix", fetch = FetchType.LAZY)
+  @Builder.Default
   private List<Drone> drones = new ArrayList<>();
 
   public Matrix(int maxX, int maxY) {

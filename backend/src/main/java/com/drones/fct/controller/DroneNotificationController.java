@@ -1,6 +1,5 @@
 package com.drones.fct.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,8 +10,11 @@ import com.drones.fct.dto.DroneDto;
 @RestController
 public class DroneNotificationController {
 
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
+  private final SimpMessagingTemplate messagingTemplate;
+
+  public DroneNotificationController(SimpMessagingTemplate messagingTemplate) {
+    this.messagingTemplate = messagingTemplate;
+  }
 
   public void sendDroneUpdate(DroneDto drone) {
     messagingTemplate.convertAndSend("/topic/droneUpdates", drone);

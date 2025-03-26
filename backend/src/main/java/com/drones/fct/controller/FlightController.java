@@ -50,7 +50,7 @@ public class FlightController {
   })
   @PostMapping("/drones/commands")
   public void executeCommandsInSequence(
-      @Parameter(description = "IDs de los drones") @RequestParam List<Long> droneIds,
+      @Parameter(description = "Drones IDs") @RequestParam List<Long> droneIds,
       @RequestBody CommandsRequest request) {
     flightService.executeCommandsInSequence(droneIds, request.getCommands());
   }
