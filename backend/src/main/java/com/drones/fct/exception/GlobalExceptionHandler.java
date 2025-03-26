@@ -3,6 +3,7 @@ package com.drones.fct.exception;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,6 +46,28 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleUnsupportedCommand(UnsupportedCommandException ex) {
     ApiError error = new ApiError("BAD_REQUEST", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiError> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+
+    String message = "Invalid input: " + extractEnumError(ex);
+    ApiError error = new ApiError("BAD_REQUEST", message);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
+  private String extractEnumError(HttpMessageNotReadableException ex) {
+    String msg = ex.getLocalizedMessage();
+
+    if (msg != null && msg.contains("not one of the values accepted for Enum class")) {
+      return "Value provided is not valid. Accepted values are: N, S, E, O.";
+    }
+    return "Malformed JSON request.";
+  }
+
+  public ResponseEntity<ApiError> handleAllUncaughtExceptions(Exception ex) {
+    ApiError error = new ApiError("INTERNAL_SERVER_ERROR", "Unexpected error occurred: " + ex.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
   }
 
 }

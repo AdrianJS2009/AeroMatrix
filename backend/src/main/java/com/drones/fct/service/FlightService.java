@@ -25,6 +25,9 @@ public class FlightService {
   private final DroneRepository droneRepository;
 
   public Drone executeCommands(Long droneId, List<MovementCommand> commands) {
+    if (commands == null || commands.isEmpty()) {
+      throw new IllegalArgumentException("Command list must not be empty.");
+    }
     Drone drone = droneRepository.findById(droneId)
         .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 

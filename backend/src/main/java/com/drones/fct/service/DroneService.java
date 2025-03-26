@@ -24,10 +24,27 @@ public class DroneService {
   private final MatrixRepository matrixRepository;
 
   public Drone createDrone(Long matrixId, String name, String model, int x, int y, Orientation orientation) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Drone name must not be empty.");
+    }
+    if (model == null || model.trim().isEmpty()) {
+      throw new IllegalArgumentException("Drone model must not be empty.");
+    }
+    if (orientation == null) {
+      throw new IllegalArgumentException("Drone orientation must be provided.");
+    }
+
     Matrix matrix = matrixRepository.findById(matrixId)
         .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
 
     validatePosition(matrix, x, y);
+
+    if (droneRepository.existsByNameAndMatrixId(name, matrixId)) {
+      throw new ConflictException("A drone with the name '" + name + "' already exists in matrix " + matrixId);
+    }
+    if (droneRepository.existsByModelAndMatrixId(model, matrixId)) {
+      throw new ConflictException("A drone with the model '" + model + "' already exists in matrix " + matrixId);
+    }
 
     if (!droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isEmpty()) {
       throw new ConflictException("Position conflict at (" + x + "," + y + ") in matrix " + matrixId);
@@ -47,6 +64,16 @@ public class DroneService {
 
   public Drone updateDrone(Long droneId, Long matrixId, String name, String model, int x, int y,
       Orientation orientation) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Drone name must not be empty.");
+    }
+    if (model == null || model.trim().isEmpty()) {
+      throw new IllegalArgumentException("Drone model must not be empty.");
+    }
+    if (orientation == null) {
+      throw new IllegalArgumentException("Drone orientation must be provided.");
+    }
+
     Drone drone = droneRepository.findById(droneId)
         .orElseThrow(() -> new NotFoundException("Drone ID " + droneId + " not found"));
 
@@ -54,6 +81,13 @@ public class DroneService {
         .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
 
     validatePosition(newMatrix, x, y);
+
+    if (!drone.getName().equals(name) && droneRepository.existsByNameAndMatrixId(name, matrixId)) {
+      throw new ConflictException("A drone with the name '" + name + "' already exists in matrix " + matrixId);
+    }
+    if (!drone.getModel().equals(model) && droneRepository.existsByModelAndMatrixId(model, matrixId)) {
+      throw new ConflictException("A drone with the model '" + model + "' already exists in matrix " + matrixId);
+    }
 
     // Check if new position is occupied by another drone
     if ((drone.getX() != x || drone.getY() != y || !drone.getMatrix().getId().equals(matrixId))

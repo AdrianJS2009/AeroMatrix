@@ -27,8 +27,12 @@ public class MatrixService {
   private final DroneRepository droneRepository;
 
   public Matrix createMatrix(int maxX, int maxY) {
+    int maxSize = 100;
     if (maxX <= 0 || maxY <= 0) {
       throw new ConflictException("Matrix dimensions must be positive (maxX: " + maxX + ", maxY: " + maxY + ")");
+    }
+    if (maxX > maxSize || maxY > maxSize) {
+      throw new ConflictException("Matrix dimensions exceed maximum allowed size (" + maxSize + ").");
     }
     Matrix matrix = Matrix.builder()
         .maxX(maxX)
