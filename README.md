@@ -1,41 +1,42 @@
+
 # 🚁 AeroMatrix
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [Cómo Clonar y Ejecutar la Aplicación](#-cómo-clonar-y-ejecutar-la-aplicación)
-- [Arquitectura y Patrones de Diseño](#-arquitectura-y-patrones-de-diseño)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Endpoints de la API](#-endpoints-de-la-api)
-- [Configuración de la Base de Datos](#-configuración-de-la-base-de-datos)
+- [How to Clone and Run the Application](#-how-to-clone-and-run-the-application)
+- [Architecture and Design Patterns](#-architecture-and-design-patterns)
+- [Project Structure](#-project-structure)
+- [API Endpoints](#-api-endpoints)
+- [Database Configuration](#-database-configuration)
 
 ---
 
-## 🛠️ Cómo Clonar y Ejecutar la Aplicación
+## 🛠️ How to Clone and Run the Application
 
-1. **Clonar el repositorio:**
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/AdrianJS2009/AeroMatrix.git
    cd Proyecto_FCT
    ```
 
-2. **Configurar la base de datos:**
+2. **Set up the database:**
 
-   - MYSQL instalado y en ejecución.
-   - Crea una base de datos llamada `dronesdb`.
+   - Ensure MySQL is installed and running.
+   - Create a database named `dronesdb`.
 
-3. **Configurar las propiedades de la aplicación:**
+3. **Configure the application properties:**
 
-   - Edita el archivo `src/main/resources/application.properties` con las credenciales de tu base de datos.
+   - Edit the file `src/main/resources/application.properties` with your database credentials.
 
-   ```bash
-    spring.datasource.url=jdbc:mysql://localhost:3306/dronesdb
-    spring.datasource.username=
-    spring.datasource.password=
-    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/dronesdb
+   spring.datasource.username=
+   spring.datasource.password=
+   spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
    ```
 
-4. **Ejecutar la aplicación:**
+4. **Run the application:**
 
    ```bash
    ./mvnw spring-boot:run
@@ -43,74 +44,87 @@
 
 ---
 
-## 🏛️ Arquitectura y Patrones de Diseño
+## 🏛️ Architecture and Design Patterns
 
-El proyecto sigue una combinación de **Domain-Driven Design (DDD)** y **Arquitectura Hexagonal**, organizado en capas con responsabilidades:
+The project follows a combination of **Domain-Driven Design (DDD)** and **Hexagonal Architecture**, organized in layers with clear responsibilities:
 
 ### 1. Domain-Driven Design (DDD)
 
-- **Dominio Central**:
-  - Entidades como `Drone` y `Matrix` (en `domain/`) encapsulan la lógica crítica del negocio.
-  - Enums como `Orientation` y `MovementCommand` definen reglas del dominio (ej: direcciones válidas).
-- **Agregados**:
-  - `Matrix` actúa como raíz, gestionando la relación con los drones asociados.
+- **Core Domain**:
+  - Entities like `Drone` and `Matrix` (in `domain/`) encapsulate core business logic.
+  - Enums like `Orientation` and `MovementCommand` define domain rules (e.g., valid directions).
+- **Aggregates**:
+  - `Matrix` acts as the aggregate root, managing its associated drones.
 
-### 2. **Arquitectura Hexagonal **
+### 2. Hexagonal Architecture
 
-- **Núcleo del Dominio**:
-  - Las entidades y servicios de dominio (`DroneService`, `FlightService`) son independientes de la infraestructura.
+- **Domain Core**:
+  - Entities and services (`DroneService`, `FlightService`) are independent of infrastructure.
 - **Repositories**:
-  - Interfaces como `DroneRepository` definen cómo interactúa el núcleo con el exterior.
-- **Adaptadores**:
-  - `DroneController` y `MatrixController` adaptan peticiones HTTP
-  - `DroneRepository` (JPA) implementa acceso a datos sin acoplar el dominio a una BD específica.
+  - Interfaces like `DroneRepository` define how the core interacts with the outside world.
+- **Adapters**:
+  - `DroneController` and `MatrixController` adapt HTTP requests.
+  - `DroneRepository` (JPA) provides data access without coupling to specific DB.
 
-### 3. **Patrones Clave**
+### 3. Key Patterns
 
 - **Repository**:
-  - Abstrae el acceso a datos (`DroneRepository`, `MatrixRepository`)
+  - Abstracts data access (`DroneRepository`, `MatrixRepository`)
 - **Service**:
-  - Servicios como `FlightService` coordinan operaciones complejas
+  - Services like `FlightService` coordinate complex operations
 - **DTO (Data Transfer Object)**:
-  - Clases como `DroneDto` desacoplan la API de las entidades internas.
-- **Manejo Centralizado de Errores**:
-  - `GlobalExceptionHandler` unifica el manejo de excepciones usando `@ControllerAdvice`.
+  - Classes like `DroneDto` decouple API from internal entities.
+- **Centralized Error Handling**:
+  - `GlobalExceptionHandler` handles exceptions using `@ControllerAdvice`.
 
 ---
 
-## 🏗️ Estructura del Proyecto
+## 🏗️ Project Structure
 
 ```plaintext
-src/
-├── main/
-│   ├── java/com/drones/fct/
-│   │   ├── config/              # ⚙️ Configuración global 
-│   │   ├── controller/          # 🌍 Controladores REST 
-│   │   ├── domain/              # 🧠 Entidades 
-│   │   ├── dto/                 # 📦 Clases DTO
-│   │   ├── exception/           # 🚨 Excepciones personalizadas y handler global
-│   │   ├── repository/          # 🗃️ Repositorios JPA
-│   │   ├── service/             # 🔧 Lógica principal
-│   │   └── FctApplication.java  # 🚀 Main
-│   └── resources/               # ⚙️ Configuración (application.properties, etc.)
-│      
-│       
-└── test/
-    └── java/com/drones/fct/
-        ├── service/             # 🧪 Pruebas unitarias de servicios
-        ├── controller/          # 🧪 Pruebas de integración de controladores
-        ├── repository/          # 🧪 Pruebas de repositorios
-        └── exception/           # 🧪 Pruebas de manejo de errores
-
+Proyecto_FCT/
+├── backend/
+│   └── src/
+│       ├── main/
+│       │   ├── java/com/drones/fct/
+│       │   │   ├── config/              # ⚙️ Global config
+│       │   │   ├── controller/          # 🌍 REST Controllers
+│       │   │   ├── domain/              # 🧠 Domain entities
+│       │   │   ├── dto/                 # 📦 DTO classes
+│       │   │   ├── exception/           # 🚨 Custom exceptions and global handler
+│       │   │   ├── repository/          # 🗃️ JPA repositories
+│       │   │   ├── service/             # 🔧 Business logic
+│       │   │   └── FctApplication.java  # 🚀 Main class
+│       │   └── resources/               # ⚙️ Config (application.properties, etc.)
+│       └── test/java/com/drones/fct/
+│           ├── service/                # 🧪 Service unit tests
+│           ├── controller/             # 🧪 Controller integration tests
+│           ├── repository/             # 🧪 Repository tests
+│           └── exception/              # 🧪 Exception handling tests
+│
+├── frontend/drone-flight-control/
+│   ├── public/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   └── types/
+│   ├── .env.local
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tailwind.config.js
+│   └── vite.config.ts
 ```
 
 ---
 
-## 🌐 Endpoints de la API
+## 🌐 API Endpoints
 
 ### Matrices
 
-- **Crear una matriz:**
+- **Create a matrix:**
 
   ```http
   POST /api/matrices-flight/create
@@ -123,13 +137,13 @@ src/
   }
   ```
 
-- **Obtener una matriz por ID:**
+- **Get matrix by ID:**
 
   ```http
   GET /api/matrices-flight/get/{id}
   ```
 
-- **Actualizar una matriz:**
+- **Update a matrix:**
 
   ```http
   PUT /api/matrices-flight/update/{id}
@@ -142,7 +156,7 @@ src/
   }
   ```
 
-- **Eliminar una matriz:**
+- **Delete a matrix:**
 
   ```http
   DELETE /api/matrices-flight/delete/{id}
@@ -150,7 +164,7 @@ src/
 
 ### Drones
 
-- **Crear un dron:**
+- **Create a drone:**
 
   ```http
   POST /api/drones
@@ -167,13 +181,13 @@ src/
   }
   ```
 
-- **Obtener un dron por ID:**
+- **Get drone by ID:**
 
   ```http
   GET /api/drones/{droneId}
   ```
 
-- **Actualizar un dron:**
+- **Update a drone:**
 
   ```http
   PUT /api/drones/{droneId}
@@ -189,15 +203,15 @@ src/
   }
   ```
 
-- **Eliminar un dron:**
+- **Delete a drone:**
 
   ```http
   DELETE /api/drones/{droneId}
   ```
 
-### Vuelos
+### Flights
 
-- **Ejecutar comandos en un dron:**
+- **Execute commands on a drone:**
 
   ```http
   POST /api/flights/drone/{droneId}/commands
@@ -209,7 +223,7 @@ src/
   }
   ```
 
-- **Ejecutar comandos en secuencia en varios drones:**
+- **Execute commands on multiple drones:**
 
   ```http
   POST /api/flights/drones/commands
@@ -222,7 +236,7 @@ src/
   }
   ```
 
-- **Ejecutar múltiples secuencias de comandos en múltiples drones:**
+- **Execute multiple command sequences on multiple drones:**
 
   ```http
   POST /api/flights/drones/batch-commands
@@ -242,8 +256,3 @@ src/
     ]
   }
   ```
-
----
-
-
-```
