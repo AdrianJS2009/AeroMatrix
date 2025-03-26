@@ -20,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MatrixService {
 
+  private static final String MATRIX_ID = "Matrix ID ";
+  private static final String NOT_FOUND = " not found";
+
   private final MatrixRepository matrixRepository;
   private final DroneRepository droneRepository;
 
@@ -36,7 +39,7 @@ public class MatrixService {
 
   public Matrix updateMatrix(Long matrixId, int maxX, int maxY) {
     Matrix matrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
+        .orElseThrow(() -> new NotFoundException(MATRIX_ID + matrixId + NOT_FOUND));
 
     List<Drone> drones = droneRepository.findByMatrixId(matrixId);
     for (Drone drone : drones) {
@@ -54,12 +57,12 @@ public class MatrixService {
 
   public Matrix getMatrix(Long matrixId) {
     return matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
+        .orElseThrow(() -> new NotFoundException(MATRIX_ID + matrixId + NOT_FOUND));
   }
 
   public void deleteMatrix(Long matrixId) {
     Matrix matrix = matrixRepository.findById(matrixId)
-        .orElseThrow(() -> new NotFoundException("Matrix ID " + matrixId + " not found"));
+        .orElseThrow(() -> new NotFoundException(MATRIX_ID + matrixId + NOT_FOUND));
 
     List<Drone> drones = droneRepository.findByMatrixId(matrixId);
     if (!drones.isEmpty()) {
