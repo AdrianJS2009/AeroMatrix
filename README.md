@@ -15,8 +15,8 @@
 1. **Clonar el repositorio:**
 
    ```bash
-   git clone https://github.com/AdrianJS2009/Proyecto-FCT.git
-   cd proyecto-drones
+   git clone https://github.com/AdrianJS2009/AeroMatrix.git
+   cd Proyecto_FCT
    ```
 
 2. **Configurar la base de datos:**
@@ -84,9 +84,9 @@ El proyecto sigue una combinación de **Domain-Driven Design (DDD)** y **Arquite
 src/
 ├── main/
 │   ├── java/com/drones/fct/
-│   │   ├── config/              # ⚙️ Configuración global (Swagger, CORS, etc.)
-│   │   ├── controller/          # 🌍 Controladores REST (Drone, Vuelo, Matriz)
-│   │   ├── domain/              # 🧠 Entidades (Drone, Matrix, etc.)
+│   │   ├── config/              # ⚙️ Configuración global 
+│   │   ├── controller/          # 🌍 Controladores REST 
+│   │   ├── domain/              # 🧠 Entidades 
 │   │   ├── dto/                 # 📦 Clases DTO
 │   │   ├── exception/           # 🚨 Excepciones personalizadas y handler global
 │   │   ├── repository/          # 🗃️ Repositorios JPA
