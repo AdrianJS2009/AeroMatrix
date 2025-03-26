@@ -87,35 +87,36 @@ Proyecto_FCT/
 │   └── src/
 │       ├── main/
 │       │   ├── java/com/drones/fct/
-│       │   │   ├── config/              # ⚙️ Global config
+│       │   │   ├── config/              # ⚙️ Global configuration classes
 │       │   │   ├── controller/          # 🌍 REST Controllers
-│       │   │   ├── domain/              # 🧠 Domain entities
-│       │   │   ├── dto/                 # 📦 DTO classes
-│       │   │   ├── exception/           # 🚨 Custom exceptions and global handler
-│       │   │   ├── repository/          # 🗃️ JPA repositories
-│       │   │   ├── service/             # 🔧 Business logic
-│       │   │   └── FctApplication.java  # 🚀 Main class
-│       │   └── resources/               # ⚙️ Config (application.properties, etc.)
+│       │   │   ├── domain/              # 🧠 Domain entities (models)
+│       │   │   ├── dto/                 # 📦 Data Transfer Objects
+│       │   │   ├── exception/           # 🚨 Custom exceptions and global handlers
+│       │   │   ├── repository/          # 🗃️ JPA Repositories (data access layer)
+│       │   │   ├── service/             # 🔧 Business logic and services
+│       │   │   └── FctApplication.java  # 🚀 Main Spring Boot application class
+│       │   └── resources/               # ⚙️ Application properties, configs, etc.
 │       └── test/java/com/drones/fct/
-│           ├── service/                # 🧪 Service unit tests
-│           ├── controller/             # 🧪 Controller integration tests
-│           ├── repository/             # 🧪 Repository tests
+│           ├── service/                # 🧪 Unit tests for services
+│           ├── controller/             # 🧪 Integration tests for controllers
+│           ├── repository/             # 🧪 Repository layer tests
 │           └── exception/              # 🧪 Exception handling tests
 │
 ├── frontend/drone-flight-control/
-│   ├── public/
+│   ├── public/                         # 🌐 Static files
 │   ├── src/
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   └── types/
-│   ├── .env.local
-│   ├── index.html
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── tailwind.config.js
-│   └── vite.config.ts
+│   │   ├── api/                        # 🔌 API calls and interfaces
+│   │   ├── components/                 # 🧩 Reusable UI components
+│   │   ├── context/                    # 🧠 Global context and providers
+│   │   ├── pages/                      # 📄 Application routes and views
+│   │   └── types/                      # 📝 TypeScript types and interfaces
+│   ├── .env.local                      # 🔐 Local environment variables
+│   ├── index.html                      # 🏠 HTML entry point
+│   ├── package.json                    # 📦 Project dependencies and scripts
+│   ├── tsconfig.json                   # ⚙️ TypeScript configuration
+│   ├── tailwind.config.js              # 🎨 Tailwind CSS configuration
+│   └── vite.config.ts                  # ⚡ Vite build configuration
+
 ```
 
 ---
