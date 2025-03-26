@@ -54,6 +54,12 @@ public class FlightService {
   @Transactional
   public void executeBatchCommands(List<BatchDroneCommandRequest.DroneCommand> commands) {
     for (BatchDroneCommandRequest.DroneCommand cmd : commands) {
+      if (cmd.getCommands() == null || cmd.getCommands().isEmpty()) {
+        throw new IllegalArgumentException("Drone " + cmd.getDroneId() + " has no commands to execute.");
+      }
+      if (!droneRepository.existsById(cmd.getDroneId())) {
+        throw new NotFoundException("Drone ID " + cmd.getDroneId() + " not found in batch request.");
+      }
       try {
         Drone drone = executeCommands(cmd.getDroneId(), cmd.getCommands());
         checkGlobalCollisions(drone);

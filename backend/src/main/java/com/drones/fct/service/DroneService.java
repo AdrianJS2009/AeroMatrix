@@ -89,10 +89,17 @@ public class DroneService {
       throw new ConflictException("A drone with the model '" + model + "' already exists in matrix " + matrixId);
     }
 
-    // Check if new position is occupied by another drone
     if ((drone.getX() != x || drone.getY() != y || !drone.getMatrix().getId().equals(matrixId))
         && !droneRepository.findByXAndYAndMatrixId(x, y, matrixId).isEmpty()) {
       throw new ConflictException("Position (" + x + "," + y + ") in matrix " + matrixId + " is occupied");
+    }
+
+    if (drone.getX() == x && drone.getY() == y &&
+        drone.getOrientation() == orientation &&
+        drone.getMatrix().getId().equals(matrixId) &&
+        drone.getName().equals(name) &&
+        drone.getModel().equals(model)) {
+      throw new ConflictException("No changes detected in the drone update.");
     }
 
     drone.setMatrix(newMatrix);
