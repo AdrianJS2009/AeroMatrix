@@ -59,9 +59,25 @@ public class GlobalExceptionHandler {
   private String extractEnumError(HttpMessageNotReadableException ex) {
     String msg = ex.getLocalizedMessage();
 
-    if (msg != null && msg.contains("not one of the values accepted for Enum class")) {
-      return "Value provided is not valid. Accepted values are: N, S, E, O.";
+    if (msg == null)
+      return "Malformed JSON request.";
+
+    if (msg.contains("MovementCommand")) {
+      return "Invalid movement command. Accepted values are: TURN_LEFT, TURN_RIGHT, MOVE_FORWARD.";
     }
+
+    if (msg.contains("Orientation")) {
+      return "Invalid orientation. Accepted values are: N, S, E, O.";
+    }
+
+    if (msg.contains("Unexpected character") || msg.contains("Unexpected token")) {
+      return "Syntax error in JSON payload. Check for extra commas, brackets, or incorrect formatting.";
+    }
+
+    if (msg.contains("Cannot deserialize value of type")) {
+      return "Invalid value type in JSON request. Please review the structure.";
+    }
+
     return "Malformed JSON request.";
   }
 
