@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -6,17 +5,7 @@ import {
   type OnInit,
   Output,
 } from '@angular/core';
-import {
-  type FormBuilder,
-  type FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
+import { type FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import {
   type CreateDroneRequest,
   type DroneModel,
@@ -29,16 +18,6 @@ import type { MatrixModel } from '../../../models/matrix.model';
   selector: 'app-drone-form',
   templateUrl: './drone-form.component.html',
   styleUrls: ['./drone-form.component.css'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    DropdownModule,
-    InputNumberModule,
-    InputTextModule,
-  ],
-  standalone: false,
 })
 export class DroneFormComponent implements OnInit {
   @Input() drone: DroneModel | null = null;
@@ -66,16 +45,16 @@ export class DroneFormComponent implements OnInit {
 
   initForm(): void {
     this.droneForm = this.fb.group({
-      name: [this.drone?.name || '', [Validators.required]],
-      model: [this.drone?.model || 'Standard', [Validators.required]],
-      x: [this.drone?.x || 0, [Validators.required, Validators.min(0)]],
-      y: [this.drone?.y || 0, [Validators.required, Validators.min(0)]],
+      name: [this.drone?.name ?? '', [Validators.required]],
+      model: [this.drone?.model ?? 'Standard', [Validators.required]],
+      x: [this.drone?.x ?? 0, [Validators.required, Validators.min(0)]],
+      y: [this.drone?.y ?? 0, [Validators.required, Validators.min(0)]],
       orientation: [
-        this.drone?.orientation || Orientation.NORTH,
+        this.drone?.orientation ?? Orientation.NORTH,
         [Validators.required],
       ],
       matrixId: [
-        this.drone?.matrixId ||
+        this.drone?.matrixId ??
           (this.matrices.length > 0 ? this.matrices[0].id : null),
         [Validators.required],
       ],

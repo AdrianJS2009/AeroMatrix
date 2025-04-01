@@ -101,13 +101,15 @@
       icon="pi pi-times"
       class="p-button-text"
       (click)="onCancel()"
+      title="Cancel"
     ></button>
     <button
       pButton
       type="submit"
-      label="{{ isEdit ? 'Update' : 'Create' }}"
+      [label]="isEdit ? 'Update' : 'Create'"
       icon="pi pi-check"
       [disabled]="droneForm.invalid"
+      [title]="isEdit ? 'Update Drone' : 'Create Drone'"
     ></button>
   </div>
 </form>
