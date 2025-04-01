@@ -1,0 +1,119 @@
+.matrix-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  .page-title-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .page-title {
+      margin: 0;
+      color: var(--text-color);
+      font-weight: 600;
+    }
+  }
+
+  .page-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.matrix-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.matrix-info-card {
+  .matrix-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .info-item {
+      display: flex;
+
+      .info-label {
+        font-weight: 600;
+        min-width: 100px;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.p-field {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+.p-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+  margin-top: -0.5rem;
+
+  .p-col-6 {
+    flex: 0 0 50%;
+    padding: 0.5rem;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .matrix-content {
+    grid-template-columns: 300px 1fr;
+    grid-template-areas:
+      "info grid"
+      "drones drones";
+  }
+
+  .matrix-info-section {
+    grid-area: info;
+  }
+
+  .matrix-grid-section {
+    grid-area: grid;
+  }
+
+  .matrix-drones-section {
+    grid-area: drones;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .page-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

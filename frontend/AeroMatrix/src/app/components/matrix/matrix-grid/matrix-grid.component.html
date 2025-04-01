@@ -1,0 +1,31 @@
+<div class="matrix-grid-container">
+  <div
+    class="matrix-grid"
+    [style.grid-template-columns]="'repeat(' + matrix.maxX + ', 1fr)'"
+  >
+    <div *ngFor="let row of grid; let y = index">
+      <div *ngFor="let cell of row; let x = index" class="grid-cell">
+        <div *ngIf="cell" class="drone-cell" [pTooltip]="getDroneTooltip(cell)">
+          <i class="pi" [ngClass]="getOrientationIcon(cell.orientation)"></i>
+          <span class="drone-name">{{ cell.name }}</span>
+        </div>
+        <div *ngIf="!cell" class="empty-cell">
+          <span class="cell-coords">({{ x }}, {{ matrix.maxY - 1 - y }})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-legend">
+    <div class="legend-item">
+      <div class="legend-icon drone-cell">
+        <i class="pi pi-arrow-up"></i>
+      </div>
+      <span>Drone</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-icon empty-cell"></div>
+      <span>Empty Cell</span>
+    </div>
+  </div>
+</div>
