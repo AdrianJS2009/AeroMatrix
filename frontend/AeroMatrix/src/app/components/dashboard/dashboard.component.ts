@@ -1,9 +1,9 @@
 import { Component, type OnInit } from '@angular/core';
-import type { MessageService } from 'primeng/api';
-import type { DroneModel } from '../../models/drone.model';
-import type { MatrixModel } from '../../models/matrix.model';
-import type { DroneService } from '../../services/drone.service';
-import type { MatrixService } from '../../services/matrix.service';
+import { MessageService } from 'primeng/api';
+import { DroneModel } from '../../models/drone.model';
+import { MatrixModel } from '../../models/matrix.model';
+import { DroneService } from '../../services/drone.service';
+import { MatrixService } from '../../services/matrix.service';
 
 @Component({
   selector: 'app-dashboard',

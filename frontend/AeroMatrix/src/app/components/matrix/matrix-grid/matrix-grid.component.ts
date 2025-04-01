@@ -5,7 +5,7 @@ import {
   type SimpleChanges,
 } from '@angular/core';
 import { type DroneModel, Orientation } from '../../../models/drone.model';
-import type { MatrixModel } from '../../../models/matrix.model';
+import { MatrixModel } from '../../../models/matrix.model';
 
 @Component({
   selector: 'app-matrix-grid',

@@ -1,12 +1,12 @@
 import { Component, type OnInit } from '@angular/core';
-import type { MessageService } from 'primeng/api';
-import type { DroneModel } from '../../../models/drone.model';
-import type {
+import { MessageService } from 'primeng/api';
+import { DroneModel } from '../../../models/drone.model';
+import {
   BatchDroneCommand,
   BatchDroneCommandRequest,
 } from '../../../models/flight.model';
-import type { DroneService } from '../../../services/drone.service';
-import type { FlightService } from '../../../services/flight.service';
+import { DroneService } from '../../../services/drone.service';
+import { FlightService } from '../../../services/flight.service';
 
 @Component({
   selector: 'app-batch-command',

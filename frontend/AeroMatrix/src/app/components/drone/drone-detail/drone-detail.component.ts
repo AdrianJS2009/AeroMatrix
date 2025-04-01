@@ -1,15 +1,15 @@
 import { Component, type OnInit } from '@angular/core';
-import type { ActivatedRoute, Router } from '@angular/router';
-import type { ConfirmationService, MessageService } from 'primeng/api';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   Orientation,
   type DroneModel,
   type UpdateDroneRequest,
 } from '../../../models/drone.model';
-import type { MatrixModel } from '../../../models/matrix.model';
-import type { DroneService } from '../../../services/drone.service';
-import type { FlightService } from '../../../services/flight.service';
-import type { MatrixService } from '../../../services/matrix.service';
+import { MatrixModel } from '../../../models/matrix.model';
+import { DroneService } from '../../../services/drone.service';
+import { FlightService } from '../../../services/flight.service';
+import { MatrixService } from '../../../services/matrix.service';
 
 @Component({
   selector: 'app-drone-detail',

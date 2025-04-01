@@ -1,4 +1,4 @@
-import type { DroneModel } from './drone.model';
+import { DroneModel } from './drone.model';
 
 export interface MatrixModel {
   id?: number;

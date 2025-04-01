@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { type FormBuilder, type FormGroup, Validators } from '@angular/forms';
-import type {
+import {
   CreateMatrixRequest,
   MatrixModel,
   UpdateMatrixRequest,

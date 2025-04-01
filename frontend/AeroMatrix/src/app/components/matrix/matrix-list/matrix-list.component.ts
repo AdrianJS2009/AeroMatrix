@@ -1,10 +1,10 @@
 import { Component, type OnInit } from '@angular/core';
-import type { ConfirmationService, MessageService } from 'primeng/api';
-import type {
+import { ConfirmationService, MessageService } from 'primeng/api';
+import {
   CreateMatrixRequest,
   MatrixModel,
 } from '../../../models/matrix.model';
-import type { MatrixService } from '../../../services/matrix.service';
+import { MatrixService } from '../../../services/matrix.service';
 
 @Component({
   selector: 'app-matrix-list',

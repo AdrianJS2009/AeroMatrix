@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import type { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
@@ -16,9 +16,9 @@ import {
   type DroneModel,
   Orientation,
 } from '../../../models/drone.model';
-import type { MatrixModel } from '../../../models/matrix.model';
-import type { DroneService } from '../../../services/drone.service';
-import type { MatrixService } from '../../../services/matrix.service';
+import { MatrixModel } from '../../../models/matrix.model';
+import { DroneService } from '../../../services/drone.service';
+import { MatrixService } from '../../../services/matrix.service';
 
 @Component({
   selector: 'app-drone-detail',

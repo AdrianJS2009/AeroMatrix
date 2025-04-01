@@ -1,5 +1,5 @@
 import { Component, type OnInit } from '@angular/core';
-import type { MenuItem } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-header',

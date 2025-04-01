@@ -12,7 +12,7 @@ import {
   Orientation,
   type UpdateDroneRequest,
 } from '../../../models/drone.model';
-import type { MatrixModel } from '../../../models/matrix.model';
+import { MatrixModel } from '../../../models/matrix.model';
 
 @Component({
   selector: 'app-drone-form',

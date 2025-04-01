@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../enviroments/enviroment';
-import type {
+import {
   CreateMatrixRequest,
   MatrixModel,
   UpdateMatrixRequest,
 } from '../models/matrix.model';
-import type { HttpClientService } from './http-client.service';
+import { HttpClientService } from './http-client.service';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,5 @@
 import { Component, type OnInit } from '@angular/core';
-import type { MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
