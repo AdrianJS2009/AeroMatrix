@@ -61,6 +61,8 @@ export class MatrixGridComponent implements OnChanges {
   }
 
   getDroneTooltip(drone: DroneModel): string {
-    return `${drone.name} (${drone.model})\nPosition: (${drone.x}, ${drone.y})\nOrientation: ${drone.orientation}`;
+    return `${drone.name} (${drone.model})
+Position: (${drone.x}, ${drone.y})
+Orientation: ${drone.orientation}`;
   }
 }

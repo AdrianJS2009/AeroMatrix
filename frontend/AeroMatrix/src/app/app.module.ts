@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,14 +32,22 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DroneDetailComponent } from './components/drone/drone-detail/drone-detail.component';
+import { DroneFormComponent } from './components/drone/drone-form/drone-form.component';
 import { DroneListComponent } from './components/drone/drone-list/drone-list.component';
 import { BatchCommandComponent } from './components/flight/batch-command/batch-command.component';
 import { FlightControlComponent } from './components/flight/flight-control/flight-control.component';
 import { MatrixDetailComponent } from './components/matrix/matrix-detail/matrix-detail.component';
+import { MatrixFormComponent } from './components/matrix/matrix-form/matrix-form.component';
 import { MatrixGridComponent } from './components/matrix/matrix-grid/matrix-grid.component';
 import { MatrixListComponent } from './components/matrix/matrix-list/matrix-list.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { HeaderComponent } from './components/shared/header/header.component';
+
+// Services
+import { DroneService } from './services/drone.service';
+import { FlightService } from './services/flight.service';
+import { HttpClientService } from './services/http-client.service';
+import { MatrixService } from './services/matrix.service';
 
 @NgModule({
   declarations: [
@@ -47,9 +55,11 @@ import { HeaderComponent } from './components/shared/header/header.component';
     DashboardComponent,
     MatrixListComponent,
     MatrixDetailComponent,
+    MatrixGridComponent,
+    MatrixFormComponent,
     DroneListComponent,
     DroneDetailComponent,
-    MatrixGridComponent,
+    DroneFormComponent,
     FlightControlComponent,
     BatchCommandComponent,
     HeaderComponent,
@@ -83,7 +93,16 @@ import { HeaderComponent } from './components/shared/header/header.component';
     ChipModule,
     BadgeModule,
   ],
-  providers: [MessageService, ConfirmationService],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    NotificationService,
+    HttpClient,
+    HttpClientService,
+    DroneService,
+    MatrixService,
+    FlightService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

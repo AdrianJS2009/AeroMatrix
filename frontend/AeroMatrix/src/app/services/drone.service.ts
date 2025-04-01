@@ -12,7 +12,7 @@ import type { HttpClientService } from './http-client.service';
   providedIn: 'root',
 })
 export class DroneService {
-  private apiUrl = `${environment.apiUrl}/drones`;
+  private readonly apiUrl = `${environment.apiUrl}/drones`;
 
   constructor(private httpClient: HttpClientService) {}
 

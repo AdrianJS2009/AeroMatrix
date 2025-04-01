@@ -12,7 +12,7 @@ import type { HttpClientService } from './http-client.service';
   providedIn: 'root',
 })
 export class MatrixService {
-  private apiUrl = `${environment.apiUrl}/matrices`;
+  private readonly apiUrl = `${environment.apiUrl}/matrices`;
 
   constructor(private httpClient: HttpClientService) {}
 

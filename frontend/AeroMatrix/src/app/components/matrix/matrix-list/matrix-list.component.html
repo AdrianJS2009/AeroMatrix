@@ -7,6 +7,7 @@
       icon="pi pi-plus"
       (click)="openCreateDialog()"
       class="p-button-success"
+      title="Create New Matrix"
     ></button>
   </div>
 
@@ -34,10 +35,10 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
-          <th>ID</th>
-          <th>Dimensions</th>
-          <th>Drones</th>
-          <th>Actions</th>
+          <th scope="col">ID</th>
+          <th scope="col">Dimensions</th>
+          <th scope="col">Drones</th>
+          <th scope="col">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-matrix>
@@ -53,6 +54,7 @@
                 class="p-button-rounded p-button-info p-button-sm"
                 [routerLink]="['/matrices', matrix.id]"
                 pTooltip="View Details"
+                title="View Matrix Details"
               ></button>
               <button
                 pButton
@@ -60,6 +62,7 @@
                 class="p-button-rounded p-button-danger p-button-sm"
                 (click)="confirmDelete(matrix)"
                 pTooltip="Delete"
+                title="Delete Matrix"
               ></button>
             </div>
           </td>
@@ -105,6 +108,7 @@
         icon="pi pi-times"
         class="p-button-text"
         (click)="displayCreateDialog = false"
+        title="Cancel"
       ></button>
       <button
         pButton
@@ -112,6 +116,7 @@
         icon="pi pi-check"
         class="p-button-text"
         (click)="createMatrix()"
+        title="Create Matrix"
       ></button>
     </ng-template>
   </p-dialog>

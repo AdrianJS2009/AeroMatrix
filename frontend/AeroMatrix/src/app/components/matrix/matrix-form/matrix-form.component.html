@@ -39,13 +39,15 @@
       icon="pi pi-times"
       class="p-button-text"
       (click)="onCancel()"
+      title="Cancel"
     ></button>
     <button
       pButton
       type="submit"
-      label="{{ isEdit ? 'Update' : 'Create' }}"
+      [label]="isEdit ? 'Update' : 'Create'"
       icon="pi pi-check"
       [disabled]="matrixForm.invalid"
+      [title]="isEdit ? 'Update Matrix' : 'Create Matrix'"
     ></button>
   </div>
 </form>

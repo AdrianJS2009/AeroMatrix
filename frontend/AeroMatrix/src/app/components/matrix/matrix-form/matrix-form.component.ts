@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -6,15 +5,7 @@ import {
   type OnInit,
   Output,
 } from '@angular/core';
-import {
-  type FormBuilder,
-  type FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { type FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import type {
   CreateMatrixRequest,
   MatrixModel,
@@ -25,14 +16,6 @@ import type {
   selector: 'app-matrix-form',
   templateUrl: './matrix-form.component.html',
   styleUrls: ['./matrix-form.component.css'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    InputNumberModule,
-  ],
-  standalone: false,
 })
 export class MatrixFormComponent implements OnInit {
   @Input() matrix: MatrixModel | null = null;
@@ -53,11 +36,11 @@ export class MatrixFormComponent implements OnInit {
   initForm(): void {
     this.matrixForm = this.fb.group({
       maxX: [
-        this.matrix?.maxX || 10,
+        this.matrix?.maxX ?? 10,
         [Validators.required, Validators.min(1), Validators.max(100)],
       ],
       maxY: [
-        this.matrix?.maxY || 10,
+        this.matrix?.maxY ?? 10,
         [Validators.required, Validators.min(1), Validators.max(100)],
       ],
     });

@@ -6,7 +6,7 @@
         icon="pi pi-arrow-left"
         class="p-button-text"
         [routerLink]="['/matrices']"
-        title="Go back to matrices"
+        title="Back to Matrices"
       ></button>
       <h2 class="page-title" *ngIf="matrix">Matrix #{{ matrix.id }}</h2>
     </div>
@@ -17,7 +17,7 @@
         icon="pi pi-pencil"
         (click)="openEditDialog()"
         class="p-button-outlined"
-        title="Edit this matrix"
+        title="Edit Matrix"
       ></button>
       <button
         pButton
@@ -25,7 +25,7 @@
         icon="pi pi-plus"
         (click)="openAddDroneDialog()"
         class="p-button-success"
-        title="Add a new drone to this matrix"
+        title="Add Drone to Matrix"
       ></button>
     </div>
   </div>
@@ -102,7 +102,7 @@
                       class="p-button-rounded p-button-info p-button-sm"
                       [routerLink]="['/drones', drone.id]"
                       pTooltip="View Details"
-                      title="View drone details"
+                      title="View Drone Details"
                     ></button>
                     <button
                       pButton
@@ -110,7 +110,7 @@
                       class="p-button-rounded p-button-danger p-button-sm"
                       (click)="confirmDeleteDrone(drone)"
                       pTooltip="Delete"
-                      title="Delete this drone"
+                      title="Delete Drone"
                     ></button>
                   </div>
                 </td>
@@ -161,6 +161,7 @@
         icon="pi pi-times"
         class="p-button-text"
         (click)="displayEditDialog = false"
+        title="Cancel"
       ></button>
       <button
         pButton
@@ -168,6 +169,7 @@
         icon="pi pi-check"
         class="p-button-text"
         (click)="updateMatrix()"
+        title="Update Matrix"
       ></button>
     </ng-template>
   </p-dialog>
@@ -236,7 +238,7 @@
         icon="pi pi-times"
         class="p-button-text"
         (click)="displayAddDroneDialog = false"
-        title="Cancel adding drone"
+        title="Cancel"
       ></button>
       <button
         pButton
@@ -244,7 +246,7 @@
         icon="pi pi-check"
         class="p-button-text"
         (click)="addDrone()"
-        title="Add the new drone"
+        title="Add Drone"
       ></button>
     </ng-template>
   </p-dialog>

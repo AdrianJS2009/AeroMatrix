@@ -5,8 +5,17 @@
   >
     <div *ngFor="let row of grid; let y = index">
       <div *ngFor="let cell of row; let x = index" class="grid-cell">
-        <div *ngIf="cell" class="drone-cell" [pTooltip]="getDroneTooltip(cell)">
-          <i class="pi" [ngClass]="getOrientationIcon(cell.orientation)"></i>
+        <div
+          *ngIf="cell"
+          class="drone-cell"
+          [pTooltip]="getDroneTooltip(cell)"
+          tooltipPosition="top"
+        >
+          <i
+            class="pi"
+            [ngClass]="getOrientationIcon(cell.orientation)"
+            aria-hidden="true"
+          ></i>
           <span class="drone-name">{{ cell.name }}</span>
         </div>
         <div *ngIf="!cell" class="empty-cell">
@@ -19,7 +28,7 @@
   <div class="grid-legend">
     <div class="legend-item">
       <div class="legend-icon drone-cell">
-        <i class="pi pi-arrow-up"></i>
+        <i class="pi pi-arrow-up" aria-hidden="true"></i>
       </div>
       <span>Drone</span>
     </div>

@@ -12,7 +12,7 @@ import type { HttpClientService } from './http-client.service';
   providedIn: 'root',
 })
 export class FlightService {
-  private apiUrl = `${environment.apiUrl}/flights`;
+  private readonly apiUrl = `${environment.apiUrl}/flights`;
 
   constructor(private httpClient: HttpClientService) {}
 
