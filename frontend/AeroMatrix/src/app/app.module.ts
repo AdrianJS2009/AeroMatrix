@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
 // PrimeNG Modules
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -30,12 +32,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DroneDetailComponent } from './components/drone/drone-detail/drone-detail.component';
-import { DroneFormComponent } from './components/drone/drone-form/drone-form.component';
 import { DroneListComponent } from './components/drone/drone-list/drone-list.component';
 import { BatchCommandComponent } from './components/flight/batch-command/batch-command.component';
 import { FlightControlComponent } from './components/flight/flight-control/flight-control.component';
 import { MatrixDetailComponent } from './components/matrix/matrix-detail/matrix-detail.component';
-import { MatrixFormComponent } from './components/matrix/matrix-form/matrix-form.component';
 import { MatrixGridComponent } from './components/matrix/matrix-grid/matrix-grid.component';
 import { MatrixListComponent } from './components/matrix/matrix-list/matrix-list.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
@@ -47,9 +47,7 @@ import { HeaderComponent } from './components/shared/header/header.component';
     DashboardComponent,
     MatrixListComponent,
     MatrixDetailComponent,
-    MatrixFormComponent,
     DroneListComponent,
-    DroneFormComponent,
     DroneDetailComponent,
     MatrixGridComponent,
     FlightControlComponent,
@@ -64,6 +62,8 @@ import { HeaderComponent } from './components/shared/header/header.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    CommonModule,
+    RouterModule,
     TableModule,
     ButtonModule,
     InputTextModule,

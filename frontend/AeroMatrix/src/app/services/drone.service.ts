@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { environment } from '../../enviroments/enviroment';
@@ -7,32 +6,33 @@ import type {
   DroneModel,
   UpdateDroneRequest,
 } from '../models/drone.model';
+import type { HttpClientService } from './http-client.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DroneService {
-  private readonly apiUrl = `${environment.apiUrl}/drones`;
+  private apiUrl = `${environment.apiUrl}/drones`;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private httpClient: HttpClientService) {}
 
   getDrones(): Observable<DroneModel[]> {
-    return this.http.get<DroneModel[]>(this.apiUrl);
+    return this.httpClient.get<DroneModel[]>(this.apiUrl);
   }
 
   getDrone(id: number): Observable<DroneModel> {
-    return this.http.get<DroneModel>(`${this.apiUrl}/${id}`);
+    return this.httpClient.get<DroneModel>(`${this.apiUrl}/${id}`);
   }
 
   createDrone(drone: CreateDroneRequest): Observable<DroneModel> {
-    return this.http.post<DroneModel>(this.apiUrl, drone);
+    return this.httpClient.post<DroneModel>(this.apiUrl, drone);
   }
 
   updateDrone(id: number, drone: UpdateDroneRequest): Observable<DroneModel> {
-    return this.http.put<DroneModel>(`${this.apiUrl}/${id}`, drone);
+    return this.httpClient.put<DroneModel>(`${this.apiUrl}/${id}`, drone);
   }
 
   deleteDrone(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.httpClient.delete(`${this.apiUrl}/${id}`);
   }
 }

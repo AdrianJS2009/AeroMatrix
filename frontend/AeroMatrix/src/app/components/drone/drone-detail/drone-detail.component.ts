@@ -1,33 +1,30 @@
 import { Component, type OnInit } from '@angular/core';
+import type { ActivatedRoute, Router } from '@angular/router';
 import type { ConfirmationService, MessageService } from 'primeng/api';
-import { lastValueFrom } from 'rxjs';
 import {
-  type CreateDroneRequest,
-  type DroneModel,
   Orientation,
+  type DroneModel,
+  type UpdateDroneRequest,
 } from '../../../models/drone.model';
 import type { MatrixModel } from '../../../models/matrix.model';
 import type { DroneService } from '../../../services/drone.service';
+import type { FlightService } from '../../../services/flight.service';
 import type { MatrixService } from '../../../services/matrix.service';
 
 @Component({
-  selector: 'app-drone-list',
-  templateUrl: './drone-list.component.html',
-  styleUrls: ['./drone-list.component.css'],
+  selector: 'app-drone-detail',
+  templateUrl: './drone-detail.component.html',
+  styleUrls: ['./drone-detail.component.css'],
 })
-export class DroneListComponent implements OnInit {
-  drones: DroneModel[] = [];
+export class DroneDetailComponent implements OnInit {
+  droneId!: number;
+  drone: DroneModel | null = null;
   matrices: MatrixModel[] = [];
   loading = true;
-  displayCreateDialog = false;
-  newDrone: CreateDroneRequest = {
-    name: '',
-    model: '',
-    x: 0,
-    y: 0,
-    orientation: Orientation.NORTH,
-    matrixId: 0,
-  };
+  displayEditDialog = false;
+  displayCommandDialog = false;
+  editDrone: UpdateDroneRequest = {};
+  commands = '';
 
   orientationOptions = [
     { label: 'North', value: Orientation.NORTH },
@@ -37,31 +34,42 @@ export class DroneListComponent implements OnInit {
   ];
 
   constructor(
-    private readonly droneService: DroneService,
-    private readonly matrixService: MatrixService,
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService
+    private route: ActivatedRoute,
+    private router: Router,
+    private droneService: DroneService,
+    private matrixService: MatrixService,
+    private flightService: FlightService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
+
+  ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.droneId = +params['id'];
+      this.loadData();
+    });
+  }
 
   loadData(): void {
     this.loading = true;
 
     Promise.all([
-      lastValueFrom(this.droneService.getDrones()),
-      lastValueFrom(this.matrixService.getMatrices()),
+      this.droneService.getDrone(this.droneId).toPromise(),
+      this.matrixService.getMatrices().toPromise(),
     ])
-      .then(([drones, matrices]) => {
-        this.drones = drones || [];
-        this.matrices = matrices || [];
+      .then(([drone, matrices]) => {
+        this.drone = drone ?? null;
+        this.matrices = matrices ?? [];
         this.loading = false;
       })
       .catch((error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to load data',
+          detail: 'Failed to load drone details',
         });
         this.loading = false;
+        this.router.navigate(['/drones']);
       });
   }
 
@@ -72,68 +80,96 @@ export class DroneListComponent implements OnInit {
       : `Matrix #${matrixId}`;
   }
 
-  openCreateDialog(): void {
-    if (this.matrices.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'You need to create a matrix first',
-      });
-      return;
+  openEditDialog(): void {
+    if (this.drone) {
+      this.editDrone = {
+        name: this.drone.name,
+        model: this.drone.model,
+        x: this.drone.x,
+        y: this.drone.y,
+        orientation: this.drone.orientation,
+        matrixId: this.drone.matrixId,
+      };
+      this.displayEditDialog = true;
     }
-
-    this.newDrone = {
-      name: '',
-      model: 'Standard',
-      x: 0,
-      y: 0,
-      orientation: Orientation.NORTH,
-      matrixId: this.matrices[0].id!,
-    };
-    this.displayCreateDialog = true;
   }
 
-  createDrone(): void {
-    this.droneService.createDrone(this.newDrone).subscribe({
+  updateDrone(): void {
+    this.droneService.updateDrone(this.droneId, this.editDrone).subscribe({
       next: (drone) => {
-        this.drones.push(drone);
+        this.drone = drone;
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Drone ${drone.name} created successfully`,
+          detail: `Drone ${drone.name} updated successfully`,
         });
-        this.displayCreateDialog = false;
+        this.displayEditDialog = false;
       },
       error: (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: error.error?.message || 'Failed to create drone',
+          detail: error.error?.message || 'Failed to update drone',
         });
       },
     });
   }
 
-  confirmDelete(drone: DroneModel): void {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete drone "${drone.name}"?`,
-      header: 'Delete Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deleteDrone(drone);
-      },
-    });
+  openCommandDialog(): void {
+    this.commands = '';
+    this.displayCommandDialog = true;
   }
 
-  deleteDrone(drone: DroneModel): void {
-    this.droneService.deleteDrone(drone.id!).subscribe({
-      next: () => {
-        this.drones = this.drones.filter((d) => d.id !== drone.id);
+  executeCommands(): void {
+    if (!this.commands.trim()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please enter commands',
+      });
+      return;
+    }
+
+    this.flightService.executeCommands(this.droneId, this.commands).subscribe({
+      next: (drone) => {
+        this.drone = drone;
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Drone ${drone.name} deleted successfully`,
+          detail: 'Commands executed successfully',
         });
+        this.displayCommandDialog = false;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.message || 'Failed to execute commands',
+        });
+      },
+    });
+  }
+
+  confirmDelete(): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete drone "${this.drone?.name}"?`,
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteDrone();
+      },
+    });
+  }
+
+  deleteDrone(): void {
+    this.droneService.deleteDrone(this.droneId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Drone ${this.drone?.name} deleted successfully`,
+        });
+        this.router.navigate(['/drones']);
       },
       error: (error) => {
         this.messageService.add({

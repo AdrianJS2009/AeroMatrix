@@ -1,0 +1,51 @@
+<form [formGroup]="matrixForm" (ngSubmit)="onSubmit()" class="p-fluid">
+  <div class="p-field">
+    <label for="maxX">Max X</label>
+    <p-inputNumber
+      id="maxX"
+      formControlName="maxX"
+      [min]="1"
+      [max]="100"
+    ></p-inputNumber>
+    <small
+      *ngIf="matrixForm.get('maxX')?.invalid && matrixForm.get('maxX')?.touched"
+      class="p-error"
+    >
+      Max X must be between 1 and 100
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label for="maxY">Max Y</label>
+    <p-inputNumber
+      id="maxY"
+      formControlName="maxY"
+      [min]="1"
+      [max]="100"
+    ></p-inputNumber>
+    <small
+      *ngIf="matrixForm.get('maxY')?.invalid && matrixForm.get('maxY')?.touched"
+      class="p-error"
+    >
+      Max Y must be between 1 and 100
+    </small>
+  </div>
+
+  <div class="form-actions">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="onCancel()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="{{ isEdit ? 'Update' : 'Create' }}"
+      icon="pi pi-check"
+      [disabled]="matrixForm.invalid"
+    ></button>
+  </div>
+</form>
