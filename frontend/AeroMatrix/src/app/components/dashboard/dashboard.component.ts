@@ -1,28 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { lastValueFrom } from 'rxjs';
+import type { MessageService } from 'primeng/api';
 import type { DroneModel } from '../../models/drone.model';
 import type { MatrixModel } from '../../models/matrix.model';
-import { DroneService } from '../../services/drone.service';
-import { MatrixService } from '../../services/matrix.service';
+import type { DroneService } from '../../services/drone.service';
+import type { MatrixService } from '../../services/matrix.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  imports: [
-    CommonModule,
-    RouterModule,
-    ButtonModule,
-    CardModule,
-    ProgressSpinnerModule,
-  ],
-  standalone: true,
 })
 export class DashboardComponent implements OnInit {
   matrices: MatrixModel[] = [];
@@ -30,9 +16,9 @@ export class DashboardComponent implements OnInit {
   loading = true;
 
   constructor(
-    private readonly matrixService: MatrixService,
-    private readonly droneService: DroneService,
-    private readonly messageService: MessageService
+    private matrixService: MatrixService,
+    private droneService: DroneService,
+    private messageService: MessageService
   ) {}
   ngOnInit(): void {
     this.loadData();
@@ -42,12 +28,12 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
 
     Promise.all([
-      lastValueFrom(this.matrixService.getMatrices()),
-      lastValueFrom(this.droneService.getDrones()),
+      this.matrixService.getMatrices().toPromise(),
+      this.droneService.getDrones().toPromise(),
     ])
       .then(([matrices, drones]) => {
-        this.matrices = matrices || [];
-        this.drones = drones || [];
+        this.matrices = matrices ?? [];
+        this.drones = drones ?? [];
         this.loading = false;
       })
       .catch((error) => {
