@@ -1,0 +1,119 @@
+<div class="dashboard">
+  <h2 class="page-title">Dashboard</h2>
+
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <div *ngIf="!loading" class="dashboard-content">
+    <div class="dashboard-summary">
+      <p-card styleClass="summary-card">
+        <ng-template pTemplate="header">
+          <div class="summary-header">
+            <i class="pi pi-th-large"></i>
+            <h3>Matrices</h3>
+          </div>
+        </ng-template>
+        <p class="summary-value">{{ matrices.length }}</p>
+      </p-card>
+
+      <p-card styleClass="summary-card">
+        <ng-template pTemplate="header">
+          <div class="summary-header">
+            <i class="pi pi-send"></i>
+            <h3>Drones</h3>
+          </div>
+        </ng-template>
+        <p class="summary-value">{{ drones.length }}</p>
+      </p-card>
+    </div>
+
+    <div class="dashboard-matrices">
+      <h3>Matrix Overview</h3>
+      <div class="matrices-grid">
+        <p-card *ngFor="let matrix of matrices" styleClass="matrix-card">
+          <ng-template pTemplate="header">
+            <div class="matrix-card-header">
+              <h4>Matrix #{{ matrix.id }}</h4>
+              <span class="matrix-dimensions"
+                >{{ matrix.maxX }}x{{ matrix.maxY }}</span
+              >
+            </div>
+          </ng-template>
+
+          <div class="matrix-card-content">
+            <div class="matrix-drones">
+              <h5>Drones: {{ getDronesInMatrix(matrix.id!).length }}</h5>
+              <ul *ngIf="getDronesInMatrix(matrix.id!).length > 0">
+                <li
+                  *ngFor="
+                    let drone of getDronesInMatrix(matrix.id!).slice(0, 3)
+                  "
+                >
+                  {{ drone.name }} ({{ drone.x }}, {{ drone.y }},
+                  {{ drone.orientation }})
+                </li>
+                <li *ngIf="getDronesInMatrix(matrix.id!).length > 3">
+                  ...and {{ getDronesInMatrix(matrix.id!).length - 3 }} more
+                </li>
+              </ul>
+              <p *ngIf="getDronesInMatrix(matrix.id!).length === 0">
+                No drones in this matrix
+              </p>
+            </div>
+          </div>
+
+          <ng-template pTemplate="footer">
+            <div class="matrix-card-footer">
+              <button
+                pButton
+                label="View Details"
+                icon="pi pi-eye"
+                [routerLink]="['/matrices', matrix.id]"
+                title="View matrix details"
+              ></button>
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
+    </div>
+
+    <div class="dashboard-actions">
+      <h3>Quick Actions</h3>
+      <div class="actions-grid">
+        <button
+          pButton
+          label="Create Matrix"
+          icon="pi pi-plus"
+          [routerLink]="['/matrices']"
+          class="p-button-success"
+          title="Create a new matrix"
+        ></button>
+        <button
+          pButton
+          label="Add Drone"
+          icon="pi pi-plus"
+          [routerLink]="['/drones']"
+          class="p-button-success"
+          title="Add a new drone"
+        ></button>
+        <button
+          pButton
+          label="Flight Control"
+          icon="pi pi-compass"
+          [routerLink]="['/flight-control']"
+          class="p-button-primary"
+          title="Go to flight control"
+        ></button>
+        <button
+          pButton
+          label="Batch Commands"
+          icon="pi pi-sitemap"
+          [routerLink]="['/batch-commands']"
+          class="p-button-primary"
+          title="Manage batch commands"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>
