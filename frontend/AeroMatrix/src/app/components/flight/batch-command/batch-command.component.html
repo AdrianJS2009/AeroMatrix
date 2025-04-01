@@ -51,7 +51,7 @@
                   icon="pi pi-times"
                   (click)="sharedCommands = ''"
                   [disabled]="executing || !sharedCommands"
-                  title="Clear command sequence"
+                  title="Clear Commands"
                 ></button>
               </div>
             </div>
@@ -76,6 +76,7 @@
                   executing || !sharedCommands || selectedDrones.length === 0
                 "
                 class="p-button-success"
+                title="Execute Commands in Sequence"
               ></button>
               <button
                 pButton
@@ -86,7 +87,7 @@
                   executing || !sharedCommands || selectedDrones.length === 0
                 "
                 class="p-button-primary"
-                title="Add command sequence to batch"
+                title="Add Commands to Batch"
               ></button>
             </div>
           </div>
@@ -123,7 +124,7 @@
                     class="p-button-rounded p-button-danger p-button-sm"
                     (click)="removeBatchItem(i)"
                     [disabled]="executing"
-                    title="Remove batch item"
+                    title="Remove Item"
                   ></button>
                 </div>
               </div>
@@ -137,7 +138,7 @@
                 (click)="clearBatch()"
                 [disabled]="executing"
                 class="p-button-outlined p-button-danger"
-                title="Clear all batch commands"
+                title="Clear All Batch Commands"
               ></button>
               <button
                 pButton
@@ -146,7 +147,7 @@
                 (click)="executeBatch()"
                 [disabled]="executing"
                 class="p-button-success"
-                title="Execute all batch commands"
+                title="Execute All Batch Commands"
               ></button>
             </div>
           </div>

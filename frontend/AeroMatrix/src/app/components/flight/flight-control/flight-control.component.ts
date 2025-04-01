@@ -3,7 +3,6 @@ import type { MessageService } from 'primeng/api';
 import type { DroneModel } from '../../../models/drone.model';
 import type { DroneService } from '../../../services/drone.service';
 import type { FlightService } from '../../../services/flight.service';
-import type { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-flight-control',
@@ -20,28 +19,11 @@ export class FlightControlComponent implements OnInit {
   constructor(
     private droneService: DroneService,
     private flightService: FlightService,
-    private messageService: MessageService,
-    private notificationService: NotificationService
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
     this.loadDrones();
-
-    // Subscribe to drone updates
-    this.notificationService.droneUpdates$.subscribe((drone) => {
-      if (drone.id) {
-        // Update the drone in the list
-        const index = this.drones.findIndex((d) => d.id === drone.id);
-        if (index !== -1) {
-          this.drones[index] = drone;
-
-          // Update selected drone if it's the one that was updated
-          if (this.selectedDrone && this.selectedDrone.id === drone.id) {
-            this.selectedDrone = drone;
-          }
-        }
-      }
-    });
   }
 
   loadDrones(): void {
