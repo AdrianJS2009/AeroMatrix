@@ -1,5 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import type { ConfirmationService, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 import { lastValueFrom } from 'rxjs';
 import {
   type CreateDroneRequest,
@@ -11,9 +21,22 @@ import type { DroneService } from '../../../services/drone.service';
 import type { MatrixService } from '../../../services/matrix.service';
 
 @Component({
-  selector: 'app-drone-list',
-  templateUrl: './drone-list.component.html',
-  styleUrls: ['./drone-list.component.css'],
+  selector: 'app-drone-detail',
+  templateUrl: './drone-detail.component.html',
+  styleUrls: ['./drone-detail.component.css'],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    CardModule,
+    DropdownModule,
+    InputNumberModule,
+    InputTextModule,
+    ProgressSpinnerModule,
+    DialogModule,
+    TooltipModule,
+  ],
+  standalone: false,
 })
 export class DroneListComponent implements OnInit {
   drones: DroneModel[] = [];

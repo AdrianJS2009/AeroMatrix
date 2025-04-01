@@ -1,5 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { lastValueFrom } from 'rxjs';
 import type { DroneModel } from '../../models/drone.model';
 import type { MatrixModel } from '../../models/matrix.model';
@@ -10,6 +15,14 @@ import { MatrixService } from '../../services/matrix.service';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ButtonModule,
+    CardModule,
+    ProgressSpinnerModule,
+  ],
+  standalone: true,
 })
 export class DashboardComponent implements OnInit {
   matrices: MatrixModel[] = [];

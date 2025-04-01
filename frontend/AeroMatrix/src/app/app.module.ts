@@ -40,7 +40,6 @@ import { MatrixGridComponent } from './components/matrix/matrix-grid/matrix-grid
 import { MatrixListComponent } from './components/matrix/matrix-list/matrix-list.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { HeaderComponent } from './components/shared/header/header.component';
-import { NotificationService } from './services/notification.service';
 
 @NgModule({
   declarations: [
@@ -84,7 +83,7 @@ import { NotificationService } from './services/notification.service';
     ChipModule,
     BadgeModule,
   ],
-  providers: [MessageService, ConfirmationService, NotificationService],
+  providers: [MessageService, ConfirmationService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
