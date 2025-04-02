@@ -1,0 +1,73 @@
+.flight-control-container {
+  .command-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .drone-info,
+  .matrix-info {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #3f51b5;
+    }
+
+    h4 {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 0.5rem;
+
+      .info-label {
+        font-weight: 600;
+        width: 100px;
+      }
+
+      .info-value {
+        flex: 1;
+      }
+    }
+
+    .drone-list {
+      margin-top: 1rem;
+
+      ul {
+        margin: 0;
+        padding-left: 1.5rem;
+
+        li {
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .mt-4 {
+    margin-top: 1rem;
+  }
+}

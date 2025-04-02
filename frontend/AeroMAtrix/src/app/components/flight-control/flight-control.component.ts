@@ -1,11 +1,22 @@
-import { Component } from '@angular/core';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
-@Component({
-  selector: 'app-flight-control',
-  imports: [],
-  templateUrl: './flight-control.component.html',
-  styleUrl: './flight-control.component.scss'
-})
-export class FlightControlComponent {
+import { FlightControlComponent } from './flight-control.component';
 
-}
+describe('FlightControlComponent', () => {
+  let component: FlightControlComponent;
+  let fixture: ComponentFixture<FlightControlComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FlightControlComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(FlightControlComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

@@ -1,1 +1,330 @@
-<p>flight-control works!</p>
+<div class="flight-control-container">
+  <h1>Flight Control Center</h1>
+
+  <div class="grid">
+    <div class="col-12 md:col-6">
+      <p-panel header="Single Drone Control">
+        <form [formGroup]="commandForm" (ngSubmit)="executeCommands()">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="droneId">Select Drone</label>
+              <p-dropdown
+                id="droneId"
+                [options]="drones"
+                formControlName="droneId"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a Drone"
+                [filter]="true"
+                filterBy="name"
+                [showClear]="false"
+                (onChange)="onDroneSelect()"
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div *ngIf="selectedDrone">
+                    {{ selectedDrone.name }} ({{ selectedDrone.model }})
+                  </div>
+                </ng-template>
+                <ng-template let-drone pTemplate="item">
+                  {{ drone.name }} ({{ drone.model }}) - Matrix #{{
+                    drone.matrixId
+                  }}
+                </ng-template>
+              </p-dropdown>
+            </div>
+
+            <div class="field">
+              <label for="commands">Commands</label>
+              <div class="p-inputgroup">
+                <input
+                  id="commands"
+                  type="text"
+                  pInputText
+                  formControlName="commands"
+                  placeholder="e.g., FFRFFLF"
+                />
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-danger"
+                  (click)="clearCommands()"
+                  title="Clear commands"
+                ></button>
+              </div>
+              <small
+                *ngIf="
+                  commandForm.get('commands')?.invalid &&
+                  commandForm.get('commands')?.touched
+                "
+                class="p-error"
+              >
+                Commands must contain only F (Forward), L (Left), or R (Right)
+              </small>
+            </div>
+
+            <div class="command-buttons">
+              <button
+                pButton
+                type="button"
+                label="Forward (F)"
+                icon="pi pi-arrow-up"
+                class="p-button-outlined"
+                (click)="addCommand('F')"
+                title="Add Forward command"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Left (L)"
+                icon="pi pi-arrow-left"
+                class="p-button-outlined"
+                (click)="addCommand('L')"
+                title="Add Left command"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Right (R)"
+                icon="pi pi-arrow-right"
+                class="p-button-outlined"
+                (click)="addCommand('R')"
+                title="Add Right command"
+              ></button>
+            </div>
+
+            <div class="drone-info" *ngIf="selectedDrone">
+              <h3>Selected Drone</h3>
+              <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span class="info-value">{{ selectedDrone.name }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Model:</span>
+                <span class="info-value">{{ selectedDrone.model }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Position:</span>
+                <span class="info-value"
+                  >({{ selectedDrone.x }}, {{ selectedDrone.y }})</span
+                >
+              </div>
+              <div class="info-row">
+                <span class="info-label">Orientation:</span>
+                <span class="info-value">{{ selectedDrone.orientation }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Matrix:</span>
+                <span class="info-value">#{{ selectedDrone.matrixId }}</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-danger"
+                (click)="clearCommands()"
+                title="Clear commands"
+              ></button>
+            </div>
+          </div>
+        </form>
+      </p-panel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-panel header="Matrix Batch Control">
+        <form [formGroup]="batchCommandForm">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="matrixId">Select Matrix</label>
+              <p-dropdown
+                id="matrixId"
+                [options]="matrices"
+                formControlName="matrixId"
+                optionLabel="id"
+                optionValue="id"
+                placeholder="Select a Matrix"
+                [filter]="true"
+                filterBy="id"
+                [showClear]="false"
+                (onChange)="onMatrixSelect()"
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div *ngIf="batchCommandForm.get('matrixId')?.value">
+                    Matrix #{{
+                      batchCommandForm.get("matrixId")?.value
+                    }}
+                    ({{ matrices.find(m => m.id === batchCommandForm.get('matrixId')?.value)?.maxX
+
+
+                    }}x{{ matrices.find(m => m.id === batchCommandForm.get('matrixId')?.value)?.maxY
+
+
+                    }})
+                  </div>
+                </ng-template>
+                <ng-template let-matrix pTemplate="item">
+                  Matrix #{{ matrix.id }} ({{ matrix.maxX }}x{{ matrix.maxY }})
+                </ng-template>
+              </p-dropdown>
+            </div>
+
+            <div class="field">
+              <label for="batchCommands">Commands for All Drones</label>
+              <div class="p-inputgroup">
+                <input
+                  id="batchCommands"
+                  type="text"
+                  pInputText
+                  formControlName="commands"
+                  placeholder="e.g., FFRFFLF"
+                />
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-danger"
+                  (click)="clearBatchCommands()"
+                  title="Clear commands"
+                ></button>
+              </div>
+              <small
+                *ngIf="
+                  batchCommandForm.get('commands')?.invalid &&
+                  batchCommandForm.get('commands')?.touched
+                "
+                class="p-error"
+              >
+                Commands must contain only F (Forward), L (Left), or R (Right)
+              </small>
+            </div>
+
+            <div class="command-buttons">
+              <button
+                pButton
+                type="button"
+                label="Forward (F)"
+                icon="pi pi-arrow-up"
+                class="p-button-outlined"
+                (click)="addBatchCommand('F')"
+                title="Add Forward command"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Left (L)"
+                icon="pi pi-arrow-left"
+                class="p-button-outlined"
+                (click)="addBatchCommand('L')"
+                title="Add Left command"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Right (R)"
+                icon="pi pi-arrow-right"
+                class="p-button-outlined"
+                (click)="addBatchCommand('R')"
+                title="Add Right command"
+              ></button>
+            </div>
+
+            <div class="matrix-info" *ngIf="selectedMatrix">
+              <h3>Selected Matrix</h3>
+              <div class="info-row">
+                <span class="info-label">ID:</span>
+                <span class="info-value">{{ selectedMatrix.id }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Dimensions:</span>
+                <span class="info-value"
+                  >{{ selectedMatrix.maxX }} x {{ selectedMatrix.maxY }}</span
+                >
+              </div>
+              <div class="info-row">
+                <span class="info-label">Drones:</span>
+                <span class="info-value">{{
+                  selectedMatrix.drones?.length || 0
+                }}</span>
+              </div>
+
+              <div *ngIf="selectedMatrix.drones?.length" class="drone-list">
+                <h4>Drones in Matrix</h4>
+                <ul>
+                  <li *ngFor="let drone of selectedMatrix.drones">
+                    {{ drone.name }} at ({{ drone.x }}, {{ drone.y }}) facing
+                    {{ drone.orientation }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                pButton
+                type="button"
+                label="Execute Same Commands on All Drones"
+                icon="pi pi-send"
+                [disabled]="
+                  batchCommandForm.invalid ||
+                  executing ||
+                  !selectedMatrix?.drones?.length
+                "
+                [loading]="executing"
+                (click)="executeBatchCommands()"
+                title="Execute commands on all drones"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Execute Random Commands"
+                icon="pi pi-bolt"
+                class="p-button-warning"
+                [disabled]="!selectedMatrix?.drones?.length || executing"
+                [loading]="executing"
+                (click)="executeCustomBatchCommands()"
+                title="Execute random commands on all drones"
+              ></button>
+            </div>
+          </div>
+        </form>
+      </p-panel>
+    </div>
+  </div>
+
+  <p-panel
+    header="Command History"
+    *ngIf="commandHistory.length > 0"
+    class="mt-4"
+  >
+    <p-table
+      [value]="commandHistory"
+      styleClass="p-datatable-sm"
+      [rows]="5"
+      [paginator]="commandHistory.length > 5"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Drone</th>
+          <th scope="col">Commands</th>
+          <th scope="col">Result Position</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-history>
+        <tr>
+          <td>{{ history.timestamp | date : "short" }}</td>
+          <td>{{ history.drone.name }}</td>
+          <td>{{ history.commands.join("") }}</td>
+          <td>
+            ({{ history.drone.x }}, {{ history.drone.y }}) facing
+            {{ history.drone.orientation }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-panel>
+</div>
