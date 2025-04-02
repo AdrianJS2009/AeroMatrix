@@ -1,39 +1,46 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { type HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Drone } from '../models/drone.model';
+import type { Observable } from 'rxjs';
+import { environment } from '../../enviroments/enviroment';
+import type { Drone } from '../models/drone.model';
+import type {
+  BatchDroneCommandRequest,
+  CommandsRequest,
+} from '../models/flight.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FlightService {
-  private apiUrl = '/api/flights';
+  private apiUrl = `${environment.apiUrl}/flights`;
 
   constructor(private http: HttpClient) {}
 
-  // Ejecuta comandos en un dron específico
+  // Execute commands on a specific drone
   executeCommands(droneId: number, commands: string[]): Observable<Drone> {
-    return this.http.post<Drone>(`${this.apiUrl}/drones/${droneId}/commands`, {
-      commands,
-    });
+    const request: CommandsRequest = { commands };
+    return this.http.post<Drone>(
+      `${this.apiUrl}/drones/${droneId}/commands`,
+      request
+    );
   }
 
-  // Ejecuta la misma secuencia de comandos en múltiples drones
+  // Execute the same sequence of commands on multiple drones
   executeCommandsInSequence(
     droneIds: number[],
     commands: string[]
   ): Observable<any> {
-    // Se envían los IDs en formato CSV como parámetro
     const params = new HttpParams().set('droneIds', droneIds.join(','));
-    return this.http.post(
-      `${this.apiUrl}/drones/commands`,
-      { commands },
-      { params }
-    );
+    const request: CommandsRequest = { commands };
+    return this.http.post(`${this.apiUrl}/drones/commands`, request, {
+      params,
+    });
   }
 
-  // Ejecuta comandos batch para distintos drones
-  executeBatchCommands(batch: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/batch-commands`, batch);
+  // Execute batch commands for different drones
+  executeBatchCommands(
+    batchRequest: BatchDroneCommandRequest
+  ): Observable<any> {
+    return this.http.post(`${this.apiUrl}/batch-commands`, batchRequest);
   }
 }
