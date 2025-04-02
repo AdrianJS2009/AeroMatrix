@@ -53,7 +53,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           life: 5000,
         });
 
-        return throwError(() => new Error(errorMessage));
+        return throwError(() => error);
       })
     );
   }
