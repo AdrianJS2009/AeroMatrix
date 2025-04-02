@@ -72,7 +72,7 @@ export class DroneFormComponent implements OnInit {
       x: [0, [Validators.required, Validators.min(0)]],
       y: [0, [Validators.required, Validators.min(0)]],
       orientation: ['N', Validators.required],
-      matrixId: [this.matrixId || '', Validators.required],
+      matrixId: [this.matrixId ?? '', Validators.required],
     });
 
     // If matrixId is provided as input, set it in the form

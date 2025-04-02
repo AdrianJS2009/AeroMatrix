@@ -1,1 +1,78 @@
-<p>matrix-form works!</p>
+<form [formGroup]="matrixForm" (ngSubmit)="onSubmit()">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="maxX">Max X</label>
+      <p-inputNumber
+        id="maxX"
+        formControlName="maxX"
+        [showButtons]="true"
+        [min]="1"
+        [max]="100"
+        buttonLayout="horizontal"
+        spinnerMode="horizontal"
+        decrementButtonClass="p-button-danger"
+        incrementButtonClass="p-button-success"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+      >
+      </p-inputNumber>
+      <small
+        *ngIf="
+          matrixForm.get('maxX')?.invalid && matrixForm.get('maxX')?.touched
+        "
+        class="p-error"
+      >
+        Max X is required and must be between 1 and 100
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="maxY">Max Y</label>
+      <p-inputNumber
+        id="maxY"
+        formControlName="maxY"
+        [showButtons]="true"
+        [min]="1"
+        [max]="100"
+        buttonLayout="horizontal"
+        spinnerMode="horizontal"
+        decrementButtonClass="p-button-danger"
+        incrementButtonClass="p-button-success"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+      >
+      </p-inputNumber>
+      <small
+        *ngIf="
+          matrixForm.get('maxY')?.invalid && matrixForm.get('maxY')?.touched
+        "
+        class="p-error"
+      >
+        Max Y is required and must be between 1 and 100
+      </small>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="Cancel"
+      class="p-button-outlined p-button-secondary"
+      (click)="onCancel()"
+      [disabled]="submitting"
+      title="Cancel"
+    ></button>
+    <button
+      pButton
+      pRipple
+      type="submit"
+      label="Save"
+      [disabled]="matrixForm.invalid || submitting"
+      [loading]="submitting"
+      class="p-button-success"
+      title="Save"
+    ></button>
+  </div>
+</form>

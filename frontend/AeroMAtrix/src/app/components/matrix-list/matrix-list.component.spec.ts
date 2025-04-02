@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MatrixListComponent } from './matrix-list.component';
 
@@ -8,9 +8,8 @@ describe('MatrixListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatrixListComponent]
-    })
-    .compileComponents();
+      imports: [MatrixListComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MatrixListComponent);
     component = fixture.componentInstance;
