@@ -82,7 +82,7 @@ import { FlightService } from '../services/flight.service';
           label="Ejecutar en grupo"
           class="mt-3 p-button-sm"
           (click)="executeGroup()"
-          [disabled]="!multiSelectedDrones?.length || !commandsGroupText"
+          [disabled]="!multiSelectedDrones.length || !commandsGroupText"
         ></button>
       </div>
     </p-panel>
