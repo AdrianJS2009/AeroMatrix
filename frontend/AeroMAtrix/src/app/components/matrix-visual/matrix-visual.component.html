@@ -1,1 +1,38 @@
-<p>matrix-visual works!</p>
+<div class="matrix-visual-container">
+  <div
+    class="matrix-grid"
+    [style.grid-template-columns]="
+      'repeat(' + matrix.maxX + ', ' + cellSize + 'px)'
+    "
+  >
+    <ng-container *ngFor="let row of gridCells; let y = index">
+      <div
+        *ngFor="let cell of row; let x = index"
+        class="grid-cell"
+        [style.width.px]="cellSize"
+        [style.height.px]="cellSize"
+        [class.has-drone]="cell.drone"
+      >
+        <div
+          *ngIf="cell.drone"
+          class="drone-marker"
+          [pTooltip]="cell.drone.name"
+        >
+          {{ getOrientationArrow(cell.drone.orientation) }}
+        </div>
+        <div class="cell-coords">{{ cell.x }},{{ cell.y }}</div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="matrix-legend">
+    <div class="legend-item">
+      <div class="legend-marker drone-marker">↑</div>
+      <span>Drone (with orientation)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-marker cell-coords">x,y</div>
+      <span>Coordinates</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+.matrix-visual-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .matrix-grid {
+    display: grid;
+    border: 1px solid #ccc;
+    max-width: 100%;
+    overflow: auto;
+
+    .grid-cell {
+      position: relative;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.has-drone {
+        background-color: #e3f2fd;
+      }
+
+      .drone-marker {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #3f51b5;
+      }
+
+      .cell-coords {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        font-size: 0.6rem;
+        color: #999;
+      }
+    }
+  }
+
+  .matrix-legend {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .legend-marker {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border: 1px solid #ddd;
+
+        &.drone-marker {
+          background-color: #e3f2fd;
+          color: #3f51b5;
+          font-weight: bold;
+        }
+
+        &.cell-coords {
+          font-size: 0.6rem;
+          color: #999;
+        }
+      }
+    }
+  }
+}
