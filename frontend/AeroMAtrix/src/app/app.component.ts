@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import type { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +8,7 @@ import type { PrimeNGConfig } from 'primeng/api';
 export class AppComponent {
   title = 'AeroMAtrix';
 
-  constructor(private primengConfig: PrimeNGConfig) {}
+  constructor() {}
 
-  ngOnInit() {
-    this.primengConfig.ripple = true;
-  }
+  ngOnInit() {}
 }
