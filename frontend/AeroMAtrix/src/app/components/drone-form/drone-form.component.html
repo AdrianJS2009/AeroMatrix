@@ -49,7 +49,9 @@
               droneForm.get("matrixId")?.value
             }}
             ({{ matrices.find(m => m.id === droneForm.get('matrixId')?.value)?.maxX
+
             }}x{{ matrices.find(m => m.id === droneForm.get('matrixId')?.value)?.maxY
+
             }})
           </div>
         </ng-template>
@@ -149,6 +151,7 @@
       class="p-button-outlined p-button-secondary"
       (click)="onCancel()"
       [disabled]="submitting"
+      aria-label="Cancel"
     ></button>
     <button
       pButton
@@ -157,6 +160,7 @@
       label="Save"
       [disabled]="droneForm.invalid || submitting"
       [loading]="submitting"
+      aria-label="Save"
     ></button>
   </div>
 </form>
