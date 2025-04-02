@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DroneFormComponent } from './drone-form.component';
 
@@ -8,9 +8,8 @@ describe('DroneFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DroneFormComponent]
-    })
-    .compileComponents();
+      imports: [DroneFormComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DroneFormComponent);
     component = fixture.componentInstance;

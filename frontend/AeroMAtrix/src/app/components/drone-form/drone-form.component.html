@@ -1,1 +1,162 @@
-<p>drone-form works!</p>
+<div *ngIf="loading" class="loading-container">
+  <p-progressSpinner></p-progressSpinner>
+  <p>Loading drone details...</p>
+</div>
+
+<form [formGroup]="droneForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" pInputText formControlName="name" />
+      <small
+        *ngIf="droneForm.get('name')?.invalid && droneForm.get('name')?.touched"
+        class="p-error"
+      >
+        Name is required and must be less than 100 characters
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="model">Model</label>
+      <input id="model" type="text" pInputText formControlName="model" />
+      <small
+        *ngIf="
+          droneForm.get('model')?.invalid && droneForm.get('model')?.touched
+        "
+        class="p-error"
+      >
+        Model is required and must be less than 100 characters
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="matrixId">Matrix</label>
+      <p-dropdown
+        id="matrixId"
+        [options]="matrices"
+        formControlName="matrixId"
+        optionLabel="id"
+        optionValue="id"
+        placeholder="Select a Matrix"
+        [filter]="true"
+        filterBy="id"
+        [showClear]="false"
+        [disabled]="!!matrixId"
+      >
+        <ng-template pTemplate="selectedItem">
+          <div *ngIf="droneForm.get('matrixId')?.value">
+            Matrix #{{
+              droneForm.get("matrixId")?.value
+            }}
+            ({{ matrices.find(m => m.id === droneForm.get('matrixId')?.value)?.maxX
+            }}x{{ matrices.find(m => m.id === droneForm.get('matrixId')?.value)?.maxY
+            }})
+          </div>
+        </ng-template>
+        <ng-template let-matrix pTemplate="item">
+          Matrix #{{ matrix.id }} ({{ matrix.maxX }}x{{ matrix.maxY }})
+        </ng-template>
+      </p-dropdown>
+      <small
+        *ngIf="
+          droneForm.get('matrixId')?.invalid &&
+          droneForm.get('matrixId')?.touched
+        "
+        class="p-error"
+      >
+        Matrix is required
+      </small>
+    </div>
+
+    <div class="field-group">
+      <div class="field">
+        <label for="x">X Position</label>
+        <p-inputNumber
+          id="x"
+          formControlName="x"
+          [showButtons]="true"
+          [min]="0"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        >
+        </p-inputNumber>
+        <small
+          *ngIf="droneForm.get('x')?.invalid && droneForm.get('x')?.touched"
+          class="p-error"
+        >
+          X position is required and must be a positive number
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="y">Y Position</label>
+        <p-inputNumber
+          id="y"
+          formControlName="y"
+          [showButtons]="true"
+          [min]="0"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        >
+        </p-inputNumber>
+        <small
+          *ngIf="droneForm.get('y')?.invalid && droneForm.get('y')?.touched"
+          class="p-error"
+        >
+          Y position is required and must be a positive number class="p-error">
+          Y position is required and must be a positive number
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="orientation">Orientation</label>
+        <p-dropdown
+          id="orientation"
+          [options]="orientationOptions"
+          formControlName="orientation"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select Orientation"
+        >
+        </p-dropdown>
+        <small
+          *ngIf="
+            droneForm.get('orientation')?.invalid &&
+            droneForm.get('orientation')?.touched
+          "
+          class="p-error"
+        >
+          Orientation is required
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="Cancel"
+      class="p-button-outlined p-button-secondary"
+      (click)="onCancel()"
+      [disabled]="submitting"
+    ></button>
+    <button
+      pButton
+      pRipple
+      type="submit"
+      label="Save"
+      [disabled]="droneForm.invalid || submitting"
+      [loading]="submitting"
+    ></button>
+  </div>
+</form>
