@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MatrixDetailComponent } from './matrix-detail.component';
 
@@ -8,9 +8,8 @@ describe('MatrixDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatrixDetailComponent]
-    })
-    .compileComponents();
+      imports: [MatrixDetailComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MatrixDetailComponent);
     component = fixture.componentInstance;

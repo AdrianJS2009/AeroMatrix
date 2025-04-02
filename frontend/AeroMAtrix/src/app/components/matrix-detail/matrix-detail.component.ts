@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Matrix } from '../../models/matrix.model';
-import { MatrixService } from '../../services/matrix.service';
+import { Component, type OnInit } from '@angular/core';
+import type { ActivatedRoute, Router } from '@angular/router';
+import type { ConfirmationService, MessageService } from 'primeng/api';
+import type { Drone } from '../../models/drone.model';
+import type { Matrix } from '../../models/matrix.model';
+import type { DroneService } from '../../services/drone.service';
+import type { MatrixService } from '../../services/matrix.service';
 
 @Component({
   selector: 'app-matrix-detail',
@@ -12,30 +15,105 @@ export class MatrixDetailComponent implements OnInit {
   matrixId!: number;
   matrix!: Matrix;
   loading = false;
-  error: string | null = null;
+  displayEditDialog = false;
+  displayAddDroneDialog = false;
+  selectedDrone: Drone | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private matrixService: MatrixService
+    public router: Router, // Public to use in template
+    private matrixService: MatrixService,
+    private droneService: DroneService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
-    // Extraemos el ID de la matriz desde la URL
-    this.matrixId = Number(this.route.snapshot.paramMap.get('id'));
-    this.fetchMatrix();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (id) {
+        this.matrixId = +id;
+        this.loadMatrix();
+      }
+    });
   }
 
-  fetchMatrix(): void {
+  loadMatrix(): void {
     this.loading = true;
     this.matrixService.getMatrix(this.matrixId).subscribe({
       next: (data) => {
         this.matrix = data;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = 'Error al cargar la matriz';
+      error: () => {
         this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load matrix details',
+          life: 3000,
+        });
+        this.router.navigate(['/matrices']);
       },
+    });
+  }
+
+  showEditDialog(): void {
+    this.displayEditDialog = true;
+  }
+
+  hideEditDialog(): void {
+    this.displayEditDialog = false;
+  }
+
+  showAddDroneDialog(): void {
+    this.displayAddDroneDialog = true;
+    this.selectedDrone = null;
+  }
+
+  hideAddDroneDialog(): void {
+    this.displayAddDroneDialog = false;
+  }
+
+  onMatrixUpdated(updatedMatrix: Matrix): void {
+    this.hideEditDialog();
+    this.matrix = updatedMatrix;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Matrix updated successfully',
+      life: 3000,
+    });
+  }
+
+  deleteDrone(drone: Drone): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete drone "${drone.name}"?`,
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.droneService.deleteDrone(drone.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Drone deleted successfully',
+              life: 3000,
+            });
+            this.loadMatrix();
+          },
+        });
+      },
+    });
+  }
+
+  editDrone(drone: Drone): void {
+    this.router.navigate(['/drones', drone.id, 'edit']);
+  }
+
+  goToFlightControl(drone: Drone): void {
+    this.router.navigate(['/flight-control'], {
+      queryParams: { droneId: drone.id },
     });
   }
 }
