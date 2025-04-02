@@ -1,16 +1,17 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 import { ShellComponent } from './layout/shell.component';
 
 export const routes: Routes = [
   {
     path: '',
+    component: LandingPageComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: '',
     component: ShellComponent,
     children: [
-      {
-        path: '',
-        redirectTo: 'drones',
-        pathMatch: 'full',
-      },
       {
         path: 'drones',
         loadChildren: () =>
@@ -25,6 +26,20 @@ export const routes: Routes = [
         path: 'flights',
         loadChildren: () =>
           import('./flights/flights.routes').then((m) => m.FLIGHT_ROUTES),
+      },
+      {
+        path: 'analytics',
+        loadComponent: () =>
+          import('./analytics/analytics.component').then(
+            (m) => m.AnalyticsComponent
+          ),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./settings/settings.component').then(
+            (m) => m.SettingsComponent
+          ),
       },
     ],
   },

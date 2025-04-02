@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -19,6 +20,7 @@ import { DividerModule } from 'primeng/divider';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
 import { Matrix } from '../models/matrix.model';
 import { MatrixService } from '../services/matrix.service';
@@ -36,18 +38,28 @@ import { MatrixService } from '../services/matrix.service';
     ToastModule,
     DividerModule,
     ProgressSpinnerModule,
+    RippleModule,
   ],
   providers: [MessageService],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 })),
+      ]),
+    ]),
+  ],
   template: `
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
       [closable]="true"
-      [style]="{ width: '400px' }"
+      [style]="{ width: '450px' }"
       [draggable]="false"
       [resizable]="false"
       (onHide)="onCancel()"
-      [header]="matrixToEdit ? 'Editar Matriz' : 'Crear Nueva Matriz'"
+      [header]="matrixToEdit ? 'Edit Matrix' : 'Create New Matrix'"
+      styleClass="matrix-form-dialog"
     >
       <div
         *ngIf="loading"
@@ -65,64 +77,91 @@ import { MatrixService } from '../services/matrix.service';
         [formGroup]="matrixForm"
         (ngSubmit)="onSubmit()"
         class="p-fluid"
+        @fadeIn
       >
-        <div class="formgrid grid">
-          <div class="field col">
-            <label for="maxX" class="font-bold">Dimensión X</label>
-            <p-inputNumber
-              id="maxX"
-              formControlName="maxX"
-              [showButtons]="true"
-              [min]="1"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && matrixForm.controls['maxX'].invalid
-              }"
-            ></p-inputNumber>
-            <small
-              *ngIf="submitted && matrixForm.controls['maxX'].invalid"
-              class="p-error"
-            >
-              Dimensión X debe ser mayor a 0
-            </small>
+        <div class="form-section">
+          <h3>Matrix Dimensions</h3>
+          <p class="section-description">
+            Define the size of your operational matrix
+          </p>
+
+          <div class="formgrid grid">
+            <div class="field col">
+              <label for="maxX" class="font-bold">X Dimension</label>
+              <p-inputNumber
+                id="maxX"
+                formControlName="maxX"
+                [showButtons]="true"
+                [min]="1"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    submitted && matrixForm.controls['maxX'].invalid
+                }"
+              ></p-inputNumber>
+              <small
+                *ngIf="submitted && matrixForm.controls['maxX'].invalid"
+                class="p-error"
+              >
+                X dimension must be greater than 0
+              </small>
+            </div>
+
+            <div class="field col">
+              <label for="maxY" class="font-bold">Y Dimension</label>
+              <p-inputNumber
+                id="maxY"
+                formControlName="maxY"
+                [showButtons]="true"
+                [min]="1"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    submitted && matrixForm.controls['maxY'].invalid
+                }"
+              ></p-inputNumber>
+              <small
+                *ngIf="submitted && matrixForm.controls['maxY'].invalid"
+                class="p-error"
+              >
+                Y dimension must be greater than 0
+              </small>
+            </div>
           </div>
 
-          <div class="field col">
-            <label for="maxY" class="font-bold">Dimensión Y</label>
-            <p-inputNumber
-              id="maxY"
-              formControlName="maxY"
-              [showButtons]="true"
-              [min]="1"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && matrixForm.controls['maxY'].invalid
-              }"
-            ></p-inputNumber>
-            <small
-              *ngIf="submitted && matrixForm.controls['maxY'].invalid"
-              class="p-error"
+          <div class="matrix-preview">
+            <div class="preview-label">Preview:</div>
+            <div
+              class="preview-grid"
+              [style.--grid-cols]="matrixForm.value.maxX"
+              [style.--grid-rows]="matrixForm.value.maxY"
             >
-              Dimensión Y debe ser mayor a 0
-            </small>
+              <div
+                class="preview-cell"
+                *ngFor="let _ of getPreviewArray()"
+              ></div>
+            </div>
+            <div class="preview-info">
+              {{ matrixForm.value.maxX }} × {{ matrixForm.value.maxY }} =
+              {{ matrixForm.value.maxX * matrixForm.value.maxY }} cells
+            </div>
           </div>
         </div>
 
-        <p-divider></p-divider>
-
-        <div class="flex justify-content-end gap-2">
+        <div class="form-actions">
           <button
             pButton
+            pRipple
             type="button"
-            label="Cancelar"
+            label="Cancel"
             class="p-button-outlined p-button-secondary"
             (click)="onCancel()"
             [disabled]="submitting"
           ></button>
           <button
             pButton
+            pRipple
             type="submit"
-            label="Guardar"
+            label="Save"
+            icon="pi pi-check"
             [loading]="submitting"
             [disabled]="submitting"
           ></button>
@@ -130,6 +169,77 @@ import { MatrixService } from '../services/matrix.service';
       </form>
     </p-dialog>
   `,
+  styles: [
+    `
+      :host ::ng-deep .matrix-form-dialog .p-dialog-content {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+      }
+
+      .form-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-700);
+      }
+
+      .section-description {
+        color: var(--text-color-secondary);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .matrix-preview {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background-color: var(--surface-ground);
+        border-radius: 8px;
+      }
+
+      .preview-label {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(var(--grid-cols, 3), 20px);
+        grid-template-rows: repeat(var(--grid-rows, 3), 20px);
+        gap: 2px;
+        margin-bottom: 0.75rem;
+      }
+
+      .preview-cell {
+        background-color: var(--primary-200);
+        border-radius: 2px;
+      }
+
+      .preview-info {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+      }
+
+      @media screen and (max-width: 576px) {
+        .form-actions {
+          flex-direction: column-reverse;
+        }
+
+        .form-actions button {
+          width: 100%;
+        }
+      }
+    `,
+  ],
 })
 export class MatrixFormComponent implements OnInit {
   @Input() visible = false;
@@ -154,8 +264,8 @@ export class MatrixFormComponent implements OnInit {
 
   initForm() {
     this.matrixForm = this.fb.group({
-      maxX: [1, [Validators.required, Validators.min(1)]],
-      maxY: [1, [Validators.required, Validators.min(1)]],
+      maxX: [3, [Validators.required, Validators.min(1)]],
+      maxY: [3, [Validators.required, Validators.min(1)]],
     });
 
     if (this.matrixToEdit) {
@@ -172,8 +282,8 @@ export class MatrixFormComponent implements OnInit {
     if (this.matrixForm.invalid) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error de validación',
-        detail: 'Por favor complete todos los campos requeridos correctamente',
+        summary: 'Validation Error',
+        detail: 'Please complete all required fields correctly',
         life: 5000,
       });
       return;
@@ -190,10 +300,10 @@ export class MatrixFormComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Éxito',
-          detail: `Matriz ${
-            this.matrixToEdit ? 'actualizada' : 'creada'
-          } correctamente`,
+          summary: 'Success',
+          detail: `Matrix ${
+            this.matrixToEdit ? 'updated' : 'created'
+          } successfully`,
           life: 3000,
         });
         this.submitting = false;
@@ -203,8 +313,8 @@ export class MatrixFormComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error al guardar',
-          detail: err.message || 'Error desconocido',
+          summary: 'Error Saving',
+          detail: err.message || 'Unknown error',
           life: 5000,
         });
         this.submitting = false;
@@ -215,5 +325,11 @@ export class MatrixFormComponent implements OnInit {
   onCancel() {
     this.submitted = false;
     this.close.emit();
+  }
+
+  getPreviewArray(): number[] {
+    const x = this.matrixForm.value.maxX || 3;
+    const y = this.matrixForm.value.maxY || 3;
+    return Array(x * y).fill(0);
   }
 }

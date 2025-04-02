@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -7,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
@@ -16,6 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RippleModule } from 'primeng/ripple';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
@@ -45,73 +48,127 @@ import { FlightService } from '../services/flight.service';
     SkeletonModule,
     TabViewModule,
     TooltipModule,
+    RippleModule,
+    BadgeModule,
   ],
   providers: [MessageService],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate(
+          '400ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+    trigger('matrixFadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.95)' }),
+        animate(
+          '500ms 200ms ease-out',
+          style({ opacity: 1, transform: 'scale(1)' })
+        ),
+      ]),
+    ]),
+    trigger('droneMove', [
+      transition(':increment', [
+        style({ transform: 'translateY(0)' }),
+        animate('300ms ease-out', style({ transform: 'translateY(-10px)' })),
+        animate('300ms ease-in', style({ transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
   template: `
-    <p-card styleClass="flight-control-card">
-      <h2 class="mb-4">Flight Control</h2>
+    <div class="flight-control-container" @fadeIn>
+      <div class="page-header">
+        <h1>Flight Control Center</h1>
+        <p>Control and monitor drone movements in real-time</p>
+      </div>
 
-      <div *ngIf="loading" class="flex justify-content-center my-5">
+      <div *ngIf="loading" class="loading-container">
         <p-progressSpinner
           strokeWidth="4"
           aria-label="Loading drones"
         ></p-progressSpinner>
+        <span>Loading flight control system...</span>
       </div>
 
       <div *ngIf="!loading" class="grid">
         <!-- Matrix Visualization -->
         <div class="col-12 lg:col-5">
-          <div class="matrix-container p-3 border-round shadow-2">
-            <h3>Matrix Visualization</h3>
-            <p *ngIf="!selectedMatrix" class="text-center p-3">
-              Select a drone to visualize its matrix
-            </p>
-            <div *ngIf="selectedMatrix" class="matrix-visualization">
-              <div class="matrix-info mb-3">
-                <p-chip
-                  [label]="
-                    'Matrix ' +
-                    selectedMatrix.id +
-                    ' (' +
-                    selectedMatrix.maxX +
-                    'x' +
-                    selectedMatrix.maxY +
-                    ')'
-                  "
-                  styleClass="mr-2"
-                ></p-chip>
-                <p-chip
-                  *ngIf="selectedMatrix.drones.length > 0"
-                  [label]="selectedMatrix.drones.length + ' drones'"
-                  styleClass="bg-primary"
-                ></p-chip>
+          <p-card styleClass="matrix-card">
+            <ng-template pTemplate="title">
+              <div class="card-title">
+                <i class="pi pi-map"></i>
+                <span>Matrix Visualization</span>
               </div>
+            </ng-template>
 
-              <div class="matrix-grid" #matrixGrid>
-                <!-- Matrix grid will be rendered here -->
-              </div>
+            <div class="matrix-container">
+              <p *ngIf="!selectedMatrix" class="empty-matrix-message">
+                <i class="pi pi-info-circle"></i>
+                Select a drone to visualize its matrix
+              </p>
 
-              <div class="matrix-legend mt-3">
-                <div class="flex align-items-center gap-2 mb-2">
-                  <div class="legend-item drone-cell"></div>
-                  <span>Drone</span>
+              <div
+                *ngIf="selectedMatrix"
+                class="matrix-visualization"
+                @matrixFadeIn
+              >
+                <div class="matrix-header">
+                  <p-chip
+                    [label]="
+                      'Matrix ' +
+                      selectedMatrix.id +
+                      ' (' +
+                      selectedMatrix.maxX +
+                      'x' +
+                      selectedMatrix.maxY +
+                      ')'
+                    "
+                    styleClass="mr-2"
+                    icon="pi pi-th-large"
+                  ></p-chip>
+                  <p-badge
+                    *ngIf="selectedMatrix.drones.length > 0"
+                    [value]="selectedMatrix.drones.length + ' drones'"
+                    severity="info"
+                  ></p-badge>
                 </div>
-                <div class="flex align-items-center gap-2 mb-2">
-                  <div class="legend-item selected-drone-cell"></div>
-                  <span>Selected Drone</span>
+
+                <div class="matrix-grid-container">
+                  <div
+                    class="matrix-grid"
+                    #matrixGrid
+                    [@droneMove]="droneAnimationTrigger"
+                  >
+                    <!-- Matrix grid will be rendered here -->
+                  </div>
                 </div>
-                <div class="flex align-items-center gap-2">
-                  <div class="legend-item empty-cell"></div>
-                  <span>Empty Cell</span>
+
+                <div class="matrix-legend">
+                  <div class="legend-item">
+                    <div class="legend-color drone-cell"></div>
+                    <span>Drone</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-color selected-drone-cell"></div>
+                    <span>Selected Drone</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-color empty-cell"></div>
+                    <span>Empty Cell</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </p-card>
         </div>
 
         <!-- Flight Controls -->
         <div class="col-12 lg:col-7">
-          <p-tabView>
+          <p-tabView styleClass="flight-tabs">
             <!-- SINGLE DRONE COMMANDS -->
             <p-tabPanel header="Single Drone">
               <div class="p-fluid">
@@ -185,6 +242,7 @@ import { FlightService } from '../services/flight.service';
                     />
                     <button
                       pButton
+                      pRipple
                       type="button"
                       icon="pi pi-question-circle"
                       pTooltip="A = Advance, L = Turn Left, R = Turn Right"
@@ -201,42 +259,51 @@ import { FlightService } from '../services/flight.service';
                   </small>
                 </div>
 
-                <div class="command-buttons flex gap-2 mt-3">
+                <div class="command-buttons">
                   <button
                     pButton
+                    pRipple
                     label="A"
-                    class="p-button-rounded p-button-sm"
+                    class="p-button-rounded p-button-lg"
                     pTooltip="Advance"
+                    tooltipPosition="top"
                     (click)="addCommand('A')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     label="L"
-                    class="p-button-rounded p-button-sm p-button-secondary"
+                    class="p-button-rounded p-button-lg p-button-secondary"
                     pTooltip="Turn Left"
+                    tooltipPosition="top"
                     (click)="addCommand('L')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     label="R"
-                    class="p-button-rounded p-button-sm p-button-secondary"
+                    class="p-button-rounded p-button-lg p-button-secondary"
                     pTooltip="Turn Right"
+                    tooltipPosition="top"
                     (click)="addCommand('R')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     icon="pi pi-trash"
-                    class="p-button-rounded p-button-sm p-button-danger"
+                    class="p-button-rounded p-button-lg p-button-danger"
                     pTooltip="Clear"
+                    tooltipPosition="top"
                     (click)="clearCommands()"
                   ></button>
                 </div>
 
                 <button
                   pButton
+                  pRipple
                   label="Execute"
                   icon="pi pi-play"
-                  class="mt-3"
+                  class="execute-button"
                   (click)="executeSingle()"
                   [disabled]="
                     !selectedDrone || !commandsText || executingSingle
@@ -287,6 +354,7 @@ import { FlightService } from '../services/flight.service';
                     />
                     <button
                       pButton
+                      pRipple
                       type="button"
                       icon="pi pi-question-circle"
                       pTooltip="A = Advance, L = Turn Left, R = Turn Right"
@@ -303,42 +371,51 @@ import { FlightService } from '../services/flight.service';
                   </small>
                 </div>
 
-                <div class="command-buttons flex gap-2 mt-3">
+                <div class="command-buttons">
                   <button
                     pButton
+                    pRipple
                     label="A"
-                    class="p-button-rounded p-button-sm"
+                    class="p-button-rounded p-button-lg"
                     pTooltip="Advance"
+                    tooltipPosition="top"
                     (click)="addGroupCommand('A')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     label="L"
-                    class="p-button-rounded p-button-sm p-button-secondary"
+                    class="p-button-rounded p-button-lg p-button-secondary"
                     pTooltip="Turn Left"
+                    tooltipPosition="top"
                     (click)="addGroupCommand('L')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     label="R"
-                    class="p-button-rounded p-button-sm p-button-secondary"
+                    class="p-button-rounded p-button-lg p-button-secondary"
                     pTooltip="Turn Right"
+                    tooltipPosition="top"
                     (click)="addGroupCommand('R')"
                   ></button>
                   <button
                     pButton
+                    pRipple
                     icon="pi pi-trash"
-                    class="p-button-rounded p-button-sm p-button-danger"
+                    class="p-button-rounded p-button-lg p-button-danger"
                     pTooltip="Clear"
+                    tooltipPosition="top"
                     (click)="clearGroupCommands()"
                   ></button>
                 </div>
 
                 <button
                   pButton
+                  pRipple
                   label="Execute Group"
                   icon="pi pi-play"
-                  class="mt-3"
+                  class="execute-button"
                   (click)="executeGroup()"
                   [disabled]="
                     !multiSelectedDrones.length ||
@@ -354,7 +431,7 @@ import { FlightService } from '../services/flight.service';
             <p-tabPanel header="Different Sequences Per Drone">
               <div
                 *ngFor="let item of batchCommands; let i = index"
-                class="mb-4 p-fluid"
+                class="batch-command-row"
               >
                 <div class="flex align-items-start gap-2">
                   <div class="flex-grow-1">
@@ -396,6 +473,7 @@ import { FlightService } from '../services/flight.service';
                         />
                         <button
                           pButton
+                          pRipple
                           type="button"
                           icon="pi pi-question-circle"
                           pTooltip="A = Advance, L = Turn Left, R = Turn Right"
@@ -415,8 +493,9 @@ import { FlightService } from '../services/flight.service';
 
                   <button
                     pButton
+                    pRipple
                     icon="pi pi-trash"
-                    class="p-button-rounded p-button-danger p-button-outlined mt-4"
+                    class="p-button-rounded p-button-danger p-button-outlined"
                     (click)="batchCommands.splice(i, 1)"
                     pTooltip="Remove"
                   ></button>
@@ -425,9 +504,10 @@ import { FlightService } from '../services/flight.service';
                 <p-divider *ngIf="i < batchCommands.length - 1"></p-divider>
               </div>
 
-              <div class="flex gap-2 mt-4">
+              <div class="batch-actions">
                 <button
                   pButton
+                  pRipple
                   label="Add Row"
                   icon="pi pi-plus"
                   class="p-button-outlined"
@@ -435,6 +515,7 @@ import { FlightService } from '../services/flight.service';
                 ></button>
                 <button
                   pButton
+                  pRipple
                   label="Execute Batch"
                   icon="pi pi-play"
                   (click)="executeBatch()"
@@ -446,15 +527,103 @@ import { FlightService } from '../services/flight.service';
           </p-tabView>
         </div>
       </div>
-    </p-card>
+    </div>
 
     <p-toast></p-toast>
   `,
   styles: [
     `
+      .flight-control-container {
+        padding: 1rem;
+      }
+
+      .page-header {
+        margin-bottom: 2rem;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+
+      .page-header p {
+        color: var(--text-color-secondary);
+        font-size: 1.1rem;
+      }
+
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 3rem;
+      }
+
+      .loading-container span {
+        color: var(--text-color-secondary);
+      }
+
+      /* Matrix Card Styling */
+      :host ::ng-deep .matrix-card .p-card-body {
+        padding: 0;
+      }
+
+      :host ::ng-deep .matrix-card .p-card-content {
+        padding: 0;
+      }
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--surface-border);
+      }
+
+      .card-title i {
+        color: var(--primary-color);
+      }
+
       .matrix-container {
-        background-color: var(--surface-card);
+        padding: 1.5rem;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .empty-matrix-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
         height: 100%;
+        color: var(--text-color-secondary);
+        font-size: 1.1rem;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .empty-matrix-message i {
+        font-size: 2rem;
+        color: var(--surface-400);
+      }
+
+      .matrix-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .matrix-grid-container {
+        overflow: auto;
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--surface-border);
+        background-color: var(--surface-ground);
+        padding: 1rem;
       }
 
       .matrix-grid {
@@ -462,7 +631,6 @@ import { FlightService } from '../services/flight.service';
         gap: 2px;
         margin: 0 auto;
         max-width: 100%;
-        overflow: auto;
       }
 
       .matrix-cell {
@@ -472,59 +640,131 @@ import { FlightService } from '../services/flight.service';
         align-items: center;
         justify-content: center;
         border: 1px solid var(--surface-border);
-        background-color: var(--surface-ground);
+        background-color: var(--surface-card);
         position: relative;
+        transition: all 0.3s ease;
       }
 
       .drone-cell {
-        background-color: var(--primary-color);
+        background-color: var(--primary-500);
         color: var(--primary-color-text);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
       .selected-drone-cell {
-        background-color: var(--primary-800);
+        background-color: var(--primary-700);
         color: var(--primary-color-text);
-        box-shadow: 0 0 0 2px var(--primary-color);
+        box-shadow: 0 0 0 2px var(--primary-300), 0 4px 8px rgba(0, 0, 0, 0.2);
         animation: pulse 1.5s infinite;
+        z-index: 1;
       }
 
       .drone-direction {
         position: absolute;
         font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .matrix-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
       }
 
       .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .legend-color {
         width: 20px;
         height: 20px;
         border: 1px solid var(--surface-border);
+        border-radius: 4px;
       }
 
       .empty-cell {
+        background-color: var(--surface-card);
+      }
+
+      /* Flight Controls Styling */
+      :host ::ng-deep .flight-tabs .p-tabview-nav {
+        border-radius: 8px 8px 0 0;
         background-color: var(--surface-ground);
+        padding: 0 1rem;
+      }
+
+      :host ::ng-deep .flight-tabs .p-tabview-nav li .p-tabview-nav-link {
+        padding: 1rem 1.25rem;
+        font-weight: 600;
+      }
+
+      :host ::ng-deep .flight-tabs .p-tabview-panels {
+        padding: 1.5rem;
+        background-color: var(--surface-card);
+        border-radius: 0 0 8px 8px;
+        border: 1px solid var(--surface-border);
+        border-top: none;
       }
 
       .command-buttons {
         display: flex;
         flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1.5rem 0;
       }
 
+      .execute-button {
+        margin-top: 1rem;
+        padding: 1rem;
+        font-weight: 600;
+      }
+
+      .batch-command-row {
+        background-color: var(--surface-hover);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .batch-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      /* Animations */
       @keyframes pulse {
         0% {
           transform: scale(1);
+          box-shadow: 0 0 0 2px var(--primary-300), 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         50% {
           transform: scale(1.05);
+          box-shadow: 0 0 0 3px var(--primary-300),
+            0 6px 12px rgba(0, 0, 0, 0.25);
         }
         100% {
           transform: scale(1);
+          box-shadow: 0 0 0 2px var(--primary-300), 0 4px 8px rgba(0, 0, 0, 0.2);
         }
       }
 
+      /* Responsive Adjustments */
       @media screen and (max-width: 768px) {
         .matrix-cell {
           width: 30px;
           height: 30px;
           font-size: 0.8rem;
+        }
+
+        .batch-actions {
+          flex-direction: column;
+        }
+
+        .batch-actions button {
+          width: 100%;
         }
       }
     `,
@@ -536,6 +776,7 @@ export class FlightControlComponent implements OnInit {
   drones: Drone[] = [];
   matrices: Matrix[] = [];
   loading = true;
+  droneAnimationTrigger = 0;
 
   // Single drone mode
   selectedDrone?: Drone;
@@ -638,6 +879,7 @@ export class FlightControlComponent implements OnInit {
       const cell = document.createElement('div');
       cell.className = 'matrix-cell';
       cell.style.backgroundColor = 'var(--surface-200)';
+      cell.style.fontWeight = 'bold';
 
       if (x > 0) {
         cell.textContent = (x - 1).toString();
@@ -652,6 +894,7 @@ export class FlightControlComponent implements OnInit {
       const yLabel = document.createElement('div');
       yLabel.className = 'matrix-cell';
       yLabel.style.backgroundColor = 'var(--surface-200)';
+      yLabel.style.fontWeight = 'bold';
       yLabel.textContent = y.toString();
       grid.appendChild(yLabel);
 
@@ -764,6 +1007,9 @@ export class FlightControlComponent implements OnInit {
           // Update the selected drone with new position
           this.selectedDrone = drone;
 
+          // Trigger animation
+          this.droneAnimationTrigger++;
+
           // Re-render the matrix
           if (this.selectedMatrix) {
             this.loadMatrixForDrone(this.selectedDrone.matrixId);
@@ -808,6 +1054,9 @@ export class FlightControlComponent implements OnInit {
         });
         this.executingGroup = false;
         this.loadDrones();
+
+        // Trigger animation
+        this.droneAnimationTrigger++;
 
         // Re-render the matrix if needed
         if (this.selectedMatrix) {
@@ -881,6 +1130,9 @@ export class FlightControlComponent implements OnInit {
         this.executingBatch = false;
         this.batchCommands = [{ droneId: null, commands: '' }];
         this.loadDrones();
+
+        // Trigger animation
+        this.droneAnimationTrigger++;
 
         // Re-render the matrix if needed
         if (this.selectedMatrix) {
