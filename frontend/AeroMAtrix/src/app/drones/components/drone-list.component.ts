@@ -5,10 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { Drone } from '../models/drone.model';
 import { DroneService } from '../services/drone.service';
 import { DroneFormComponent } from './drone-form.component';
@@ -27,18 +29,22 @@ import { DroneFormComponent } from './drone-form.component';
     CardModule,
     TagModule,
     SkeletonModule,
+    TooltipModule,
+    InputTextModule,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-    <p-card>
+    <p-card styleClass="drone-list-card">
       <div class="flex justify-content-between align-items-center mb-3">
         <h2 class="m-0">Drones</h2>
         <button
           pButton
           icon="pi pi-plus"
-          label="Nuevo Dron"
+          label="New Drone"
           (click)="openForm()"
           class="p-button-sm"
+          pTooltip="Add a new drone"
+          tooltipPosition="left"
         ></button>
       </div>
 
@@ -51,24 +57,43 @@ import { DroneFormComponent } from './drone-form.component';
         styleClass="p-datatable-sm p-datatable-gridlines"
         [tableStyle]="{ 'min-width': '50rem' }"
         responsiveLayout="scroll"
+        [rowHover]="true"
+        dataKey="id"
+        [globalFilterFields]="['name', 'model']"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} drones"
       >
+        <ng-template pTemplate="caption">
+          <div class="flex justify-content-between align-items-center">
+            <h5 class="m-0">Manage Drones</h5>
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                placeholder="Search..."
+                (input)="onSearch($event)"
+              />
+            </span>
+          </div>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id">
+            <th pSortableColumn="id" style="width: 5rem">
               ID <p-sortIcon field="id"></p-sortIcon>
             </th>
             <th pSortableColumn="name">
-              Nombre <p-sortIcon field="name"></p-sortIcon>
+              Name <p-sortIcon field="name"></p-sortIcon>
             </th>
             <th pSortableColumn="model">
-              Modelo <p-sortIcon field="model"></p-sortIcon>
+              Model <p-sortIcon field="model"></p-sortIcon>
             </th>
-            <th>Posición</th>
-            <th>Orientación</th>
+            <th>Position</th>
+            <th>Orientation</th>
             <th pSortableColumn="matrixId">
-              Matriz <p-sortIcon field="matrixId"></p-sortIcon>
+              Matrix <p-sortIcon field="matrixId"></p-sortIcon>
             </th>
-            <th style="width: 8rem">Acciones</th>
+            <th style="width: 8rem">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-drone>
@@ -85,9 +110,9 @@ import { DroneFormComponent } from './drone-form.component';
             </td>
             <td>
               <p-tag
-                [value]="drone.orientation"
+                [value]="getOrientationLabel(drone.orientation)"
                 [rounded]="true"
-                severity="success"
+                [severity]="getOrientationSeverity(drone.orientation)"
               ></p-tag>
             </td>
             <td>{{ drone.matrixId }}</td>
@@ -98,14 +123,16 @@ import { DroneFormComponent } from './drone-form.component';
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-text p-button-sm"
                   (click)="openForm(drone)"
-                  pTooltip="Editar"
+                  pTooltip="Edit"
+                  tooltipPosition="top"
                 ></button>
                 <button
                   pButton
                   icon="pi pi-trash"
                   class="p-button-rounded p-button-text p-button-sm p-button-danger"
                   (click)="confirmDelete(drone)"
-                  pTooltip="Eliminar"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
                 ></button>
               </div>
             </td>
@@ -128,7 +155,7 @@ import { DroneFormComponent } from './drone-form.component';
                 <p-skeleton height="2rem" width="10rem"></p-skeleton>
               </div>
               <div *ngIf="!loading">
-                No se encontraron drones. Crea uno nuevo para comenzar.
+                No drones found. Create a new one to get started.
               </div>
             </td>
           </tr>
@@ -144,10 +171,10 @@ import { DroneFormComponent } from './drone-form.component';
     />
 
     <p-confirmDialog
-      header="Confirmar Eliminación"
+      header="Confirm Deletion"
       icon="pi pi-exclamation-triangle"
-      acceptLabel="Sí, eliminar"
-      rejectLabel="Cancelar"
+      acceptLabel="Yes, delete"
+      rejectLabel="Cancel"
       acceptButtonStyleClass="p-button-danger"
     ></p-confirmDialog>
 
@@ -156,6 +183,7 @@ import { DroneFormComponent } from './drone-form.component';
 })
 export class DroneListComponent implements OnInit {
   drones: Drone[] = [];
+  filteredDrones: Drone[] = [];
   formVisible = false;
   selectedDrone?: Drone;
   loading = true;
@@ -175,13 +203,14 @@ export class DroneListComponent implements OnInit {
     this.droneService.getAll().subscribe({
       next: (data) => {
         this.drones = data;
+        this.filteredDrones = data;
         this.loading = false;
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.message || 'No se pudieron cargar los drones',
+          detail: err.message || 'Could not load drones',
           life: 5000,
         });
         this.loading = false;
@@ -191,7 +220,7 @@ export class DroneListComponent implements OnInit {
 
   confirmDelete(drone: Drone) {
     this.confirmationService.confirm({
-      message: `¿Estás seguro de que deseas eliminar el dron "${drone.name}"?`,
+      message: `Are you sure you want to delete drone "${drone.name}"?`,
       accept: () => this.deleteDrone(drone.id),
     });
   }
@@ -201,8 +230,8 @@ export class DroneListComponent implements OnInit {
       next: (response) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Dron eliminado',
-          detail: response.message || `Dron ID ${id} eliminado correctamente`,
+          summary: 'Drone Deleted',
+          detail: response.message || `Drone ID ${id} deleted successfully`,
           life: 3000,
         });
         this.loadDrones();
@@ -210,8 +239,8 @@ export class DroneListComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error al eliminar',
-          detail: err.message || 'Error inesperado',
+          summary: 'Error Deleting',
+          detail: err.message || 'Unexpected error',
           life: 5000,
         });
       },
@@ -226,5 +255,45 @@ export class DroneListComponent implements OnInit {
   closeForm() {
     this.selectedDrone = undefined;
     this.formVisible = false;
+  }
+
+  onSearch(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+
+    if (!filterValue) {
+      this.filteredDrones = this.drones;
+      return;
+    }
+
+    this.filteredDrones = this.drones.filter(
+      (drone) =>
+        drone.name.toLowerCase().includes(filterValue) ||
+        drone.model.toLowerCase().includes(filterValue)
+    );
+  }
+
+  getOrientationLabel(orientation: string): string {
+    const labels = {
+      N: 'North',
+      S: 'South',
+      E: 'East',
+      W: 'West',
+      O: 'West',
+    };
+    return labels[orientation as keyof typeof labels] || orientation;
+  }
+
+  getOrientationSeverity(
+    orientation: string
+  ): 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast' {
+    const map = {
+      N: 'success',
+      S: 'warning',
+      E: 'info',
+      W: 'contrast',
+      O: 'contrast',
+    } as const;
+
+    return map[orientation as keyof typeof map] || 'success';
   }
 }

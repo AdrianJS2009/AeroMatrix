@@ -50,7 +50,8 @@ import { DroneService } from '../services/drone.service';
       [draggable]="false"
       [resizable]="false"
       (onHide)="onCancel()"
-      [header]="droneToEdit ? 'Editar Dron' : 'Crear Nuevo Dron'"
+      [header]="droneToEdit ? 'Edit Drone' : 'Create New Drone'"
+      styleClass="drone-form-dialog"
     >
       <div
         *ngIf="loading"
@@ -60,6 +61,7 @@ import { DroneService } from '../services/drone.service';
         <p-progressSpinner
           strokeWidth="4"
           [style]="{ width: '50px', height: '50px' }"
+          aria-label="Loading matrices"
         ></p-progressSpinner>
       </div>
 
@@ -70,48 +72,52 @@ import { DroneService } from '../services/drone.service';
         class="p-fluid"
       >
         <div class="field">
-          <label for="name" class="font-bold">Nombre</label>
+          <label for="name" class="font-bold">Name</label>
           <input
             id="name"
             pInputText
             formControlName="name"
-            placeholder="Ingrese nombre del dron"
+            placeholder="Enter drone name"
             [ngClass]="{
               'ng-invalid ng-dirty':
                 submitted && droneForm.controls['name'].invalid
             }"
+            aria-describedby="name-help"
           />
           <small
+            id="name-help"
             *ngIf="submitted && droneForm.controls['name'].invalid"
             class="p-error"
           >
-            El nombre es requerido
+            Name is required
           </small>
         </div>
 
         <div class="field">
-          <label for="model" class="font-bold">Modelo</label>
+          <label for="model" class="font-bold">Model</label>
           <input
             id="model"
             pInputText
             formControlName="model"
-            placeholder="Ingrese modelo del dron"
+            placeholder="Enter drone model"
             [ngClass]="{
               'ng-invalid ng-dirty':
                 submitted && droneForm.controls['model'].invalid
             }"
+            aria-describedby="model-help"
           />
           <small
+            id="model-help"
             *ngIf="submitted && droneForm.controls['model'].invalid"
             class="p-error"
           >
-            El modelo es requerido
+            Model is required
           </small>
         </div>
 
         <div class="formgrid grid">
           <div class="field col">
-            <label for="x" class="font-bold">Posición X</label>
+            <label for="x" class="font-bold">X Position</label>
             <p-inputNumber
               id="x"
               formControlName="x"
@@ -121,17 +127,19 @@ import { DroneService } from '../services/drone.service';
                 'ng-invalid ng-dirty':
                   submitted && droneForm.controls['x'].invalid
               }"
+              aria-describedby="x-help"
             ></p-inputNumber>
             <small
+              id="x-help"
               *ngIf="submitted && droneForm.controls['x'].invalid"
               class="p-error"
             >
-              Posición X requerida
+              X position is required
             </small>
           </div>
 
           <div class="field col">
-            <label for="y" class="font-bold">Posición Y</label>
+            <label for="y" class="font-bold">Y Position</label>
             <p-inputNumber
               id="y"
               formControlName="y"
@@ -141,59 +149,65 @@ import { DroneService } from '../services/drone.service';
                 'ng-invalid ng-dirty':
                   submitted && droneForm.controls['y'].invalid
               }"
+              aria-describedby="y-help"
             ></p-inputNumber>
             <small
+              id="y-help"
               *ngIf="submitted && droneForm.controls['y'].invalid"
               class="p-error"
             >
-              Posición Y requerida
+              Y position is required
             </small>
           </div>
         </div>
 
         <div class="field">
-          <label for="orientation" class="font-bold">Orientación</label>
+          <label for="orientation" class="font-bold">Orientation</label>
           <p-dropdown
             id="orientation"
             [options]="orientationOptions"
             optionLabel="label"
             optionValue="value"
             formControlName="orientation"
-            placeholder="Seleccione orientación"
+            placeholder="Select orientation"
             [ngClass]="{
               'ng-invalid ng-dirty':
                 submitted && droneForm.controls['orientation'].invalid
             }"
+            aria-describedby="orientation-help"
           ></p-dropdown>
           <small
+            id="orientation-help"
             *ngIf="submitted && droneForm.controls['orientation'].invalid"
             class="p-error"
           >
-            La orientación es requerida
+            Orientation is required
           </small>
         </div>
 
         <div class="field">
-          <label for="matrixId" class="font-bold">Matriz</label>
+          <label for="matrixId" class="font-bold">Matrix</label>
           <p-dropdown
             id="matrixId"
             [options]="matrixOptions"
             optionLabel="label"
             optionValue="value"
             formControlName="matrixId"
-            placeholder="Seleccione matriz"
+            placeholder="Select matrix"
             [ngClass]="{
               'ng-invalid ng-dirty':
                 submitted && droneForm.controls['matrixId'].invalid
             }"
             [filter]="true"
             filterBy="label"
+            aria-describedby="matrix-help"
           ></p-dropdown>
           <small
+            id="matrix-help"
             *ngIf="submitted && droneForm.controls['matrixId'].invalid"
             class="p-error"
           >
-            La matriz es requerida
+            Matrix is required
           </small>
         </div>
 
@@ -203,7 +217,7 @@ import { DroneService } from '../services/drone.service';
           <button
             pButton
             type="button"
-            label="Cancelar"
+            label="Cancel"
             class="p-button-outlined p-button-secondary"
             (click)="onCancel()"
             [disabled]="submitting"
@@ -211,7 +225,7 @@ import { DroneService } from '../services/drone.service';
           <button
             pButton
             type="submit"
-            label="Guardar"
+            label="Save"
             [loading]="submitting"
             [disabled]="submitting"
           ></button>
@@ -229,10 +243,10 @@ export class DroneFormComponent implements OnInit {
   droneForm!: FormGroup;
   matrixOptions: { label: string; value: number }[] = [];
   orientationOptions = [
-    { label: 'Norte (N)', value: 'N' },
-    { label: 'Sur (S)', value: 'S' },
-    { label: 'Este (E)', value: 'E' },
-    { label: 'Oeste (O)', value: 'O' },
+    { label: 'North (N)', value: 'N' },
+    { label: 'South (S)', value: 'S' },
+    { label: 'East (E)', value: 'E' },
+    { label: 'West (W)', value: 'W' },
   ];
 
   loading = false;
@@ -271,7 +285,7 @@ export class DroneFormComponent implements OnInit {
     this.matrixService.getAll().subscribe({
       next: (matrices) => {
         this.matrixOptions = matrices.map((m) => ({
-          label: `Matriz ${m.id} (${m.maxX}x${m.maxY})`,
+          label: `Matrix ${m.id} (${m.maxX}x${m.maxY})`,
           value: m.id,
         }));
         this.loading = false;
@@ -280,7 +294,7 @@ export class DroneFormComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudieron cargar las matrices',
+          detail: 'Could not load matrices',
           life: 5000,
         });
         this.loading = false;
@@ -294,8 +308,8 @@ export class DroneFormComponent implements OnInit {
     if (this.droneForm.invalid) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error de validación',
-        detail: 'Por favor complete todos los campos requeridos correctamente',
+        summary: 'Validation Error',
+        detail: 'Please complete all required fields correctly',
         life: 5000,
       });
       return;
@@ -312,10 +326,10 @@ export class DroneFormComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Éxito',
-          detail: `Dron ${
-            this.droneToEdit ? 'actualizado' : 'creado'
-          } correctamente`,
+          summary: 'Success',
+          detail: `Drone ${
+            this.droneToEdit ? 'updated' : 'created'
+          } successfully`,
           life: 3000,
         });
         this.submitting = false;
@@ -325,8 +339,8 @@ export class DroneFormComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error al guardar',
-          detail: err.message || 'Error desconocido',
+          summary: 'Error Saving',
+          detail: err.message || 'Unknown error',
           life: 5000,
         });
         this.submitting = false;

@@ -14,7 +14,7 @@ import { ToastModule } from 'primeng/toast';
       <ng-template pTemplate="start">
         <div class="flex align-items-center gap-2 ml-2">
           <i class="pi pi-send text-xl"></i>
-          <span class="font-bold text-xl">Drone Control</span>
+          <span class="font-bold text-xl">Drone Control System</span>
         </div>
       </ng-template>
     </p-menubar>
@@ -40,7 +40,7 @@ export class AppComponent {
       routerLink: '/matrices',
     },
     {
-      label: 'Vuelos',
+      label: 'Flights',
       icon: 'pi pi-compass',
       routerLink: '/flights',
     },
