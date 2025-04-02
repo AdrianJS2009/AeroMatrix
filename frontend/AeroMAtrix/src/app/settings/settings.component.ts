@@ -504,7 +504,7 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
-  constructor(private messageService: MessageService) {}
+  constructor(private readonly messageService: MessageService) {}
 
   saveSettings(section: string) {
     // In a real app, this would save to a service or backend

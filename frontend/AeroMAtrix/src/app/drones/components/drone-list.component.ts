@@ -378,9 +378,9 @@ export class DroneListComponent implements OnInit {
   loading = true;
 
   constructor(
-    private droneService: DroneService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private readonly droneService: DroneService,
+    private readonly messageService: MessageService,
+    private readonly confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {

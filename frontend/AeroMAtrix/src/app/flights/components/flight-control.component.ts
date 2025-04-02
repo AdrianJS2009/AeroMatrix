@@ -638,10 +638,10 @@ export class FlightControlComponent implements OnInit {
   executingBatch = false;
 
   constructor(
-    private droneService: DroneService,
-    private matrixService: MatrixService,
-    private flightService: FlightService,
-    private messageService: MessageService
+    private readonly droneService: DroneService,
+    private readonly matrixService: MatrixService,
+    private readonly flightService: FlightService,
+    private readonly messageService: MessageService
   ) {}
 
   ngOnInit(): void {

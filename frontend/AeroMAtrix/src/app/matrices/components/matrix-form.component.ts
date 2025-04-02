@@ -253,9 +253,9 @@ export class MatrixFormComponent implements OnInit {
   submitted = false;
 
   constructor(
-    private fb: FormBuilder,
-    private matrixService: MatrixService,
-    private messageService: MessageService
+    private readonly fb: FormBuilder,
+    private readonly matrixService: MatrixService,
+    private readonly messageService: MessageService
   ) {}
 
   ngOnInit(): void {

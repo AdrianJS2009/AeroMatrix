@@ -6,9 +6,9 @@ import type { Drone } from '../../drones/models/drone.model';
 
 @Injectable({ providedIn: 'root' })
 export class FlightService {
-  private apiUrl = `${environment.apiUrl}/flights`;
+  private readonly apiUrl = `${environment.apiUrl}/flights`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   sendCommands(droneId: number, commands: string[]): Observable<Drone> {
     return this.http

@@ -217,7 +217,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         </div>
         <div class="info-item">
           <span class="info-label">Drones:</span>
-          <span class="info-value">{{ drones?.length || 0 }}</span>
+          <span class="info-value">{{ drones.length || 0 }}</span>
         </div>
         <div class="info-item" *ngIf="selectedDroneId">
           <span class="info-label">Selected:</span>
@@ -555,11 +555,11 @@ export class DroneMatrixComponent
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private controls!: OrbitControls;
-  private droneModels: Map<number, THREE.Object3D> = new Map();
+  private readonly droneModels: Map<number, THREE.Object3D> = new Map();
   private gridHelper!: THREE.GridHelper;
   private animationFrameId?: number;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private readonly ngZone: NgZone) {}
 
   ngOnInit(): void {
     this.resetView();
@@ -725,7 +725,6 @@ export class DroneMatrixComponent
     }
 
     // Adjust pan to zoom toward mouse position
-    const scaleFactor = this.scale / oldScale;
     const panAdjustX = mouseX / oldScale - mouseX / this.scale;
     const panAdjustY = mouseY / oldScale - mouseY / this.scale;
 
@@ -1250,7 +1249,7 @@ export class DroneMatrixComponent
       const userData = (model as any).userData;
 
       // Position animation
-      if (userData && userData.startPosition && userData.targetPosition) {
+      if (userData?.startPosition && userData?.targetPosition) {
         userData.animationProgress += 0.05;
 
         if (userData.animationProgress <= 1) {
@@ -1288,7 +1287,7 @@ export class DroneMatrixComponent
       });
 
       // Glow effect animation for selected drone
-      if (userData && userData.glowMesh) {
+      if (userData?.glowMesh) {
         userData.glowFactor += 0.03 * userData.glowDirection;
 
         if (userData.glowFactor >= 1) {

@@ -532,7 +532,7 @@ export class LandingPageComponent implements OnInit {
     },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   ngOnInit() {
     // Animate demo drones

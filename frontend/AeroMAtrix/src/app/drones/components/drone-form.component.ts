@@ -340,10 +340,10 @@ export class DroneFormComponent implements OnInit {
   submitted = false;
 
   constructor(
-    private fb: FormBuilder,
-    private droneService: DroneService,
-    private matrixService: MatrixService,
-    private messageService: MessageService
+    private readonly fb: FormBuilder,
+    private readonly droneService: DroneService,
+    private readonly matrixService: MatrixService,
+    private readonly messageService: MessageService
   ) {}
 
   ngOnInit(): void {

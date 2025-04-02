@@ -381,9 +381,9 @@ export class MatrixListComponent implements OnInit {
   loading = true;
 
   constructor(
-    private matrixService: MatrixService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private readonly matrixService: MatrixService,
+    private readonly messageService: MessageService,
+    private readonly confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
