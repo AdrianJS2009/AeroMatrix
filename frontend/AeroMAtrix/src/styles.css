@@ -1,5 +1,162 @@
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
 body {
   font-family: var(--font-family);
   margin: 0;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .container {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+/* PrimeNG custom styles */
+:root {
+  --primary-color: #3b82f6;
+  --primary-color-text: #ffffff;
+}
+
+.p-button {
+  border-radius: 6px;
+}
+
+.p-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.p-datatable .p-datatable-header {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-width: 1px 0 1px 0;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.p-chip {
+  background: #e9ecef;
+  color: #495057;
+  border-radius: 16px;
+  padding: 0 0.5rem;
+}
+
+.p-chip-sm {
+  height: 1.5rem;
+  min-height: 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* Utility classes */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.p-3 {
+  padding: 1rem;
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.shadow-1 {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-500 {
+  color: #6c757d;
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+  color: var(--primary-color-text);
 }
