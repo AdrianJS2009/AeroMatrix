@@ -51,10 +51,11 @@ import { MatrixService } from '../services/matrix.service';
           <button
             pButton
             type="submit"
-            label="Guardar"
             [disabled]="matrixForm.invalid"
             class="p-button-sm"
-          />
+          >
+            Guardar
+          </button>
         </div>
       </form>
     </p-dialog>

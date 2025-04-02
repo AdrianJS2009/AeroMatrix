@@ -30,7 +30,7 @@ import { DroneFormComponent } from './drone-form.component';
         label="Nuevo"
         (click)="openForm()"
         class="p-button-sm"
-      />
+      ></button>
     </div>
 
     <p-table
@@ -62,13 +62,13 @@ import { DroneFormComponent } from './drone-form.component';
               icon="pi pi-pencil"
               class="p-button-rounded p-button-text p-button-sm me-1"
               (click)="openForm(drone)"
-            />
+            ></button>
             <button
               pButton
               icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-sm p-button-danger"
               (click)="deleteDrone(drone.id)"
-            />
+            ></button>
           </td>
         </tr>
       </ng-template>

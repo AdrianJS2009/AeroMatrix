@@ -30,7 +30,7 @@ import { MatrixFormComponent } from './matrix-form.component';
         label="Nueva"
         class="p-button-sm"
         (click)="openForm()"
-      />
+      ></button>
     </div>
 
     <p-table
@@ -65,13 +65,13 @@ import { MatrixFormComponent } from './matrix-form.component';
               icon="pi pi-pencil"
               class="p-button-rounded p-button-text p-button-sm me-1"
               (click)="openForm(matrix)"
-            />
+            ></button>
             <button
               pButton
               icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-sm p-button-danger"
               (click)="deleteMatrix(matrix.id)"
-            />
+            ></button>
           </td>
         </tr>
       </ng-template>

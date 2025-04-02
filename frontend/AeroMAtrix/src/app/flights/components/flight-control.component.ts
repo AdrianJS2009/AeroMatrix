@@ -54,7 +54,7 @@ import { FlightService } from '../services/flight.service';
           class="mt-3 p-button-sm"
           (click)="executeSingle()"
           [disabled]="!selectedDrone || !commandsText"
-        />
+        ></button>
       </div>
     </p-panel>
 
@@ -83,7 +83,7 @@ import { FlightService } from '../services/flight.service';
           class="mt-3 p-button-sm"
           (click)="executeGroup()"
           [disabled]="!multiSelectedDrones?.length || !commandsGroupText"
-        />
+        ></button>
       </div>
     </p-panel>
 
@@ -114,7 +114,7 @@ import { FlightService } from '../services/flight.service';
           icon="pi pi-trash"
           class="p-button-rounded p-button-danger p-button-sm mt-2"
           (click)="batchCommands.splice(i, 1)"
-        />
+        ></button>
       </div>
 
       <button
@@ -123,7 +123,7 @@ import { FlightService } from '../services/flight.service';
         icon="pi pi-plus"
         class="p-button-sm me-2"
         (click)="addBatchCommand()"
-      />
+      ></button>
       <button
         pButton
         label="Ejecutar lote"
@@ -131,7 +131,7 @@ import { FlightService } from '../services/flight.service';
         class="p-button-sm"
         (click)="executeBatch()"
         [disabled]="batchCommands.length === 0"
-      />
+      ></button>
     </p-panel>
   `,
 })

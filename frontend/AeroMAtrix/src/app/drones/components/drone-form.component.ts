@@ -75,7 +75,7 @@ import { DroneService } from '../services/drone.service';
             label="Guardar"
             [disabled]="droneForm.invalid"
             class="p-button-sm"
-          />
+          ></button>
         </div>
       </form>
     </p-dialog>
