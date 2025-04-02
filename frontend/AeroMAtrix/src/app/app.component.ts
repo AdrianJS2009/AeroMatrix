@@ -12,6 +12,6 @@ export class AppComponent {
   constructor(private primengConfig: PrimeNGConfig) {}
 
   ngOnInit() {
-    this.primengConfig.ripple = true; // El efecto ripple es:
+    this.primengConfig.ripple = true;
   }
 }
