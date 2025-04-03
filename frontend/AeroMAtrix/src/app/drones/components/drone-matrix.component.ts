@@ -159,7 +159,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
               <div
                 class="grid-line horizontal"
                 *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
-                [style.top.px]="y * cellSize"
+                [style.top.px]="(matrix!.maxY - 1 - y) * cellSize"
                 [ngClass]="{ 'axis-line': y === 0 }"
               ></div>
             </div>
@@ -177,7 +177,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
               <div
                 class="grid-cell"
                 *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
-                [style.top.px]="y * cellSize"
+                [style.top.px]="(matrix!.maxY - 1 - y) * cellSize"
                 [style.width.px]="cellSize * (matrix?.maxX || 1)"
                 [style.height.px]="cellSize"
                 [ngClass]="{ 'alternate-row': y % 2 === 1 }"
@@ -209,7 +209,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
             <div
               class="coordinate-label y-label"
               *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
-              [style.top.px]="(y + 0.5) * cellSize"
+              [style.top.px]="(matrix!.maxY - 1 - y + 0.5) * cellSize"
               [style.left.px]="-25"
             >
               {{ y }}
@@ -229,7 +229,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
                   drone.orientation === 'W' || drone.orientation === 'O'
               }"
               [style.left.px]="drone.x * cellSize"
-              [style.top.px]="drone.y * cellSize"
+              [style.top.px]="(matrix!.maxY - 1 - drone.y) * cellSize"
               [style.width.px]="cellSize"
               [style.height.px]="cellSize"
               (click)="selectDrone(drone)"
@@ -986,7 +986,7 @@ export class DroneMatrixComponent
 
     // Convert to grid coordinates
     const gridX = Math.floor(mouseX / this.cellSize);
-    const gridY = Math.floor(mouseY / this.cellSize);
+    const gridY = this.matrix.maxY - 1 - Math.floor(mouseY / this.cellSize);
 
     // Check if coordinates are within matrix bounds
     if (
