@@ -2,7 +2,6 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 :root {
   /* Primary color palette */
@@ -81,6 +80,22 @@
   --text-color: #1e293b;
   --text-color-secondary: #64748b;
 }
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --surface-ground: #121212;
+  --surface-section: #1e1e1e;
+  --surface-card: #262626;
+  --surface-overlay: #2e2e2e;
+  --surface-border: #383838;
+  --surface-hover: #2a2a2a;
+  --text-color: #f8f9fa;
+  --text-color-secondary: #adb5bd;
+  --primary-color: #4dabf7;
+  --primary-color-text: #121212;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 body {
   font-family: var(--font-family);
@@ -299,4 +314,9 @@ body {
 
 .selected-drone-cell {
   animation: pulse 1.5s infinite;
+}
+
+/* Dark theme overrides for Three.js canvas */
+[data-theme="dark"] canvas {
+  filter: brightness(0.9);
 }
