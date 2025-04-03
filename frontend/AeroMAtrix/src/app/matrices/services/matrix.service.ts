@@ -6,9 +6,9 @@ import type { Matrix } from '../models/matrix.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatrixService {
-  private apiUrl = `${environment.apiUrl}/matrices`;
+  private readonly apiUrl = `${environment.apiUrl}/matrices`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getAll(): Observable<Matrix[]> {
     return this.http.get<Matrix[]>(this.apiUrl).pipe(

@@ -571,7 +571,7 @@ export class AppComponent implements OnInit {
 
   currentRoute = '';
 
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   ngOnInit() {
     this.router.events

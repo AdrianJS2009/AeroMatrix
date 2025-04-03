@@ -182,11 +182,7 @@ import { MatrixFormComponent } from './matrix-form.component';
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td
-                  colspan="4"
-                  class="text-center p-
-4"
-                >
+                <td colspan="4" class="text-center p-4">
                   <div
                     *ngIf="loading"
                     class="flex flex-column align-items-center"
@@ -401,7 +397,7 @@ export class MatrixListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.message || 'No se pudieron cargar las matrices',
+          detail: err.message || 'Matrices could not be loaded',
           life: 5000,
         });
         this.loading = false;

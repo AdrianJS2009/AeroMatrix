@@ -507,7 +507,6 @@ export class SettingsComponent {
   constructor(private readonly messageService: MessageService) {}
 
   saveSettings(section: string) {
-    // In a real app, this would save to a service or backend
     this.messageService.add({
       severity: 'success',
       summary: 'Settings Saved',
@@ -566,7 +565,7 @@ export class SettingsComponent {
   }
 
   testApiConnection() {
-    // Simulate API connection test
+    // Simulation
     setTimeout(() => {
       this.messageService.add({
         severity: 'success',
