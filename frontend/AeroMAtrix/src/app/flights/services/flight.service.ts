@@ -1,18 +1,32 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { type Observable, catchError, throwError } from 'rxjs';
-import { environment } from '../../../enviroments/environment';
-import type { Drone } from '../../drones/models/drone.model';
+import { ApiService } from '../../core/api.service';
+import { Drone } from '../../drones/models/drone.model';
 
-@Injectable({ providedIn: 'root' })
+export interface CommandsRequest {
+  commands: string[];
+}
+
+export interface BatchCommandRequest {
+  droneId: number;
+  commands: string[];
+}
+
+export interface BatchDroneCommandRequest {
+  commands: BatchCommandRequest[];
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class FlightService {
-  private readonly apiUrl = `${environment.apiUrl}/flights`;
+  private path = '/flights';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
   sendCommands(droneId: number, commands: string[]): Observable<Drone> {
-    return this.http
-      .post<Drone>(`${this.apiUrl}/drones/${droneId}/commands`, {
+    return this.apiService
+      .post<Drone, CommandsRequest>(`${this.path}/drones/${droneId}/commands`, {
         commands,
       })
       .pipe(
@@ -27,13 +41,13 @@ export class FlightService {
   }
 
   sendCommandsToMany(droneIds: number[], commands: string[]): Observable<void> {
-    return this.http
-      .post<void>(
-        `${this.apiUrl}/drones/commands`,
-        { commands },
-        {
-          params: { droneIds: droneIds.join(',') },
-        }
+    const params = new URLSearchParams();
+    params.append('droneIds', droneIds.join(','));
+
+    return this.apiService
+      .post<void, CommandsRequest>(
+        `${this.path}/drones/commands?${params.toString()}`,
+        { commands }
       )
       .pipe(
         catchError((error) => {
@@ -46,11 +60,9 @@ export class FlightService {
       );
   }
 
-  sendBatchCommands(
-    batch: { droneId: number; commands: string[] }[]
-  ): Observable<void> {
-    return this.http
-      .post<void>(`${this.apiUrl}/batch-commands`, {
+  sendBatchCommands(batch: BatchCommandRequest[]): Observable<void> {
+    return this.apiService
+      .post<void, BatchDroneCommandRequest>(`${this.path}/batch-commands`, {
         commands: batch,
       })
       .pipe(

@@ -1,17 +1,28 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { type Observable, catchError, throwError } from 'rxjs';
-import { environment } from '../../../enviroments/environment';
-import type { Matrix } from '../models/matrix.model';
+import { Observable, catchError, throwError } from 'rxjs';
+import { ApiService } from '../../core/api.service';
+import { Matrix } from '../models/matrix.model';
 
-@Injectable({ providedIn: 'root' })
+export interface CreateMatrixRequest {
+  maxX: number;
+  maxY: number;
+}
+
+export interface UpdateMatrixRequest {
+  maxX: number;
+  maxY: number;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class MatrixService {
-  private readonly apiUrl = `${environment.apiUrl}/matrices`;
+  private readonly path = '/matrices';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly apiService: ApiService) {}
 
   getAll(): Observable<Matrix[]> {
-    return this.http.get<Matrix[]>(this.apiUrl).pipe(
+    return this.apiService.get<Matrix[]>(this.path).pipe(
       catchError((error) => {
         console.error('Error fetching matrices:', error);
         return throwError(
@@ -22,7 +33,7 @@ export class MatrixService {
   }
 
   getById(id: number): Observable<Matrix> {
-    return this.http.get<Matrix>(`${this.apiUrl}/${id}`).pipe(
+    return this.apiService.get<Matrix>(`${this.path}/${id}`).pipe(
       catchError((error) => {
         console.error(`Error fetching matrix ${id}:`, error);
         return throwError(
@@ -33,32 +44,36 @@ export class MatrixService {
     );
   }
 
-  create(data: { maxX: number; maxY: number }): Observable<Matrix> {
-    return this.http.post<Matrix>(this.apiUrl, data).pipe(
-      catchError((error) => {
-        console.error('Error creating matrix:', error);
-        const message =
-          error.error?.message ||
-          'Failed to create matrix. Please check your input and try again.';
-        return throwError(() => new Error(message));
-      })
-    );
+  create(data: CreateMatrixRequest): Observable<Matrix> {
+    return this.apiService
+      .post<Matrix, CreateMatrixRequest>(this.path, data)
+      .pipe(
+        catchError((error) => {
+          console.error('Error creating matrix:', error);
+          const message =
+            error.error?.message ||
+            'Failed to create matrix. Please check your input and try again.';
+          return throwError(() => new Error(message));
+        })
+      );
   }
 
-  update(id: number, data: { maxX: number; maxY: number }): Observable<Matrix> {
-    return this.http.put<Matrix>(`${this.apiUrl}/${id}`, data).pipe(
-      catchError((error) => {
-        console.error(`Error updating matrix ${id}:`, error);
-        const message =
-          error.error?.message ||
-          'Failed to update matrix. Please check your input and try again.';
-        return throwError(() => new Error(message));
-      })
-    );
+  update(id: number, data: UpdateMatrixRequest): Observable<Matrix> {
+    return this.apiService
+      .put<Matrix, UpdateMatrixRequest>(`${this.path}/${id}`, data)
+      .pipe(
+        catchError((error) => {
+          console.error(`Error updating matrix ${id}:`, error);
+          const message =
+            error.error?.message ||
+            'Failed to update matrix. Please check your input and try again.';
+          return throwError(() => new Error(message));
+        })
+      );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.apiService.delete<void>(`${this.path}/${id}`).pipe(
       catchError((error) => {
         console.error(`Error deleting matrix ${id}:`, error);
         const message =
