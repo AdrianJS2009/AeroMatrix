@@ -1,0 +1,116 @@
+{
+  "HEADER": {
+    "TOGGLE_THEME": "Cambiar tema",
+    "LANGUAGE": "Cambiar idioma"
+  },
+  "SIDEBAR": {
+    "NAVIGATION": "Navegación",
+    "SYSTEM_INFO": "Sistema de Control de Drones",
+    "COLLAPSE": "Colapsar barra lateral",
+    "EXPAND": "Expandir barra lateral"
+  },
+  "MENU": {
+    "DASHBOARD": "Panel",
+    "DRONES": "Drones",
+    "MATRICES": "Matrices",
+    "FLIGHTS": "Vuelos",
+    "ANALYTICS": "Analíticas",
+    "SETTINGS": "Configuración"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notificaciones",
+    "DRONE_ALERT": "Alerta de Drone",
+    "DRONE_ALERT_DESC": "El Drone #5 se está acercando al límite de la matriz",
+    "FLIGHT_COMPLETED": "Vuelo Completado",
+    "FLIGHT_COMPLETED_DESC": "El vuelo programado para el Drone #2 se completó con éxito",
+    "SYSTEM_UPDATE": "Actualización del Sistema",
+    "SYSTEM_UPDATE_DESC": "Nueva versión del sistema disponible",
+    "VIEW_ALL": "Ver todas las notificaciones",
+    "TIME_AGO": {
+      "MINUTES": "hace {{minutes}} minutos",
+      "HOURS": "hace {{hours}} hora",
+      "DAYS": "hace {{days}} día"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Seleccionar Idioma"
+  },
+  "USER": {
+    "ADMIN": "Usuario Administrador",
+    "ROLE": "Administrador",
+    "EDIT_PROFILE": "Editar Perfil",
+    "SETTINGS": "Configuración",
+    "LOGOUT": "Cerrar Sesión"
+  },
+  "FOOTER": {
+    "RIGHTS": "Todos los derechos reservados.",
+    "CREATED_BY": "Creado por Adrián Jiménez Santiago como actividad educativa para su FCT."
+  },
+  "DRONE_MATRIX": {
+    "MATRIX": "Matriz",
+    "DIMENSIONS": "Dimensiones",
+    "DRONES": "Drones",
+    "SELECTED": "Seleccionado",
+    "VIEW": "3D (Usa el ratón para rotar y hacer zoom)",
+    "ZOOM_IN": "Acercar",
+    "ZOOM_OUT": "Alejar",
+    "RESET_VIEW": "Restablecer Vista",
+    "3D_VIEW": "Vista 3D",
+    "2D_VIEW": "Vista 2D",
+    "SHOW_LABELS": "Mostrar Etiquetas",
+    "HIDE_LABELS": "Ocultar Etiquetas"
+  },
+  "SETTINGS": {
+    "TITLE": "Configuración del Sistema",
+    "SUBTITLE": "Configura las preferencias de tu sistema de control de drones",
+    "GENERAL": {
+      "TITLE": "General",
+      "APP_SETTINGS": "Configuración de la Aplicación",
+      "DARK_MODE": "Modo Oscuro",
+      "DARK_MODE_DESC": "Habilitar tema oscuro para la aplicación",
+      "ANIMATIONS": "Animaciones de UI",
+      "ANIMATIONS_DESC": "Habilitar animaciones en toda la interfaz",
+      "LANGUAGE": "Idioma",
+      "LANGUAGE_DESC": "Selecciona tu idioma preferido",
+      "NOTIFICATIONS": "Notificaciones",
+      "NOTIFICATIONS_DESC": "Habilitar notificaciones del sistema"
+    },
+    "DRONE": {
+      "TITLE": "Control de Drones",
+      "DEFAULT_SETTINGS": "Configuración Predeterminada de Drones",
+      "DEFAULT_ORIENTATION": "Orientación Predeterminada",
+      "DEFAULT_ORIENTATION_DESC": "Orientación inicial para nuevos drones",
+      "AUTO_POSITION": "Auto-Posición",
+      "AUTO_POSITION_DESC": "Posicionar automáticamente nuevos drones en el origen de la matriz",
+      "FLIGHT_CONTROLS": "Controles de Vuelo",
+      "CONFIRM_COMMANDS": "Confirmar Comandos",
+      "CONFIRM_COMMANDS_DESC": "Mostrar diálogo de confirmación antes de ejecutar comandos de vuelo",
+      "COMMAND_DELAY": "Retraso de Ejecución de Comandos (ms)",
+      "COMMAND_DELAY_DESC": "Retraso entre ejecuciones de comandos para visualización",
+      "BOUNDARY_CHECK": "Verificación de Límites",
+      "BOUNDARY_CHECK_DESC": "Evitar que los drones se muevan fuera de los límites de la matriz",
+      "COLLISION_DETECTION": "Detección de Colisiones",
+      "COLLISION_DETECTION_DESC": "Evitar que los drones ocupen la misma posición"
+    },
+    "API": {
+      "TITLE": "Configuración de API",
+      "CONNECTION": "Conexión API",
+      "API_URL": "URL de API",
+      "API_URL_DESC": "URL base para la API de control de drones",
+      "REQUEST_TIMEOUT": "Tiempo de Espera de Solicitud (ms)",
+      "REQUEST_TIMEOUT_DESC": "Tiempo máximo de espera para respuestas de API",
+      "RETRY_ATTEMPTS": "Intentos de Reintento",
+      "RETRY_ATTEMPTS_DESC": "Número de veces para reintentar solicitudes de API fallidas",
+      "AUTHENTICATION": "Autenticación",
+      "API_KEY": "Clave API",
+      "API_KEY_DESC": "Clave de autenticación para acceso a API",
+      "TOKEN_REFRESH": "Actualización Automática de Token",
+      "TOKEN_REFRESH_DESC": "Actualizar automáticamente tokens de autenticación"
+    },
+    "ACTIONS": {
+      "RESET": "Restablecer Valores Predeterminados",
+      "SAVE": "Guardar Cambios",
+      "TEST_CONNECTION": "Probar Conexión"
+    }
+  }
+}
