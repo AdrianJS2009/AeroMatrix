@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
@@ -13,6 +14,8 @@ import { RippleModule } from 'primeng/ripple';
 import { SidebarModule } from 'primeng/sidebar';
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs/operators';
+import { ThemeService } from './core/theme.service';
+import { Language, TranslationService } from './core/translation.service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +32,7 @@ import { filter } from 'rxjs/operators';
     AvatarModule,
     BadgeModule,
     OverlayPanelModule,
+    TranslateModule,
   ],
   animations: [
     trigger('fadeAnimation', [
@@ -40,7 +44,13 @@ import { filter } from 'rxjs/operators';
     ]),
   ],
   template: `
-    <div class="app-container" [ngClass]="{ 'sidebar-open': sidebarVisible }">
+    <div
+      class="app-container"
+      [ngClass]="{
+        'sidebar-open': sidebarVisible,
+        'sidebar-collapsed': sidebarCollapsed && !sidebarVisible
+      }"
+    >
       <!-- Header -->
       <header class="app-header">
         <div class="header-content">
@@ -56,11 +66,33 @@ import { filter } from 'rxjs/operators';
             ></button>
             <div class="logo-container" (click)="navigateHome()">
               <i class="pi pi-send logo-icon"></i>
-              <h1 class="logo-text">DroneMatrix</h1>
+              <h1 class="logo-text">AeroMatrix</h1>
             </div>
           </div>
 
           <div class="header-right">
+            <!-- Theme Toggle -->
+            <button
+              pButton
+              pRipple
+              type="button"
+              [icon]="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'"
+              class="p-button-text p-button-rounded theme-toggle"
+              (click)="toggleTheme()"
+              pTooltip="{{ 'HEADER.TOGGLE_THEME' | translate }}"
+            ></button>
+
+            <!-- Language Selector -->
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-globe"
+              class="p-button-text p-button-rounded"
+              (click)="langPanel.toggle($event)"
+              pTooltip="{{ 'HEADER.LANGUAGE' | translate }}"
+            ></button>
+
             <button
               pButton
               pRipple
@@ -92,7 +124,17 @@ import { filter } from 'rxjs/operators';
       >
         <div class="sidebar-header">
           <i class="pi pi-send"></i>
-          <span>Navigation</span>
+          <span>{{ 'SIDEBAR.NAVIGATION' | translate }}</span>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-angle-left"
+            class="p-button-text p-button-rounded collapse-btn"
+            (click)="collapseSidebar()"
+            pTooltip="{{ 'SIDEBAR.COLLAPSE' | translate }}"
+          ></button>
         </div>
 
         <div class="sidebar-menu">
@@ -103,7 +145,7 @@ import { filter } from 'rxjs/operators';
               (click)="navigateTo(item.routerLink)"
             >
               <i [class]="item.icon"></i>
-              <span>{{ item.label }}</span>
+              <span>{{ item.label ?? '' | translate }}</span>
               <div class="hover-indicator"></div>
             </li>
           </ul>
@@ -111,11 +153,41 @@ import { filter } from 'rxjs/operators';
 
         <div class="sidebar-footer">
           <div class="system-info">
-            <span>Drone Control System</span>
+            <span>{{ 'SIDEBAR.SYSTEM_INFO' | translate }}</span>
             <span class="version">v1.2.0</span>
           </div>
         </div>
       </p-sidebar>
+
+      <!-- Collapsed Sidebar -->
+      <div
+        class="collapsed-sidebar"
+        *ngIf="sidebarCollapsed && !sidebarVisible"
+      >
+        <div class="collapsed-sidebar-content">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-angle-right"
+            class="p-button-text p-button-rounded expand-btn"
+            (click)="expandSidebar()"
+            pTooltip="{{ 'SIDEBAR.EXPAND' | translate }}"
+          ></button>
+
+          <ul class="collapsed-menu">
+            <li
+              *ngFor="let item of menuItems"
+              [ngClass]="{ active: isActive(item.routerLink) }"
+              (click)="navigateTo(item.routerLink)"
+              pTooltip="{{ item.label ?? '' | translate }}"
+              tooltipPosition="right"
+            >
+              <i [class]="item.icon"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
 
       <!-- Main Content -->
       <main
@@ -129,34 +201,66 @@ import { filter } from 'rxjs/operators';
       <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '350px' }">
         <ng-template pTemplate>
           <div class="notification-panel">
-            <h3>Notifications</h3>
+            <h3>{{ 'NOTIFICATIONS.TITLE' | translate }}</h3>
             <div class="notification-item unread">
               <i class="pi pi-exclamation-circle"></i>
               <div class="notification-content">
-                <h4>Drone Alert</h4>
-                <p>Drone #5 is approaching matrix boundary</p>
-                <span class="notification-time">5 minutes ago</span>
+                <h4>{{ 'NOTIFICATIONS.DRONE_ALERT' | translate }}</h4>
+                <p>{{ 'NOTIFICATIONS.DRONE_ALERT_DESC' | translate }}</p>
+                <span class="notification-time">{{
+                  'NOTIFICATIONS.TIME_AGO.MINUTES' | translate : { minutes: 5 }
+                }}</span>
               </div>
             </div>
             <div class="notification-item unread">
               <i class="pi pi-check-circle"></i>
               <div class="notification-content">
-                <h4>Flight Completed</h4>
-                <p>Scheduled flight for Drone #2 completed successfully</p>
-                <span class="notification-time">1 hour ago</span>
+                <h4>{{ 'NOTIFICATIONS.FLIGHT_COMPLETED' | translate }}</h4>
+                <p>{{ 'NOTIFICATIONS.FLIGHT_COMPLETED_DESC' | translate }}</p>
+                <span class="notification-time">{{
+                  'NOTIFICATIONS.TIME_AGO.HOURS' | translate : { hours: 1 }
+                }}</span>
               </div>
             </div>
             <div class="notification-item">
               <i class="pi pi-info-circle"></i>
               <div class="notification-content">
-                <h4>System Update</h4>
-                <p>New system version available</p>
-                <span class="notification-time">1 day ago</span>
+                <h4>{{ 'NOTIFICATIONS.SYSTEM_UPDATE' | translate }}</h4>
+                <p>{{ 'NOTIFICATIONS.SYSTEM_UPDATE_DESC' | translate }}</p>
+                <span class="notification-time">{{
+                  'NOTIFICATIONS.TIME_AGO.DAYS' | translate : { days: 1 }
+                }}</span>
               </div>
             </div>
             <div class="view-all">
-              <a href="#">View all notifications</a>
+              <a href="#">{{ 'NOTIFICATIONS.VIEW_ALL' | translate }}</a>
             </div>
+          </div>
+        </ng-template>
+      </p-overlayPanel>
+
+      <!-- Language Panel -->
+      <p-overlayPanel
+        #langPanel
+        [showCloseIcon]="true"
+        [style]="{ width: '250px' }"
+      >
+        <ng-template pTemplate>
+          <div class="language-panel">
+            <h3>{{ 'LANGUAGE.SELECT' | translate }}</h3>
+            <ul class="language-list">
+              <li
+                *ngFor="let lang of availableLanguages"
+                [ngClass]="{ active: currentLanguage.code === lang.code }"
+                (click)="setLanguage(lang)"
+              >
+                <span>{{ lang.name }}</span>
+                <i
+                  class="pi pi-check"
+                  *ngIf="currentLanguage.code === lang.code"
+                ></i>
+              </li>
+            </ul>
           </div>
         </ng-template>
       </p-overlayPanel>
@@ -176,14 +280,21 @@ import { filter } from 'rxjs/operators';
                 shape="circle"
               ></p-avatar>
               <div class="user-details">
-                <h4>Admin User</h4>
-                <p>Administrator</p>
+                <h4>{{ 'USER.ADMIN' | translate }}</h4>
+                <p>{{ 'USER.ROLE' | translate }}</p>
               </div>
             </div>
             <ul class="user-menu">
-              <li><i class="pi pi-user-edit"></i> Edit Profile</li>
-              <li><i class="pi pi-cog"></i> Settings</li>
-              <li><i class="pi pi-sign-out"></i> Logout</li>
+              <li>
+                <i class="pi pi-user-edit"></i>
+                {{ 'USER.EDIT_PROFILE' | translate }}
+              </li>
+              <li (click)="navigateTo('/settings')">
+                <i class="pi pi-cog"></i> {{ 'USER.SETTINGS' | translate }}
+              </li>
+              <li>
+                <i class="pi pi-sign-out"></i> {{ 'USER.LOGOUT' | translate }}
+              </li>
             </ul>
           </div>
         </ng-template>
@@ -197,6 +308,19 @@ import { filter } from 'rxjs/operators';
         acceptButtonStyleClass="p-button-danger"
         rejectButtonStyleClass="p-button-text"
       ></p-confirmDialog>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <div class="copyright">
+            &copy; {{ currentYear }} AeroMatrix.
+            {{ 'FOOTER.RIGHTS' | translate }}
+          </div>
+          <div class="attribution">
+            {{ 'FOOTER.CREATED_BY' | translate }}
+          </div>
+        </div>
+      </footer>
     </div>
   `,
   styles: [
@@ -275,11 +399,13 @@ import { filter } from 'rxjs/operators';
         transform: rotate(90deg);
       }
 
+      .theme-toggle,
       .user-avatar {
         cursor: pointer;
         transition: transform 0.2s ease;
       }
 
+      .theme-toggle:hover,
       .user-avatar:hover {
         transform: scale(1.1);
       }
@@ -302,10 +428,18 @@ import { filter } from 'rxjs/operators';
         border-bottom: 1px solid var(--surface-border);
         font-size: 1.2rem;
         font-weight: 600;
+        position: relative;
       }
 
       .sidebar-header i {
         color: var(--primary-color);
+      }
+
+      .collapse-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
       }
 
       .sidebar-menu {
@@ -381,6 +515,65 @@ import { filter } from 'rxjs/operators';
         opacity: 0.7;
       }
 
+      /* Collapsed Sidebar */
+      .collapsed-sidebar {
+        width: 60px;
+        background-color: var(--surface-card);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+      }
+
+      .collapsed-sidebar-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 1rem 0;
+      }
+
+      .expand-btn {
+        align-self: center;
+        margin-bottom: 1rem;
+      }
+
+      .collapsed-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .collapsed-menu li {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+
+      .collapsed-menu li i {
+        font-size: 1.2rem;
+        color: var(--text-color-secondary);
+      }
+
+      .collapsed-menu li.active i {
+        color: var(--primary-color);
+      }
+
+      .collapsed-menu li:hover {
+        background-color: var(--surface-hover);
+      }
+
+      .collapsed-menu li.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: var(--primary-color);
+      }
+
       /* Main Content */
       .app-content {
         flex: 1;
@@ -392,6 +585,11 @@ import { filter } from 'rxjs/operators';
       .sidebar-open .app-content {
         margin-left: 250px;
         width: calc(100% - 250px);
+      }
+
+      .sidebar-collapsed .app-content {
+        margin-left: 60px;
+        width: calc(100% - 60px);
       }
 
       /* Notification Panel */
@@ -463,6 +661,38 @@ import { filter } from 'rxjs/operators';
         font-size: 0.875rem;
       }
 
+      /* Language Panel */
+      .language-panel h3 {
+        margin-top: 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--surface-border);
+      }
+
+      .language-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .language-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0.5rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+      }
+
+      .language-list li:hover {
+        background-color: var(--surface-100);
+      }
+
+      .language-list li.active {
+        background-color: var(--primary-50);
+        color: var(--primary-color);
+      }
+
       /* User Panel */
       .user-panel {
         padding: 0.5rem 0;
@@ -511,6 +741,22 @@ import { filter } from 'rxjs/operators';
         width: 1.5rem;
       }
 
+      /* Footer */
+      .app-footer {
+        background-color: var(--surface-card);
+        border-top: 1px solid var(--surface-border);
+        padding: 1rem 1.5rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+      }
+
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
       /* Custom Confirm Dialog */
       :host ::ng-deep .custom-confirm-dialog .p-dialog-content {
         padding: 2rem 1.5rem 1rem;
@@ -518,13 +764,18 @@ import { filter } from 'rxjs/operators';
 
       /* Responsive Adjustments */
       @media screen and (max-width: 768px) {
-        .sidebar-open .app-content {
+        .sidebar-open .app-content,
+        .sidebar-collapsed .app-content {
           margin-left: 0;
           width: 100%;
         }
 
         :host ::ng-deep .app-sidebar {
           width: 100% !important;
+        }
+
+        .collapsed-sidebar {
+          display: none;
         }
 
         .logo-text {
@@ -536,42 +787,54 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   sidebarVisible = false;
+  sidebarCollapsed = false;
   menuItems: MenuItem[] = [
     {
-      label: 'Dashboard',
+      label: 'MENU.DASHBOARD',
       icon: 'pi pi-home',
       routerLink: '/',
     },
     {
-      label: 'Drones',
+      label: 'MENU.DRONES',
       icon: 'pi pi-send',
       routerLink: '/drones',
     },
     {
-      label: 'Matrices',
+      label: 'MENU.MATRICES',
       icon: 'pi pi-th-large',
       routerLink: '/matrices',
     },
     {
-      label: 'Flights',
+      label: 'MENU.FLIGHTS',
       icon: 'pi pi-compass',
       routerLink: '/flights',
     },
     {
-      label: 'Analytics',
+      label: 'MENU.ANALYTICS',
       icon: 'pi pi-chart-bar',
       routerLink: '/analytics',
     },
     {
-      label: 'Settings',
+      label: 'MENU.SETTINGS',
       icon: 'pi pi-cog',
       routerLink: '/settings',
     },
   ];
 
   currentRoute = '';
+  isDarkTheme = false;
+  currentLanguage: Language;
+  availableLanguages: Language[];
+  currentYear = new Date().getFullYear();
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly themeService: ThemeService,
+    private readonly translationService: TranslationService
+  ) {
+    this.currentLanguage = this.translationService.availableLanguages[0];
+    this.availableLanguages = this.translationService.availableLanguages;
+  }
 
   ngOnInit() {
     this.router.events
@@ -579,10 +842,35 @@ export class AppComponent implements OnInit {
       .subscribe((event: any) => {
         this.currentRoute = event.url;
       });
+
+    // Subscribe to theme changes
+    this.themeService.currentTheme$.subscribe((theme) => {
+      this.isDarkTheme = theme === 'dark';
+    });
+
+    // Subscribe to language changes
+    this.translationService.currentLanguage$.subscribe((language) => {
+      this.currentLanguage = language;
+    });
   }
 
   toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
+    if (this.sidebarCollapsed) {
+      this.sidebarCollapsed = false;
+      this.sidebarVisible = true;
+    } else {
+      this.sidebarVisible = !this.sidebarVisible;
+    }
+  }
+
+  collapseSidebar() {
+    this.sidebarVisible = false;
+    this.sidebarCollapsed = true;
+  }
+
+  expandSidebar() {
+    this.sidebarCollapsed = false;
+    this.sidebarVisible = true;
   }
 
   navigateTo(route: string | undefined) {
@@ -604,5 +892,13 @@ export class AppComponent implements OnInit {
       this.currentRoute === route ||
       (route !== '/' && this.currentRoute.startsWith(route))
     );
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
+
+  setLanguage(language: Language) {
+    this.translationService.setLanguage(language);
   }
 }
