@@ -12,10 +12,10 @@ import { environment } from '../../enviroments/environment';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = environment.apiUrl;
-  private timeoutDuration = 30000; // 30 seconds timeout
+  private readonly apiUrl = environment.apiUrl;
+  private readonly timeoutDuration = 30000;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   get<T>(path: string, params: HttpParams = new HttpParams()): Observable<T> {
     return this.http.get<T>(`${this.apiUrl}${path}`, { params }).pipe(

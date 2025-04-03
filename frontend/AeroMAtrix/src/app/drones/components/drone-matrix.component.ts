@@ -1024,7 +1024,6 @@ export class DroneMatrixComponent
     }
 
     // Adjust pan to zoom toward mouse position
-    const scaleFactor = this.scale / oldScale;
     const panAdjustX = mouseX / oldScale - mouseX / this.scale;
     const panAdjustY = mouseY / oldScale - mouseY / this.scale;
 
@@ -1218,7 +1217,6 @@ export class DroneMatrixComponent
           directionIndicator.rotation.z = Math.PI / 2;
           break;
         case 'W':
-        case 'O': // Handle legacy 'O' for Oeste (West in Spanish)
           directionIndicator.position.set(-0.4, 0.1, 0);
           directionIndicator.rotation.z = -Math.PI / 2;
           break;

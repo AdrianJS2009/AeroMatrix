@@ -1206,10 +1206,10 @@ export class FlightControlComponent implements OnInit {
   }[] = [];
 
   constructor(
-    private droneService: DroneService,
-    private matrixService: MatrixService,
-    private flightService: FlightService,
-    private messageService: MessageService
+    private readonly droneService: DroneService,
+    private readonly matrixService: MatrixService,
+    private readonly flightService: FlightService,
+    private readonly messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -1296,131 +1296,124 @@ export class FlightControlComponent implements OnInit {
     this.commandsGroupTextInvalid = false;
   }
 
-  executeSingle() {
-    if (!this.validateCommands(this.commandsText)) {
-      this.commandsTextInvalid = true;
-      return;
-    }
+  private refreshDronesAndMatrix() {
+    this.droneService.getAll().subscribe({
+      next: (updatedDrones) => {
+        this.drones = updatedDrones;
 
-    this.commandsTextInvalid = false;
-    this.executingSingle = true;
-
-    const commandMap: Record<string, string> = {
-      A: 'MOVE_FORWARD',
-      L: 'TURN_LEFT',
-      R: 'TURN_RIGHT',
-    };
-
-    const commands = this.commandsText
-      .toUpperCase()
-      .replace(/I/g, 'L') // si usas I y D como atajos
-      .replace(/D/g, 'R')
-      .split('')
-      .map((char) => commandMap[char])
-      .filter((cmd): cmd is string => !!cmd); // filtra comandos inválidos
-
-    this.flightService
-      .sendCommands(this.selectedDrone!.id, commands)
-      .subscribe({
-        next: (drone) => {
-          // Add to flight history
-          this.addToFlightHistory(
-            this.selectedDrone!.name,
-            this.commandsText.toUpperCase(),
-            `(${this.selectedDrone!.x}, ${this.selectedDrone!.y})`,
-            `(${drone.x}, ${drone.y})`,
-            'Completed'
-          );
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Commands Executed',
-            detail: `New position: (${drone.x}, ${
-              drone.y
-            }) - Orientation: ${this.getOrientationLabel(drone.orientation)}`,
-            life: 3000,
-          });
-          this.executingSingle = false;
-          this.loadDrones();
-
-          // Update the selected drone with new position
-          this.selectedDrone = drone;
-
-          // Trigger animation
-          this.droneAnimationTrigger++;
-
-          // Re-render the matrix
-          if (this.selectedMatrix) {
-            this.loadMatrixForDrone(this.selectedDrone.matrixId);
-          }
-        },
-        error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.message || 'Flight failed',
-            life: 5000,
-          });
-          this.executingSingle = false;
-        },
-      });
-  }
-
-  executeGroup() {
-    if (!this.validateCommands(this.commandsGroupText)) {
-      this.commandsGroupTextInvalid = true;
-      return;
-    }
-
-    this.commandsGroupTextInvalid = false;
-    this.executingGroup = true;
-    const droneIds = this.multiSelectedDrones.map((d) => d.id);
-
-    // Convert legacy commands (I/D) to new format (L/R)
-    const commands = this.commandsGroupText
-      .toUpperCase()
-      .replace(/I/g, 'L') // Replace I (Izquierda) with L (Left)
-      .replace(/D/g, 'R') // Replace D (Derecha) with R (Right)
-      .split('');
-
-    this.flightService.sendCommandsToMany(droneIds, commands).subscribe({
-      next: () => {
-        // Add to flight history for each drone
-        this.multiSelectedDrones.forEach((drone) => {
-          this.addToFlightHistory(
-            drone.name,
-            this.commandsGroupText.toUpperCase(),
-            `(${drone.x}, ${drone.y})`,
-            'Updated',
-            'Completed'
-          );
-        });
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Commands Sent to Group',
-          detail: `${this.multiSelectedDrones.length} drones updated successfully`,
-          life: 3000,
-        });
-        this.executingGroup = false;
-        this.loadDrones();
-
-        // Trigger animation
-        this.droneAnimationTrigger++;
-
-        // Re-render the matrix if needed
         if (this.selectedMatrix) {
-          this.loadMatrixForDrone(this.selectedMatrix.id);
+          const updatedMatrix = this.matrices.find(
+            (m) => m.id === this.selectedMatrix?.id
+          );
+          if (updatedMatrix) {
+            updatedMatrix.drones = updatedDrones.filter(
+              (d) => d.matrixId === updatedMatrix.id
+            );
+            this.selectedMatrix = { ...updatedMatrix }; // ⚠️ Cambiar referencia
+          }
         }
       },
       error: (err) => {
+        console.error('Error actualizando drones:', err);
+      },
+    });
+  }
+
+  executeSingle(): void {
+    if (!this.selectedDrone?.id || !this.commandsText) return;
+
+    const droneId = this.selectedDrone.id;
+    const commands = this.commandsText
+      .toUpperCase()
+      .split('')
+      .map((char) => this.mapCommand(char))
+      .filter((cmd): cmd is string => !!cmd);
+
+    if (commands.length === 0) return;
+
+    this.flightService.sendCommands(droneId, commands).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Commands executed',
+        });
+        this.refreshDronesAndMatrix();
+        this.commandsText = '';
+      },
+      error: (err) => {
+        console.error(`Error sending commands to drone ${droneId}:`, err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Group Error',
-          detail: err.message || 'Flight failed',
-          life: 5000,
+          summary: 'Failed to execute commands',
         });
-        this.executingGroup = false;
+      },
+    });
+  }
+
+  executeGroup(): void {
+    if (this.multiSelectedDrones.length === 0 || !this.commandsGroupText)
+      return;
+
+    const commands = this.commandsGroupText
+      .toUpperCase()
+      .split('')
+      .map((char) => this.mapCommand(char))
+      .filter((cmd): cmd is string => cmd !== null);
+
+    if (commands.length === 0) return;
+
+    const droneIds = this.multiSelectedDrones.map((d) => d.id);
+
+    this.flightService.sendCommandsToMany(droneIds, commands).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Commands sent to selected drones',
+        });
+        this.refreshDronesAndMatrix();
+        this.commandsGroupText = '';
+      },
+      error: (err) => {
+        console.error('Error sending commands to group:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed to execute group commands',
+        });
+      },
+    });
+  }
+
+  executeBatch(): void {
+    if (this.batchCommands.length === 0) return;
+
+    const batchPayload = this.batchCommands
+      .filter((batch) => batch.droneId !== null && batch.commands.trim() !== '')
+      .map((batch) => ({
+        droneId: batch.droneId as number,
+        commands: batch.commands
+          .toUpperCase()
+          .split('')
+          .map((char) => this.mapCommand(char))
+          .filter((cmd): cmd is string => !!cmd),
+      }));
+
+    if (batchPayload.length === 0) return;
+
+    this.flightService.sendBatchCommands(batchPayload).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Batch commands executed',
+        });
+        this.refreshDronesAndMatrix();
+        this.batchCommands = [];
+      },
+      error: (err) => {
+        console.error('Error executing batch commands:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed to execute batch',
+        });
       },
     });
   }
@@ -1444,77 +1437,6 @@ export class FlightControlComponent implements OnInit {
     this.batchCommands.push({ droneId: null, commands: '' });
   }
 
-  executeBatch() {
-    if (!this.isValidBatch()) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Validation',
-        detail: 'Please complete at least one row correctly',
-        life: 3000,
-      });
-      return;
-    }
-
-    this.executingBatch = true;
-    const batch = this.batchCommands
-      .filter(
-        (b) => b.droneId && b.commands && this.validateCommands(b.commands)
-      )
-      .map((b) => ({
-        droneId: b.droneId!,
-        commands: b.commands
-          .toUpperCase()
-          .replace(/I/g, 'L') // Replace I (Izquierda) with L (Left)
-          .replace(/D/g, 'R') // Replace D (Derecha) with R (Right)
-          .split(''),
-      }));
-
-    this.flightService.sendBatchCommands(batch).subscribe({
-      next: () => {
-        // Add to flight history
-        batch.forEach((item) => {
-          const drone = this.drones.find((d) => d.id === item.droneId);
-          if (drone) {
-            this.addToFlightHistory(
-              drone.name,
-              item.commands.join(''),
-              `(${drone.x}, ${drone.y})`,
-              'Updated',
-              'Completed'
-            );
-          }
-        });
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Batch Commands Sent',
-          detail: `Total flights: ${batch.length}`,
-          life: 3000,
-        });
-        this.executingBatch = false;
-        this.batchCommands = [{ droneId: null, commands: '' }];
-        this.loadDrones();
-
-        // Trigger animation
-        this.droneAnimationTrigger++;
-
-        // Re-render the matrix if needed
-        if (this.selectedMatrix) {
-          this.loadMatrixForDrone(this.selectedMatrix.id);
-        }
-      },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Batch Error',
-          detail: err.message || 'Batch failed',
-          life: 5000,
-        });
-        this.executingBatch = false;
-      },
-    });
-  }
-
   getOrientationLabel(orientation: string): string {
     const labels = {
       N: 'North',
@@ -1534,7 +1456,6 @@ export class FlightControlComponent implements OnInit {
       S: 'warning',
       E: 'info',
       W: 'info',
-      O: 'info', // Handle legacy 'O'
     } as const;
 
     return map[orientation as keyof typeof map] || 'info';
@@ -1556,7 +1477,6 @@ export class FlightControlComponent implements OnInit {
   }
 
   getRandomColor(seed: string): string {
-    // Simple hash function to generate a consistent color from a string
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
       hash = seed.charCodeAt(i) + ((hash << 5) - hash);
@@ -1629,5 +1549,15 @@ export class FlightControlComponent implements OnInit {
 
   toggleDarkMode() {
     this.darkMode = !this.darkMode;
+  }
+
+  mapCommand(char: string): string | null {
+    const commandMap: Record<string, string> = {
+      A: 'MOVE_FORWARD',
+      L: 'TURN_LEFT',
+      R: 'TURN_RIGHT',
+    };
+
+    return commandMap[char.toUpperCase()] ?? null;
   }
 }
