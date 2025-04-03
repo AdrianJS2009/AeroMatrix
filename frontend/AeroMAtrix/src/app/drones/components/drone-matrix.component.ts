@@ -16,7 +16,10 @@ import {
   type SimpleChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { SliderModule } from 'primeng/slider';
 import { TooltipModule } from 'primeng/tooltip';
 import { Drone } from '../../drones/models/drone.model';
@@ -36,6 +39,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
     TooltipModule,
     SliderModule,
     FormsModule,
+    BadgeModule,
+    DividerModule,
+    InputSwitchModule,
   ],
   animations: [
     trigger('fadeIn', [
@@ -53,49 +59,78 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
   ],
   template: `
     <div class="matrix-container" @fadeIn>
-      <div class="matrix-controls">
-        <div class="control-group">
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-rounded p-button-outlined"
-            (click)="zoomIn()"
-            pTooltip="Zoom In"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-minus"
-            class="p-button-rounded p-button-outlined"
-            (click)="zoomOut()"
-            pTooltip="Zoom Out"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-refresh"
-            class="p-button-rounded p-button-outlined"
-            (click)="resetView()"
-            pTooltip="Reset View"
-          ></button>
+      <div class="matrix-header">
+        <div class="matrix-title">
+          <h2>Drone Matrix Visualization</h2>
+          <p>Interactive grid for monitoring drone positions and movements</p>
         </div>
 
-        <div class="view-options">
-          <button
-            pButton
-            [icon]="view3D ? 'pi pi-table' : 'pi pi-cube'"
-            [label]="view3D ? '2D View' : '3D View'"
-            class="p-button-sm p-button-outlined"
-            (click)="toggleView()"
-          ></button>
+        <div class="matrix-controls">
+          <div class="control-group">
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-rounded p-button-outlined"
+              (click)="zoomIn()"
+              pTooltip="Zoom In"
+              tooltipPosition="bottom"
+              aria-label="Zoom In"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-minus"
+              class="p-button-rounded p-button-outlined"
+              (click)="zoomOut()"
+              pTooltip="Zoom Out"
+              tooltipPosition="bottom"
+              aria-label="Zoom Out"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-refresh"
+              class="p-button-rounded p-button-outlined"
+              (click)="resetView()"
+              pTooltip="Reset View"
+              tooltipPosition="bottom"
+              aria-label="Reset View"
+            ></button>
+          </div>
 
-          <button
-            pButton
-            [icon]="showLabels ? 'pi pi-eye-slash' : 'pi pi-eye'"
-            [label]="showLabels ? 'Hide Labels' : 'Show Labels'"
-            class="p-button-sm p-button-outlined"
-            (click)="toggleLabels()"
-          ></button>
+          <div class="view-options">
+            <button
+              pButton
+              [icon]="view3D ? 'pi pi-table' : 'pi pi-cube'"
+              [label]="view3D ? '2D View' : '3D View'"
+              class="p-button-sm p-button-outlined"
+              (click)="toggleView()"
+              aria-label="Toggle between 2D and 3D view"
+            ></button>
+
+            <div class="p-inputswitch-container">
+              <label for="showLabels" class="switch-label">Show Labels</label>
+              <p-inputSwitch
+                [(ngModel)]="showLabels"
+                inputId="showLabels"
+                aria-label="Toggle coordinate labels"
+              ></p-inputSwitch>
+            </div>
+
+            <div class="p-inputswitch-container" *ngIf="!view3D">
+              <label for="showGridlines" class="switch-label"
+                >Enhanced Grid</label
+              >
+              <p-inputSwitch
+                [(ngModel)]="enhancedGrid"
+                inputId="showGridlines"
+                aria-label="Toggle enhanced grid lines"
+                (onChange)="updateGridStyle()"
+              ></p-inputSwitch>
+            </div>
+          </div>
         </div>
       </div>
+
+      <p-divider></p-divider>
 
       <!-- 2D Matrix View -->
       <div
@@ -106,7 +141,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         (mousemove)="pan($event)"
         (mouseup)="endPan()"
         (mouseleave)="endPan()"
-        (wheel)="onWheel($event)"
+        [attr.aria-label]="
+          'Matrix grid with ' + (drones.length || 0) + ' drones'
+        "
       >
         <div
           class="matrix-grid"
@@ -117,12 +154,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
           [style.height.px]="cellSize * (matrix?.maxY || 1)"
         >
           <!-- Grid Lines -->
-          <div class="grid-lines">
+          <div class="grid-lines" [ngClass]="{ enhanced: enhancedGrid }">
             <div class="horizontal-lines">
               <div
                 class="grid-line horizontal"
                 *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
                 [style.top.px]="y * cellSize"
+                [ngClass]="{ 'axis-line': y === 0 }"
               ></div>
             </div>
             <div class="vertical-lines">
@@ -130,6 +168,27 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
                 class="grid-line vertical"
                 *ngFor="let x of getArrayFromSize(matrix?.maxX || 0)"
                 [style.left.px]="x * cellSize"
+                [ngClass]="{ 'axis-line': x === 0 }"
+              ></div>
+            </div>
+
+            <!-- Grid Cells for better visibility -->
+            <div class="grid-cells" *ngIf="enhancedGrid">
+              <div
+                class="grid-cell"
+                *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
+                [style.top.px]="y * cellSize"
+                [style.width.px]="cellSize * (matrix?.maxX || 1)"
+                [style.height.px]="cellSize"
+                [ngClass]="{ 'alternate-row': y % 2 === 1 }"
+              ></div>
+              <div
+                class="grid-cell vertical"
+                *ngFor="let x of getArrayFromSize(matrix?.maxX || 0)"
+                [style.left.px]="x * cellSize"
+                [style.width.px]="cellSize"
+                [style.height.px]="cellSize * (matrix?.maxY || 1)"
+                [ngClass]="{ 'alternate-column': x % 2 === 1 }"
               ></div>
             </div>
           </div>
@@ -174,6 +233,19 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
               [style.width.px]="cellSize"
               [style.height.px]="cellSize"
               (click)="selectDrone(drone)"
+              [attr.aria-label]="
+                'Drone ' +
+                drone.name +
+                ' at position ' +
+                drone.x +
+                ',' +
+                drone.y +
+                ' facing ' +
+                getOrientationLabel(drone.orientation)
+              "
+              [attr.aria-selected]="drone.id === selectedDroneId"
+              tabindex="0"
+              (keydown.enter)="selectDrone(drone)"
               @scaleIn
             >
               <div class="drone-body">
@@ -186,7 +258,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
                 <div
                   class="drone-info"
-                  *ngIf="showLabels || drone.id === selectedDroneId"
+                  [ngClass]="{
+                    visible: showLabels || drone.id === selectedDroneId
+                  }"
                 >
                   <span class="drone-id">{{ drone.name }}</span>
                   <span class="drone-position"
@@ -194,14 +268,35 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
                   >
                 </div>
               </div>
+
+              <!-- Position indicator on grid -->
+              <div class="position-marker" *ngIf="enhancedGrid"></div>
             </div>
           </ng-container>
+
+          <!-- Grid Coordinates Overlay -->
+          <div class="grid-coordinates" *ngIf="showCoordinates">
+            <span>{{ currentCoordinates }}</span>
+          </div>
         </div>
       </div>
 
       <!-- 3D Matrix View -->
-      <div class="matrix-3d-container" #container3d *ngIf="view3D">
+      <div
+        class="matrix-3d-container"
+        #container3d
+        *ngIf="view3D"
+        [attr.aria-label]="
+          '3D Matrix visualization with ' + (drones.length || 0) + ' drones'
+        "
+      >
         <!-- Three.js will render here -->
+        <div class="matrix-3d-controls">
+          <div class="control-hint">
+            <i class="pi pi-info-circle"></i>
+            <span>Use mouse to rotate, zoom and pan the 3D view</span>
+          </div>
+        </div>
       </div>
 
       <div class="matrix-info">
@@ -217,15 +312,16 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         </div>
         <div class="info-item">
           <span class="info-label">Drones:</span>
-          <span class="info-value">{{ drones.length || 0 }}</span>
+          <p-badge
+            [value]="(drones.length || 0).toString()"
+            severity="info"
+          ></p-badge>
         </div>
         <div class="info-item" *ngIf="selectedDroneId">
           <span class="info-label">Selected:</span>
-          <span class="info-value">{{ getSelectedDroneName() }}</span>
-        </div>
-        <div class="info-item" *ngIf="view3D">
-          <span class="info-label">View:</span>
-          <span class="info-value">3D (Use mouse to rotate and zoom)</span>
+          <span class="info-value selected-drone">{{
+            getSelectedDroneName()
+          }}</span>
         </div>
       </div>
     </div>
@@ -242,14 +338,32 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         overflow: hidden;
       }
 
+      .matrix-header {
+        padding: 1.25rem 1.5rem;
+        background-color: var(--surface-section);
+      }
+
+      .matrix-title {
+        margin-bottom: 1rem;
+      }
+
+      .matrix-title h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        color: var(--text-color);
+      }
+
+      .matrix-title p {
+        margin: 0;
+        color: var(--text-color-secondary);
+      }
+
       .matrix-controls {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem;
-        background-color: var(--surface-section);
-        border-bottom: 1px solid var(--surface-border);
-        z-index: 10;
+        flex-wrap: wrap;
+        gap: 1rem;
       }
 
       .control-group {
@@ -259,7 +373,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
       .view-options {
         display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .p-inputswitch-container {
+        display: flex;
+        align-items: center;
         gap: 0.5rem;
+      }
+
+      .switch-label {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
       }
 
       .matrix-viewport {
@@ -279,6 +406,23 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         position: relative;
         overflow: hidden;
         background-color: var(--surface-ground);
+      }
+
+      .matrix-3d-controls {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        pointer-events: none;
       }
 
       .matrix-grid {
@@ -304,6 +448,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         background-color: rgba(0, 0, 0, 0.1);
       }
 
+      [data-theme='dark'] .grid-line {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
       .grid-line.horizontal {
         width: 100%;
         height: 1px;
@@ -314,6 +462,49 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         width: 1px;
       }
 
+      /* Enhanced grid styling */
+      .grid-lines.enhanced .grid-line {
+        background-color: rgba(0, 0, 0, 0.15);
+      }
+
+      [data-theme='dark'] .grid-lines.enhanced .grid-line {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .grid-lines.enhanced .grid-line.axis-line {
+        background-color: var(--primary-400);
+        opacity: 0.5;
+        width: 2px;
+        height: 2px;
+        z-index: 1;
+      }
+
+      .grid-cells {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .grid-cell {
+        position: absolute;
+      }
+
+      .grid-cell.alternate-row {
+        background-color: rgba(0, 0, 0, 0.02);
+      }
+
+      .grid-cell.alternate-column {
+        background-color: rgba(0, 0, 0, 0.02);
+      }
+
+      [data-theme='dark'] .grid-cell.alternate-row,
+      [data-theme='dark'] .grid-cell.alternate-column {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+
       .coordinate-label {
         position: absolute;
         font-size: 0.75rem;
@@ -321,6 +512,15 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         transform: translate(-50%, -50%);
         pointer-events: none;
         font-weight: 600;
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      [data-theme='dark'] .coordinate-label {
+        background-color: rgba(30, 30, 30, 0.7);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
       }
 
       .drone {
@@ -328,6 +528,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
         z-index: 10;
+      }
+
+      .drone:focus {
+        outline: none;
+      }
+
+      .drone:focus .drone-body {
+        box-shadow: 0 0 0 3px var(--primary-300), 0 8px 16px rgba(0, 0, 0, 0.3);
       }
 
       .drone-body {
@@ -454,9 +662,42 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         z-index: 20;
       }
 
+      .drone-info.visible,
       .drone:hover .drone-info,
       .drone.selected .drone-info {
         opacity: 1;
+      }
+
+      /* Position marker for enhanced grid */
+      .position-marker {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        border: 2px dashed var(--primary-300);
+        border-radius: 8px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .drone:hover .position-marker,
+      .drone.selected .position-marker {
+        opacity: 0.7;
+      }
+
+      /* Grid coordinates overlay */
+      .grid-coordinates {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        pointer-events: none;
       }
 
       .matrix-info {
@@ -487,6 +728,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
         font-family: monospace;
       }
 
+      .info-value.selected-drone {
+        background-color: var(--primary-100);
+        color: var(--primary-700);
+        font-weight: 600;
+      }
+
       @keyframes pulse {
         0% {
           box-shadow: 0 0 0 3px var(--primary-300),
@@ -514,13 +761,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
       @media screen and (max-width: 768px) {
         .matrix-controls {
           flex-direction: column;
-          gap: 0.75rem;
           align-items: flex-start;
         }
 
         .view-options {
           width: 100%;
           justify-content: space-between;
+        }
+
+        .matrix-header {
+          padding: 1rem;
+        }
+
+        .matrix-title h2 {
+          font-size: 1.25rem;
         }
       }
     `,
@@ -549,6 +803,9 @@ export class DroneMatrixComponent
   lastPanY = 0; // Last Y position for pan
   view3D = false; // Whether to show 3D view
   showLabels = true; // Whether to show coordinate labels
+  enhancedGrid = true; // Whether to show enhanced grid
+  showCoordinates = false; // Whether to show coordinates overlay
+  currentCoordinates = '(0, 0)'; // Current coordinates under mouse
 
   // Three.js properties
   private scene!: THREE.Scene;
@@ -613,6 +870,17 @@ export class DroneMatrixComponent
   getSelectedDroneName(): string {
     const drone = this.drones.find((d) => d.id === this.selectedDroneId);
     return drone ? drone.name : '';
+  }
+
+  getOrientationLabel(orientation: string): string {
+    const orientations: Record<string, string> = {
+      N: 'North',
+      S: 'South',
+      E: 'East',
+      W: 'West',
+      O: 'West', // Legacy code for "Oeste" (West in Spanish)
+    };
+    return orientations[orientation] || orientation;
   }
 
   zoomIn(): void {
@@ -693,6 +961,9 @@ export class DroneMatrixComponent
 
     this.panX = this.lastPanX + deltaX / this.scale;
     this.panY = this.lastPanY + deltaY / this.scale;
+
+    // Update coordinates display
+    this.updateMouseCoordinates(event);
   }
 
   endPan(): void {
@@ -700,6 +971,34 @@ export class DroneMatrixComponent
       this.isPanning = false;
       this.lastPanX = this.panX;
       this.lastPanY = this.panY;
+    }
+  }
+
+  updateMouseCoordinates(event: MouseEvent): void {
+    if (!this.matrix || !this.viewportRef) return;
+
+    const viewport = this.viewportRef.nativeElement;
+    const rect = viewport.getBoundingClientRect();
+
+    // Calculate mouse position relative to the matrix
+    const mouseX = (event.clientX - rect.left) / this.scale - this.panX;
+    const mouseY = (event.clientY - rect.top) / this.scale - this.panY;
+
+    // Convert to grid coordinates
+    const gridX = Math.floor(mouseX / this.cellSize);
+    const gridY = Math.floor(mouseY / this.cellSize);
+
+    // Check if coordinates are within matrix bounds
+    if (
+      gridX >= 0 &&
+      gridX < this.matrix.maxX &&
+      gridY >= 0 &&
+      gridY < this.matrix.maxY
+    ) {
+      this.currentCoordinates = `(${gridX}, ${gridY})`;
+      this.showCoordinates = true;
+    } else {
+      this.showCoordinates = false;
     }
   }
 
@@ -725,6 +1024,7 @@ export class DroneMatrixComponent
     }
 
     // Adjust pan to zoom toward mouse position
+    const scaleFactor = this.scale / oldScale;
     const panAdjustX = mouseX / oldScale - mouseX / this.scale;
     const panAdjustY = mouseY / oldScale - mouseY / this.scale;
 
@@ -759,13 +1059,9 @@ export class DroneMatrixComponent
     }
   }
 
-  toggleLabels(): void {
-    this.showLabels = !this.showLabels;
-
-    if (this.view3D && this.scene) {
-      // Toggle labels in 3D view
-      this.updateLabels();
-    }
+  updateGridStyle(): void {
+    // This method is called when the enhanced grid toggle changes
+    // The actual styling is handled by CSS classes
   }
 
   // Three.js methods
@@ -1006,8 +1302,24 @@ export class DroneMatrixComponent
     this.drones.forEach((drone) => {
       const droneModel = this.droneModels.get(drone.id);
       if (droneModel) {
+        // Ensure drone is within matrix boundaries
+        const boundedX = Math.max(
+          0,
+          Math.min(drone.x, this.matrix?.maxX ?? 10 - 1)
+        );
+        const boundedY = Math.max(
+          0,
+          Math.min(drone.y, this.matrix?.maxY ?? 10 - 1)
+        );
+
+        // If position was adjusted, update the drone object
+        if (boundedX !== drone.x || boundedY !== drone.y) {
+          drone.x = boundedX;
+          drone.y = boundedY;
+        }
+
         // Animate to new position
-        const targetPosition = new THREE.Vector3(drone.x, 0.2, drone.y);
+        const targetPosition = new THREE.Vector3(boundedX, 0.2, boundedY);
 
         // Create animation
         const currentPosition = droneModel.position.clone();
@@ -1162,17 +1474,6 @@ export class DroneMatrixComponent
         this.addDroneLabel(droneModel as THREE.Group, drone);
       }
     }
-  }
-
-  private updateLabels(): void {
-    // Update visibility of all drone labels
-    this.droneModels.forEach((model, droneId) => {
-      this.updateDroneLabel(
-        model,
-        droneId,
-        this.showLabels || droneId === this.selectedDroneId
-      );
-    });
   }
 
   private updateCameraPosition(): void {

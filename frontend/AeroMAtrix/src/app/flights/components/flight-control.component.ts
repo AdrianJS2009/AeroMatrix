@@ -3,19 +3,24 @@ import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RippleModule } from 'primeng/ripple';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SkeletonModule } from 'primeng/skeleton';
+import { StepsModule } from 'primeng/steps';
 import { TabViewModule } from 'primeng/tabview';
+import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { DroneMatrixComponent } from '../../drones/components/drone-matrix.component';
@@ -46,6 +51,11 @@ import { FlightService } from '../services/flight.service';
     TooltipModule,
     RippleModule,
     BadgeModule,
+    AvatarModule,
+    StepsModule,
+    TagModule,
+    ScrollPanelModule,
+    InputSwitchModule,
     DroneMatrixComponent,
   ],
   providers: [MessageService],
@@ -59,12 +69,42 @@ import { FlightService } from '../services/flight.service';
         ),
       ]),
     ]),
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(-20px)' }),
+        animate(
+          '400ms ease-out',
+          style({ opacity: 1, transform: 'translateX(0)' })
+        ),
+      ]),
+    ]),
+    trigger('slideInRight', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(20px)' }),
+        animate(
+          '400ms ease-out',
+          style({ opacity: 1, transform: 'translateX(0)' })
+        ),
+      ]),
+    ]),
   ],
   template: `
     <div class="flight-control-container" @fadeIn>
       <div class="page-header">
-        <h1>Flight Control Center</h1>
-        <p>Control and monitor drone movements in real-time</p>
+        <div class="header-content">
+          <div>
+            <h1>Flight Control Center</h1>
+            <p>Control and monitor drone movements in real-time</p>
+          </div>
+          <div class="header-actions">
+            <p-inputSwitch
+              [(ngModel)]="darkMode"
+              (onChange)="toggleDarkMode()"
+              class="mr-2"
+            ></p-inputSwitch>
+            <label class="dark-mode-label">Dark Mode</label>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="loading" class="loading-container">
@@ -75,376 +115,616 @@ import { FlightService } from '../services/flight.service';
         <span>Loading flight control system...</span>
       </div>
 
-      <div *ngIf="!loading" class="grid">
-        <!-- Matrix Visualization -->
-        <div class="col-12 lg:col-6">
-          <app-drone-matrix
-            [matrix]="selectedMatrix"
-            [drones]="selectedMatrix?.drones || []"
-            [selectedDroneId]="selectedDrone?.id"
-            (droneSelected)="onMatrixDroneSelect($event)"
-          ></app-drone-matrix>
-        </div>
+      <div
+        *ngIf="!loading"
+        class="flight-control-content"
+        [ngClass]="{ 'dark-theme': darkMode }"
+      >
+        <div class="grid">
+          <!-- Matrix Visualization -->
+          <div class="col-12 lg:col-6 xl:col-7">
+            <div class="matrix-container">
+              <app-drone-matrix
+                [matrix]="selectedMatrix"
+                [drones]="selectedMatrix?.drones || []"
+                [selectedDroneId]="selectedDrone?.id"
+                (droneSelected)="onMatrixDroneSelect($event)"
+              ></app-drone-matrix>
+            </div>
+          </div>
 
-        <!-- Flight Controls -->
-        <div class="col-12 lg:col-6">
-          <p-tabView styleClass="flight-tabs">
-            <!-- SINGLE DRONE COMMANDS -->
-            <p-tabPanel header="Single Drone">
-              <div class="p-fluid">
-                <div class="field">
-                  <label class="font-bold">Drone</label>
-                  <p-dropdown
-                    [options]="drones"
-                    [(ngModel)]="selectedDrone"
-                    optionLabel="name"
-                    placeholder="Select a drone"
-                    [filter]="true"
-                    filterBy="name"
-                    [showClear]="true"
-                    styleClass="w-full"
-                    (onChange)="onDroneSelect($event)"
-                  >
-                    <ng-template pTemplate="selectedItem">
-                      <div
-                        *ngIf="selectedDrone"
-                        class="flex align-items-center gap-2"
-                      >
-                        <span>{{ selectedDrone.name }}</span>
-                        <p-chip
-                          [label]="
-                            '(' + selectedDrone.x + ',' + selectedDrone.y + ')'
-                          "
-                          [removable]="false"
-                          styleClass="p-chip-sm"
-                        ></p-chip>
-                        <p-chip
-                          [label]="
-                            getOrientationLabel(selectedDrone.orientation)
-                          "
-                          [removable]="false"
-                          styleClass="p-chip-sm"
-                          [style]="
-                            getOrientationStyle(selectedDrone.orientation)
-                          "
-                        ></p-chip>
-                      </div>
-                    </ng-template>
-                    <ng-template let-drone pTemplate="item">
-                      <div class="flex align-items-center gap-2">
-                        <span>{{ drone.name }}</span>
-                        <p-chip
-                          [label]="'(' + drone.x + ',' + drone.y + ')'"
-                          [removable]="false"
-                          styleClass="p-chip-sm"
-                        ></p-chip>
-                        <p-chip
-                          [label]="getOrientationLabel(drone.orientation)"
-                          [removable]="false"
-                          styleClass="p-chip-sm"
-                          [style]="getOrientationStyle(drone.orientation)"
-                        ></p-chip>
-                      </div>
-                    </ng-template>
-                  </p-dropdown>
-                </div>
-
-                <div class="field mt-3">
-                  <label class="font-bold">Commands</label>
-                  <div class="p-inputgroup">
-                    <input
-                      type="text"
-                      pInputText
-                      [(ngModel)]="commandsText"
-                      placeholder="Ex: AIAAD"
-                      [ngClass]="{ 'ng-invalid': commandsTextInvalid }"
-                      aria-describedby="commands-help"
-                    />
-                    <button
-                      pButton
-                      pRipple
-                      type="button"
-                      icon="pi pi-question-circle"
-                      pTooltip="A = Advance, L = Turn Left, R = Turn Right"
-                      tooltipPosition="left"
-                      class="p-button-info"
-                    ></button>
-                  </div>
-                  <small
-                    id="commands-help"
-                    *ngIf="commandsTextInvalid"
-                    class="p-error"
-                  >
-                    Invalid commands. Use only A (Advance), L (Left), R (Right)
-                  </small>
-                </div>
-
-                <div class="command-buttons">
-                  <button
-                    pButton
-                    pRipple
-                    label="A"
-                    class="p-button-rounded p-button-lg command-button advance"
-                    pTooltip="Advance"
-                    tooltipPosition="top"
-                    (click)="addCommand('A')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    label="L"
-                    class="p-button-rounded p-button-lg p-button-secondary command-button left"
-                    pTooltip="Turn Left"
-                    tooltipPosition="top"
-                    (click)="addCommand('L')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    label="R"
-                    class="p-button-rounded p-button-lg p-button-secondary command-button right"
-                    pTooltip="Turn Right"
-                    tooltipPosition="top"
-                    (click)="addCommand('R')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    icon="pi pi-trash"
-                    class="p-button-rounded p-button-lg p-button-danger"
-                    pTooltip="Clear"
-                    tooltipPosition="top"
-                    (click)="clearCommands()"
-                  ></button>
-                </div>
-
-                <button
-                  pButton
-                  pRipple
-                  label="Execute"
-                  icon="pi pi-play"
-                  class="execute-button"
-                  (click)="executeSingle()"
-                  [disabled]="
-                    !selectedDrone || !commandsText || executingSingle
-                  "
-                  [loading]="executingSingle"
-                ></button>
-              </div>
-            </p-tabPanel>
-
-            <!-- MULTIPLE DRONES - SAME COMMANDS -->
-            <p-tabPanel header="Multiple Drones - Same Commands">
-              <div class="p-fluid">
-                <div class="field">
-                  <label class="font-bold">Drones</label>
-                  <p-multiSelect
-                    [options]="drones"
-                    [(ngModel)]="multiSelectedDrones"
-                    optionLabel="name"
-                    placeholder="Select drones"
-                    [filter]="true"
-                    filterBy="name"
-                    display="chip"
-                    styleClass="w-full"
-                  >
-                    <ng-template let-drone pTemplate="item">
-                      <div class="flex align-items-center gap-2">
-                        <span>{{ drone.name }}</span>
-                        <p-chip
-                          [label]="'(' + drone.x + ',' + drone.y + ')'"
-                          [removable]="false"
-                          styleClass="p-chip-sm"
-                        ></p-chip>
-                      </div>
-                    </ng-template>
-                  </p-multiSelect>
-                </div>
-
-                <div class="field mt-3">
-                  <label class="font-bold">Commands</label>
-                  <div class="p-inputgroup">
-                    <input
-                      type="text"
-                      pInputText
-                      [(ngModel)]="commandsGroupText"
-                      placeholder="Ex: RRALA"
-                      [ngClass]="{ 'ng-invalid': commandsGroupTextInvalid }"
-                      aria-describedby="group-commands-help"
-                    />
-                    <button
-                      pButton
-                      pRipple
-                      type="button"
-                      icon="pi pi-question-circle"
-                      pTooltip="A = Advance, L = Turn Left, R = Turn Right"
-                      tooltipPosition="left"
-                      class="p-button-info"
-                    ></button>
-                  </div>
-                  <small
-                    id="group-commands-help"
-                    *ngIf="commandsGroupTextInvalid"
-                    class="p-error"
-                  >
-                    Invalid commands. Use only A (Advance), L (Left), R (Right)
-                  </small>
-                </div>
-
-                <div class="command-buttons">
-                  <button
-                    pButton
-                    pRipple
-                    label="A"
-                    class="p-button-rounded p-button-lg command-button advance"
-                    pTooltip="Advance"
-                    tooltipPosition="top"
-                    (click)="addGroupCommand('A')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    label="L"
-                    class="p-button-rounded p-button-lg p-button-secondary command-button left"
-                    pTooltip="Turn Left"
-                    tooltipPosition="top"
-                    (click)="addGroupCommand('L')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    label="R"
-                    class="p-button-rounded p-button-lg p-button-secondary command-button right"
-                    pTooltip="Turn Right"
-                    tooltipPosition="top"
-                    (click)="addGroupCommand('R')"
-                  ></button>
-                  <button
-                    pButton
-                    pRipple
-                    icon="pi pi-trash"
-                    class="p-button-rounded p-button-lg p-button-danger"
-                    pTooltip="Clear"
-                    tooltipPosition="top"
-                    (click)="clearGroupCommands()"
-                  ></button>
-                </div>
-
-                <button
-                  pButton
-                  pRipple
-                  label="Execute Group"
-                  icon="pi pi-play"
-                  class="execute-button"
-                  (click)="executeGroup()"
-                  [disabled]="
-                    !multiSelectedDrones.length ||
-                    !commandsGroupText ||
-                    executingGroup
-                  "
-                  [loading]="executingGroup"
-                ></button>
-              </div>
-            </p-tabPanel>
-
-            <!-- DIFFERENT SEQUENCES PER DRONE -->
-            <p-tabPanel header="Different Sequences Per Drone">
-              <div
-                *ngFor="let item of batchCommands; let i = index"
-                class="batch-command-row"
-              >
-                <div class="flex align-items-start gap-2">
-                  <div class="flex-grow-1">
+          <!-- Flight Controls -->
+          <div class="col-12 lg:col-6 xl:col-5">
+            <p-card styleClass="flight-controls-card">
+              <p-tabView styleClass="flight-tabs">
+                <!-- SINGLE DRONE COMMANDS -->
+                <p-tabPanel header="Single Drone" leftIcon="pi pi-send">
+                  <div class="p-fluid">
                     <div class="field">
-                      <label class="font-bold">Drone</label>
+                      <label class="font-bold">Select Drone</label>
                       <p-dropdown
                         [options]="drones"
-                        [(ngModel)]="item.droneId"
+                        [(ngModel)]="selectedDrone"
                         optionLabel="name"
-                        placeholder="Select drone"
+                        placeholder="Select a drone"
                         [filter]="true"
                         filterBy="name"
+                        [showClear]="true"
                         styleClass="w-full"
+                        (onChange)="onDroneSelect($event)"
                       >
+                        <ng-template pTemplate="selectedItem">
+                          <div
+                            *ngIf="selectedDrone"
+                            class="drone-selection-item"
+                          >
+                            <p-avatar
+                              [label]="selectedDrone.name.charAt(0)"
+                              styleClass="mr-2"
+                              [style]="{
+                                'background-color': getDroneColor(
+                                  selectedDrone.id
+                                )
+                              }"
+                            ></p-avatar>
+                            <div class="drone-details">
+                              <span class="drone-name">{{
+                                selectedDrone.name
+                              }}</span>
+                              <div class="drone-meta">
+                                <p-tag
+                                  [value]="
+                                    '(' +
+                                    selectedDrone.x +
+                                    ',' +
+                                    selectedDrone.y +
+                                    ')'
+                                  "
+                                  [rounded]="true"
+                                  severity="info"
+                                  styleClass="mr-2"
+                                ></p-tag>
+                                <p-tag
+                                  [value]="
+                                    getOrientationLabel(
+                                      selectedDrone.orientation
+                                    )
+                                  "
+                                  [rounded]="true"
+                                  [severity]="
+                                    getOrientationSeverity(
+                                      selectedDrone.orientation
+                                    )
+                                  "
+                                ></p-tag>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
                         <ng-template let-drone pTemplate="item">
-                          <div class="flex align-items-center gap-2">
-                            <span>{{ drone.name }}</span>
-                            <p-chip
-                              [label]="'(' + drone.x + ',' + drone.y + ')'"
-                              [removable]="false"
-                              styleClass="p-chip-sm"
-                            ></p-chip>
+                          <div class="drone-selection-item">
+                            <p-avatar
+                              [label]="drone.name.charAt(0)"
+                              styleClass="mr-2"
+                              [style]="{
+                                'background-color': getDroneColor(drone.id)
+                              }"
+                            ></p-avatar>
+                            <div class="drone-details">
+                              <span class="drone-name">{{ drone.name }}</span>
+                              <div class="drone-meta">
+                                <p-tag
+                                  [value]="'(' + drone.x + ',' + drone.y + ')'"
+                                  [rounded]="true"
+                                  severity="info"
+                                  styleClass="mr-2"
+                                ></p-tag>
+                                <p-tag
+                                  [value]="
+                                    getOrientationLabel(drone.orientation)
+                                  "
+                                  [rounded]="true"
+                                  [severity]="
+                                    getOrientationSeverity(drone.orientation)
+                                  "
+                                ></p-tag>
+                              </div>
+                            </div>
                           </div>
                         </ng-template>
                       </p-dropdown>
                     </div>
 
-                    <div class="field mt-2">
-                      <label class="font-bold">Commands</label>
+                    <div class="field mt-3">
+                      <label class="font-bold">Flight Commands</label>
                       <div class="p-inputgroup">
                         <input
                           type="text"
                           pInputText
-                          [(ngModel)]="item.commands"
-                          placeholder="Ex: AALRR"
-                          [ngClass]="{
-                            'ng-invalid': isBatchCommandInvalid(item.commands)
-                          }"
+                          [(ngModel)]="commandsText"
+                          placeholder="Enter commands (e.g., AALRRA)"
+                          [ngClass]="{ 'ng-invalid': commandsTextInvalid }"
+                          aria-describedby="commands-help"
                         />
                         <button
                           pButton
                           pRipple
                           type="button"
-                          icon="pi pi-question-circle"
-                          pTooltip="A = Advance, L = Turn Left, R = Turn Right"
+                          icon="pi pi-trash"
+                          class="p-button-danger"
+                          pTooltip="Clear Commands"
                           tooltipPosition="left"
-                          class="p-button-info"
+                          (click)="clearCommands()"
                         ></button>
                       </div>
                       <small
-                        *ngIf="isBatchCommandInvalid(item.commands)"
+                        id="commands-help"
+                        *ngIf="commandsTextInvalid"
                         class="p-error"
                       >
                         Invalid commands. Use only A (Advance), L (Left), R
                         (Right)
                       </small>
+                      <small *ngIf="!commandsTextInvalid" class="command-help">
+                        A = Advance, L = Turn Left, R = Turn Right
+                      </small>
+                    </div>
+
+                    <div class="command-legend">
+                      <div class="legend-item">
+                        <div class="legend-color advance"></div>
+                        <span>A - Advance</span>
+                      </div>
+                      <div class="legend-item">
+                        <div class="legend-color left"></div>
+                        <span>L - Turn Left</span>
+                      </div>
+                      <div class="legend-item">
+                        <div class="legend-color right"></div>
+                        <span>R - Turn Right</span>
+                      </div>
+                    </div>
+
+                    <div class="command-buttons">
+                      <button
+                        pButton
+                        pRipple
+                        label="A"
+                        class="p-button-rounded p-button-lg command-button advance"
+                        pTooltip="Advance"
+                        tooltipPosition="top"
+                        (click)="addCommand('A')"
+                      ></button>
+                      <button
+                        pButton
+                        pRipple
+                        label="L"
+                        class="p-button-rounded p-button-lg p-button-secondary command-button left"
+                        pTooltip="Turn Left"
+                        tooltipPosition="top"
+                        (click)="addCommand('L')"
+                      ></button>
+                      <button
+                        pButton
+                        pRipple
+                        label="R"
+                        class="p-button-rounded p-button-lg p-button-secondary command-button right"
+                        pTooltip="Turn Right"
+                        tooltipPosition="top"
+                        (click)="addCommand('R')"
+                      ></button>
+                    </div>
+
+                    <div class="command-preview" *ngIf="commandsText">
+                      <label>Command Preview:</label>
+                      <div class="command-sequence">
+                        <div
+                          *ngFor="
+                            let cmd of commandsText.split('');
+                            let i = index
+                          "
+                          class="command-step"
+                          [ngClass]="{
+                            'advance-step': cmd.toUpperCase() === 'A',
+                            'left-step': cmd.toUpperCase() === 'L',
+                            'right-step': cmd.toUpperCase() === 'R'
+                          }"
+                        >
+                          {{ cmd.toUpperCase() }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      pButton
+                      pRipple
+                      label="Execute Flight"
+                      icon="pi pi-play"
+                      class="execute-button"
+                      (click)="executeSingle()"
+                      [disabled]="
+                        !selectedDrone || !commandsText || executingSingle
+                      "
+                      [loading]="executingSingle"
+                    ></button>
+                  </div>
+                </p-tabPanel>
+
+                <!-- MULTIPLE DRONES - SAME COMMANDS -->
+                <p-tabPanel header="Group Flight" leftIcon="pi pi-users">
+                  <div class="p-fluid">
+                    <div class="field">
+                      <label class="font-bold">Select Multiple Drones</label>
+                      <p-multiSelect
+                        [options]="drones"
+                        [(ngModel)]="multiSelectedDrones"
+                        optionLabel="name"
+                        placeholder="Select drones"
+                        [filter]="true"
+                        filterBy="name"
+                        display="chip"
+                        styleClass="w-full"
+                      >
+                        <ng-template let-drone pTemplate="item">
+                          <div class="drone-selection-item">
+                            <p-avatar
+                              [label]="drone.name.charAt(0)"
+                              styleClass="mr-2"
+                              [style]="{
+                                'background-color': getDroneColor(drone.id)
+                              }"
+                            ></p-avatar>
+                            <div class="drone-details">
+                              <span class="drone-name">{{ drone.name }}</span>
+                              <div class="drone-meta">
+                                <p-tag
+                                  [value]="'(' + drone.x + ',' + drone.y + ')'"
+                                  [rounded]="true"
+                                  severity="info"
+                                ></p-tag>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </p-multiSelect>
+                    </div>
+
+                    <div
+                      class="selected-drones-preview"
+                      *ngIf="multiSelectedDrones.length > 0"
+                    >
+                      <p-scrollPanel
+                        [style]="{ width: '100%', height: '100px' }"
+                        styleClass="custom-scrollbar"
+                      >
+                        <div class="selected-drones-grid">
+                          <div
+                            *ngFor="let drone of multiSelectedDrones"
+                            class="selected-drone-item"
+                          >
+                            <p-avatar
+                              [label]="drone.name.charAt(0)"
+                              [style]="{
+                                'background-color': getDroneColor(drone.id)
+                              }"
+                              size="normal"
+                            ></p-avatar>
+                            <span>{{ drone.name }}</span>
+                          </div>
+                        </div>
+                      </p-scrollPanel>
+                    </div>
+
+                    <div class="field mt-3">
+                      <label class="font-bold"
+                        >Flight Commands for All Selected Drones</label
+                      >
+                      <div class="p-inputgroup">
+                        <input
+                          type="text"
+                          pInputText
+                          [(ngModel)]="commandsGroupText"
+                          placeholder="Enter commands (e.g., RRALA)"
+                          [ngClass]="{ 'ng-invalid': commandsGroupTextInvalid }"
+                          aria-describedby="group-commands-help"
+                        />
+                        <button
+                          pButton
+                          pRipple
+                          type="button"
+                          icon="pi pi-trash"
+                          class="p-button-danger"
+                          pTooltip="Clear Commands"
+                          tooltipPosition="left"
+                          (click)="clearGroupCommands()"
+                        ></button>
+                      </div>
+                      <small
+                        id="group-commands-help"
+                        *ngIf="commandsGroupTextInvalid"
+                        class="p-error"
+                      >
+                        Invalid commands. Use only A (Advance), L (Left), R
+                        (Right)
+                      </small>
+                      <small
+                        *ngIf="!commandsGroupTextInvalid"
+                        class="command-help"
+                      >
+                        A = Advance, L = Turn Left, R = Turn Right
+                      </small>
+                    </div>
+
+                    <div class="command-buttons">
+                      <button
+                        pButton
+                        pRipple
+                        label="A"
+                        class="p-button-rounded p-button-lg command-button advance"
+                        pTooltip="Advance"
+                        tooltipPosition="top"
+                        (click)="addGroupCommand('A')"
+                      ></button>
+                      <button
+                        pButton
+                        pRipple
+                        label="L"
+                        class="p-button-rounded p-button-lg p-button-secondary command-button left"
+                        pTooltip="Turn Left"
+                        tooltipPosition="top"
+                        (click)="addGroupCommand('L')"
+                      ></button>
+                      <button
+                        pButton
+                        pRipple
+                        label="R"
+                        class="p-button-rounded p-button-lg p-button-secondary command-button right"
+                        pTooltip="Turn Right"
+                        tooltipPosition="top"
+                        (click)="addGroupCommand('R')"
+                      ></button>
+                    </div>
+
+                    <div class="command-preview" *ngIf="commandsGroupText">
+                      <label>Command Preview:</label>
+                      <div class="command-sequence">
+                        <div
+                          *ngFor="
+                            let cmd of commandsGroupText.split('');
+                            let i = index
+                          "
+                          class="command-step"
+                          [ngClass]="{
+                            'advance-step': cmd.toUpperCase() === 'A',
+                            'left-step': cmd.toUpperCase() === 'L',
+                            'right-step': cmd.toUpperCase() === 'R'
+                          }"
+                        >
+                          {{ cmd.toUpperCase() }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      pButton
+                      pRipple
+                      label="Execute Group Flight"
+                      icon="pi pi-play"
+                      class="execute-button"
+                      (click)="executeGroup()"
+                      [disabled]="
+                        !multiSelectedDrones.length ||
+                        !commandsGroupText ||
+                        executingGroup
+                      "
+                      [loading]="executingGroup"
+                    ></button>
+                  </div>
+                </p-tabPanel>
+
+                <!-- DIFFERENT SEQUENCES PER DRONE -->
+                <p-tabPanel header="Batch Flights" leftIcon="pi pi-list">
+                  <div class="batch-flights-container">
+                    <p-scrollPanel
+                      [style]="{ width: '100%', height: '400px' }"
+                      styleClass="custom-scrollbar"
+                    >
+                      <div
+                        *ngFor="let item of batchCommands; let i = index"
+                        class="batch-command-row"
+                        @slideIn
+                      >
+                        <div class="batch-header">
+                          <span class="batch-number">Flight #{{ i + 1 }}</span>
+                          <button
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-danger p-button-outlined p-button-sm"
+                            (click)="batchCommands.splice(i, 1)"
+                            pTooltip="Remove"
+                          ></button>
+                        </div>
+
+                        <div class="field">
+                          <label>Drone</label>
+                          <p-dropdown
+                            [options]="drones"
+                            [(ngModel)]="item.droneId"
+                            optionLabel="name"
+                            placeholder="Select drone"
+                            [filter]="true"
+                            filterBy="name"
+                            styleClass="w-full"
+                          >
+                            <ng-template let-drone pTemplate="item">
+                              <div class="drone-selection-item">
+                                <p-avatar
+                                  [label]="drone.name.charAt(0)"
+                                  styleClass="mr-2"
+                                  [style]="{
+                                    'background-color': getDroneColor(drone.id)
+                                  }"
+                                  size="normal"
+                                ></p-avatar>
+                                <span>{{ drone.name }}</span>
+                              </div>
+                            </ng-template>
+                          </p-dropdown>
+                        </div>
+
+                        <div class="field mt-2">
+                          <label>Commands</label>
+                          <div class="p-inputgroup">
+                            <input
+                              type="text"
+                              pInputText
+                              [(ngModel)]="item.commands"
+                              placeholder="Ex: AALRR"
+                              [ngClass]="{
+                                'ng-invalid': isBatchCommandInvalid(
+                                  item.commands
+                                )
+                              }"
+                            />
+                            <button
+                              pButton
+                              pRipple
+                              type="button"
+                              icon="pi pi-question-circle"
+                              pTooltip="A = Advance, L = Turn Left, R = Turn Right"
+                              tooltipPosition="left"
+                              class="p-button-info"
+                            ></button>
+                          </div>
+                          <small
+                            *ngIf="isBatchCommandInvalid(item.commands)"
+                            class="p-error"
+                          >
+                            Invalid commands. Use only A (Advance), L (Left), R
+                            (Right)
+                          </small>
+                        </div>
+
+                        <div class="command-preview" *ngIf="item.commands">
+                          <div class="command-sequence small">
+                            <div
+                              *ngFor="
+                                let cmd of item.commands.split('');
+                                let j = index
+                              "
+                              class="command-step"
+                              [ngClass]="{
+                                'advance-step': cmd.toUpperCase() === 'A',
+                                'left-step': cmd.toUpperCase() === 'L',
+                                'right-step': cmd.toUpperCase() === 'R'
+                              }"
+                            >
+                              {{ cmd.toUpperCase() }}
+                            </div>
+                          </div>
+                        </div>
+
+                        <p-divider
+                          *ngIf="i < batchCommands.length - 1"
+                        ></p-divider>
+                      </div>
+                    </p-scrollPanel>
+
+                    <div class="batch-actions">
+                      <button
+                        pButton
+                        pRipple
+                        label="Add Flight"
+                        icon="pi pi-plus"
+                        class="p-button-outlined"
+                        (click)="addBatchCommand()"
+                      ></button>
+                      <button
+                        pButton
+                        pRipple
+                        label="Execute All Flights"
+                        icon="pi pi-play"
+                        (click)="executeBatch()"
+                        [disabled]="!isValidBatch() || executingBatch"
+                        [loading]="executingBatch"
+                      ></button>
                     </div>
                   </div>
+                </p-tabPanel>
+              </p-tabView>
+            </p-card>
+          </div>
+        </div>
 
-                  <button
-                    pButton
-                    pRipple
-                    icon="pi pi-trash"
-                    class="p-button-rounded p-button-danger p-button-outlined"
-                    (click)="batchCommands.splice(i, 1)"
-                    pTooltip="Remove"
-                  ></button>
+        <!-- Flight History Section -->
+        <div
+          class="flight-history-section"
+          *ngIf="flightHistory.length > 0"
+          @fadeIn
+        >
+          <h2>Recent Flight Activity</h2>
+          <div class="flight-history-container">
+            <div
+              class="flight-history-item"
+              *ngFor="let flight of flightHistory"
+              @slideInRight
+            >
+              <div class="flight-time">{{ flight.time }}</div>
+              <div class="flight-content">
+                <div class="flight-header">
+                  <p-avatar
+                    [label]="flight.drone.charAt(0)"
+                    styleClass="mr-2"
+                    [style]="{
+                      'background-color': getRandomColor(flight.drone)
+                    }"
+                    size="normal"
+                  ></p-avatar>
+                  <span class="flight-drone">{{ flight.drone }}</span>
+                  <p-tag
+                    [value]="flight.status"
+                    [severity]="getStatusSeverity(flight.status)"
+                    styleClass="ml-2"
+                  ></p-tag>
                 </div>
-
-                <p-divider *ngIf="i < batchCommands.length - 1"></p-divider>
+                <div class="flight-details">
+                  <div class="flight-commands">
+                    <span class="commands-label">Commands:</span>
+                    <div class="command-sequence small">
+                      <div
+                        *ngFor="
+                          let cmd of flight.commands.split('');
+                          let i = index
+                        "
+                        class="command-step"
+                        [ngClass]="{
+                          'advance-step': cmd.toUpperCase() === 'A',
+                          'left-step': cmd.toUpperCase() === 'L',
+                          'right-step': cmd.toUpperCase() === 'R'
+                        }"
+                      >
+                        {{ cmd.toUpperCase() }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flight-positions">
+                    <span class="position-label">From:</span>
+                    <p-tag
+                      [value]="flight.startPosition"
+                      severity="info"
+                      styleClass="mr-3"
+                    ></p-tag>
+                    <span class="position-label">To:</span>
+                    <p-tag
+                      [value]="flight.endPosition"
+                      severity="success"
+                    ></p-tag>
+                  </div>
+                </div>
               </div>
-
-              <div class="batch-actions">
-                <button
-                  pButton
-                  pRipple
-                  label="Add Row"
-                  icon="pi pi-plus"
-                  class="p-button-outlined"
-                  (click)="addBatchCommand()"
-                ></button>
-                <button
-                  pButton
-                  pRipple
-                  label="Execute Batch"
-                  icon="pi pi-play"
-                  (click)="executeBatch()"
-                  [disabled]="!isValidBatch() || executingBatch"
-                  [loading]="executingBatch"
-                ></button>
-              </div>
-            </p-tabPanel>
-          </p-tabView>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -458,7 +738,23 @@ import { FlightService } from '../services/flight.service';
       }
 
       .page-header {
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+      }
+
+      .dark-mode-label {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
       }
 
       .page-header h1 {
@@ -485,29 +781,125 @@ import { FlightService } from '../services/flight.service';
         color: var(--text-color-secondary);
       }
 
-      /* Flight Controls Styling */
-      :host ::ng-deep .flight-tabs .p-tabview-nav {
-        border-radius: 8px 8px 0 0;
+      .flight-control-content {
+        transition: all 0.3s ease;
+      }
+
+      .flight-control-content.dark-theme {
         background-color: var(--surface-ground);
-        padding: 0 1rem;
+        border-radius: 8px;
+        padding: 1rem;
+      }
+
+      .matrix-container {
+        height: 100%;
+        min-height: 500px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Flight Controls Styling */
+      :host ::ng-deep .flight-controls-card {
+        height: 100%;
+      }
+
+      :host ::ng-deep .flight-controls-card .p-card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .flight-controls-card .p-card-content {
+        flex: 1;
+        padding: 0;
+      }
+
+      :host ::ng-deep .flight-tabs {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .flight-tabs .p-tabview-panels {
+        flex: 1;
+        padding: 1.5rem;
+      }
+
+      :host ::ng-deep .flight-tabs .p-tabview-nav {
+        background-color: var(--surface-ground);
       }
 
       :host ::ng-deep .flight-tabs .p-tabview-nav li .p-tabview-nav-link {
         padding: 1rem 1.25rem;
-        font-weight: 600;
       }
 
-      :host ::ng-deep .flight-tabs .p-tabview-panels {
-        padding: 1.5rem;
-        background-color: var(--surface-card);
-        border-radius: 0 0 8px 8px;
-        border: 1px solid var(--surface-border);
-        border-top: none;
+      .drone-selection-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .drone-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .drone-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .drone-meta {
+        display: flex;
+        align-items: center;
+      }
+
+      .command-help {
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
+      }
+
+      .command-legend {
+        display: flex;
+        justify-content: space-between;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        background-color: var(--surface-ground);
+        border-radius: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .legend-color {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+      }
+
+      .legend-color.advance {
+        background: linear-gradient(135deg, var(--green-500), var(--green-700));
+      }
+
+      .legend-color.left {
+        background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+      }
+
+      .legend-color.right {
+        background: linear-gradient(
+          135deg,
+          var(--orange-500),
+          var(--orange-700)
+        );
       }
 
       .command-buttons {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: center;
         gap: 1rem;
         margin: 1.5rem 0;
       }
@@ -516,24 +908,10 @@ import { FlightService } from '../services/flight.service';
         position: relative;
         overflow: hidden;
         transition: all 0.3s ease;
-      }
-
-      .command-button::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.5);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1, 1) translate(-50%);
-        transform-origin: 50% 50%;
-      }
-
-      .command-button:active::after {
-        animation: ripple 0.6s ease-out;
+        width: 60px;
+        height: 60px;
+        font-size: 1.25rem;
+        font-weight: bold;
       }
 
       .command-button.advance {
@@ -555,19 +933,63 @@ import { FlightService } from '../services/flight.service';
         border-color: var(--orange-700);
       }
 
-      @keyframes ripple {
-        0% {
-          transform: scale(0, 0);
-          opacity: 0.5;
-        }
-        20% {
-          transform: scale(25, 25);
-          opacity: 0.5;
-        }
-        100% {
-          opacity: 0;
-          transform: scale(40, 40);
-        }
+      .command-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .command-preview {
+        background-color: var(--surface-ground);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .command-preview label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+      }
+
+      .command-sequence {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .command-sequence.small {
+        gap: 0.25rem;
+      }
+
+      .command-step {
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .command-sequence.small .command-step {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.75rem;
+      }
+
+      .advance-step {
+        background-color: var(--green-600);
+      }
+
+      .left-step {
+        background-color: var(--blue-600);
+      }
+
+      .right-step {
+        background-color: var(--orange-600);
       }
 
       .execute-button {
@@ -588,11 +1010,53 @@ import { FlightService } from '../services/flight.service';
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
+      .selected-drones-preview {
+        background-color: var(--surface-ground);
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+
+      .selected-drones-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.5rem;
+        padding: 0.5rem;
+      }
+
+      .selected-drone-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--surface-card);
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+      }
+
+      /* Batch Flights Styling */
+      .batch-flights-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
       .batch-command-row {
-        background-color: var(--surface-hover);
+        background-color: var(--surface-ground);
         border-radius: 8px;
         padding: 1.25rem;
         margin-bottom: 1rem;
+      }
+
+      .batch-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .batch-number {
+        font-weight: 600;
+        color: var(--primary-color);
       }
 
       .batch-actions {
@@ -601,14 +1065,107 @@ import { FlightService } from '../services/flight.service';
         margin-top: 1.5rem;
       }
 
+      /* Flight History Section */
+      .flight-history-section {
+        margin-top: 2rem;
+      }
+
+      .flight-history-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+      }
+
+      .flight-history-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+
+      .flight-history-item {
+        background-color: var(--surface-card);
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flight-time {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+
+      .flight-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .flight-drone {
+        font-weight: 600;
+      }
+
+      .flight-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .flight-commands,
+      .flight-positions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .commands-label,
+      .position-label {
+        font-size: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+
+      /* Custom Scrollbar */
+      :host ::ng-deep .custom-scrollbar .p-scrollpanel-wrapper {
+        border-radius: 8px;
+      }
+
+      :host ::ng-deep .custom-scrollbar .p-scrollpanel-bar {
+        background-color: var(--primary-300);
+        opacity: 0.6;
+      }
+
+      :host ::ng-deep .custom-scrollbar .p-scrollpanel-bar:hover {
+        background-color: var(--primary-400);
+        opacity: 0.8;
+      }
+
       /* Responsive Adjustments */
       @media screen and (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .command-legend {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
         .batch-actions {
           flex-direction: column;
         }
 
         .batch-actions button {
           width: 100%;
+        }
+
+        .flight-history-container {
+          grid-template-columns: 1fr;
         }
       }
     `,
@@ -619,6 +1176,7 @@ export class FlightControlComponent implements OnInit {
   matrices: Matrix[] = [];
   loading = true;
   droneAnimationTrigger = 0;
+  darkMode = false;
 
   // Single drone mode
   selectedDrone?: Drone;
@@ -637,11 +1195,21 @@ export class FlightControlComponent implements OnInit {
   batchCommands: { droneId: number | null; commands: string }[] = [];
   executingBatch = false;
 
+  // Flight history
+  flightHistory: {
+    drone: string;
+    commands: string;
+    startPosition: string;
+    endPosition: string;
+    status: string;
+    time: string;
+  }[] = [];
+
   constructor(
-    private readonly droneService: DroneService,
-    private readonly matrixService: MatrixService,
-    private readonly flightService: FlightService,
-    private readonly messageService: MessageService
+    private droneService: DroneService,
+    private matrixService: MatrixService,
+    private flightService: FlightService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -737,17 +1305,33 @@ export class FlightControlComponent implements OnInit {
     this.commandsTextInvalid = false;
     this.executingSingle = true;
 
-    // Convert legacy commands (I/D) to new format (L/R)
+    const commandMap: Record<string, string> = {
+      A: 'MOVE_FORWARD',
+      L: 'TURN_LEFT',
+      R: 'TURN_RIGHT',
+    };
+
     const commands = this.commandsText
       .toUpperCase()
-      .replace(/I/g, 'L') // Replace I (Izquierda) with L (Left)
-      .replace(/D/g, 'R') // Replace D (Derecha) with R (Right)
-      .split('');
+      .replace(/I/g, 'L') // si usas I y D como atajos
+      .replace(/D/g, 'R')
+      .split('')
+      .map((char) => commandMap[char])
+      .filter((cmd): cmd is string => !!cmd); // filtra comandos inválidos
 
     this.flightService
       .sendCommands(this.selectedDrone!.id, commands)
       .subscribe({
         next: (drone) => {
+          // Add to flight history
+          this.addToFlightHistory(
+            this.selectedDrone!.name,
+            this.commandsText.toUpperCase(),
+            `(${this.selectedDrone!.x}, ${this.selectedDrone!.y})`,
+            `(${drone.x}, ${drone.y})`,
+            'Completed'
+          );
+
           this.messageService.add({
             severity: 'success',
             summary: 'Commands Executed',
@@ -801,10 +1385,21 @@ export class FlightControlComponent implements OnInit {
 
     this.flightService.sendCommandsToMany(droneIds, commands).subscribe({
       next: () => {
+        // Add to flight history for each drone
+        this.multiSelectedDrones.forEach((drone) => {
+          this.addToFlightHistory(
+            drone.name,
+            this.commandsGroupText.toUpperCase(),
+            `(${drone.x}, ${drone.y})`,
+            'Updated',
+            'Completed'
+          );
+        });
+
         this.messageService.add({
           severity: 'success',
           summary: 'Commands Sent to Group',
-          detail: `Drones: ${droneIds.join(', ')}`,
+          detail: `${this.multiSelectedDrones.length} drones updated successfully`,
           life: 3000,
         });
         this.executingGroup = false;
@@ -876,10 +1471,24 @@ export class FlightControlComponent implements OnInit {
 
     this.flightService.sendBatchCommands(batch).subscribe({
       next: () => {
+        // Add to flight history
+        batch.forEach((item) => {
+          const drone = this.drones.find((d) => d.id === item.droneId);
+          if (drone) {
+            this.addToFlightHistory(
+              drone.name,
+              item.commands.join(''),
+              `(${drone.x}, ${drone.y})`,
+              'Updated',
+              'Completed'
+            );
+          }
+        });
+
         this.messageService.add({
           severity: 'success',
           summary: 'Batch Commands Sent',
-          detail: `Total drones: ${batch.length}`,
+          detail: `Total flights: ${batch.length}`,
           life: 3000,
         });
         this.executingBatch = false;
@@ -917,14 +1526,108 @@ export class FlightControlComponent implements OnInit {
     return labels[orientation as keyof typeof labels] || orientation;
   }
 
-  getOrientationStyle(orientation: string): any {
-    const styles = {
-      N: { backgroundColor: 'var(--green-500)' },
-      S: { backgroundColor: 'var(--yellow-500)' },
-      E: { backgroundColor: 'var(--blue-500)' },
-      W: { backgroundColor: 'var(--purple-500)' },
-      O: { backgroundColor: 'var(--purple-500)' }, // Handle legacy 'O'
+  getOrientationSeverity(
+    orientation: string
+  ): 'success' | 'info' | 'warning' | 'danger' {
+    const map = {
+      N: 'success',
+      S: 'warning',
+      E: 'info',
+      W: 'info',
+      O: 'info', // Handle legacy 'O'
+    } as const;
+
+    return map[orientation as keyof typeof map] || 'info';
+  }
+
+  getDroneColor(id: number): string {
+    // Generate a consistent color based on drone ID
+    const colors = [
+      '#3B82F6', // primary
+      '#10B981', // green
+      '#F59E0B', // yellow
+      '#EF4444', // red
+      '#8B5CF6', // purple
+      '#EC4899', // pink
+      '#06B6D4', // cyan
+    ];
+
+    return colors[id % colors.length];
+  }
+
+  getRandomColor(seed: string): string {
+    // Simple hash function to generate a consistent color from a string
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const colors = [
+      '#3B82F6', // primary
+      '#10B981', // green
+      '#F59E0B', // yellow
+      '#EF4444', // red
+      '#8B5CF6', // purple
+      '#EC4899', // pink
+      '#06B6D4', // cyan
+    ];
+
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  getStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
+    const map: Record<string, 'success' | 'info' | 'warning' | 'danger'> = {
+      Completed: 'success',
+      'In-Progress': 'info',
+      Failed: 'danger',
+      Pending: 'warning',
     };
-    return styles[orientation as keyof typeof styles] || {};
+
+    return map[status] || 'info';
+  }
+
+  addToFlightHistory(
+    drone: string,
+    commands: string,
+    startPosition: string,
+    endPosition: string,
+    status: string
+  ) {
+    // Add new flight to the beginning
+    this.flightHistory.unshift({
+      drone,
+      commands,
+      startPosition,
+      endPosition,
+      status,
+      time: this.getRelativeTime(new Date()),
+    });
+
+    // Limit history to 10 items
+    if (this.flightHistory.length > 10) {
+      this.flightHistory = this.flightHistory.slice(0, 10);
+    }
+  }
+
+  getRelativeTime(date: Date): string {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return 'Just now';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+  }
+
+  toggleDarkMode() {
+    this.darkMode = !this.darkMode;
   }
 }
