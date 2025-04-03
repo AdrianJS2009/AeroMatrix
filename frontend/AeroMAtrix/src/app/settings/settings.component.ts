@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -12,6 +13,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
+import { Theme, ThemeService } from '../core/theme.service';
+import { Language, TranslationService } from '../core/translation.service';
 
 @Component({
   selector: 'app-settings',
@@ -28,6 +31,7 @@ import { ToastModule } from 'primeng/toast';
     DividerModule,
     InputNumberModule,
     ToastModule,
+    TranslateModule,
   ],
   providers: [MessageService],
   animations: [
@@ -44,32 +48,41 @@ import { ToastModule } from 'primeng/toast';
   template: `
     <div class="settings-container" @fadeIn>
       <div class="page-header">
-        <h1>System Settings</h1>
-        <p>Configure your drone control system preferences</p>
+        <h1>{{ 'SETTINGS.TITLE' | translate }}</h1>
+        <p>{{ 'SETTINGS.SUBTITLE' | translate }}</p>
       </div>
 
       <p-tabView>
         <!-- General Settings -->
-        <p-tabPanel header="General">
+        <p-tabPanel [header]="'SETTINGS.GENERAL.TITLE' | translate">
           <p-card>
             <div class="settings-section">
-              <h2>Application Settings</h2>
+              <h2>{{ 'SETTINGS.GENERAL.APP_SETTINGS' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="darkMode">Dark Mode</label>
-                  <small>Enable dark theme for the application</small>
+                  <label for="darkMode">{{
+                    'SETTINGS.GENERAL.DARK_MODE' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.DARK_MODE_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.darkMode"
                   inputId="darkMode"
+                  (onChange)="onThemeChange()"
                 ></p-inputSwitch>
               </div>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="animations">UI Animations</label>
-                  <small>Enable animations throughout the interface</small>
+                  <label for="animations">{{
+                    'SETTINGS.GENERAL.ANIMATIONS' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.ANIMATIONS_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.animations"
@@ -79,21 +92,30 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="language">Language</label>
-                  <small>Select your preferred language</small>
+                  <label for="language">{{
+                    'SETTINGS.GENERAL.LANGUAGE' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.LANGUAGE_DESC' | translate
+                  }}</small>
                 </div>
                 <p-dropdown
                   [options]="languageOptions"
                   [(ngModel)]="settings.language"
                   optionLabel="name"
                   styleClass="w-full md:w-14rem"
+                  (onChange)="onLanguageChange()"
                 ></p-dropdown>
               </div>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="notifications">Notifications</label>
-                  <small>Enable system notifications</small>
+                  <label for="notifications">{{
+                    'SETTINGS.GENERAL.NOTIFICATIONS' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.NOTIFICATIONS_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.notifications"
@@ -105,12 +127,16 @@ import { ToastModule } from 'primeng/toast';
             <p-divider></p-divider>
 
             <div class="settings-section">
-              <h2>Data Display</h2>
+              <h2>{{ 'SETTINGS.GENERAL.DATA_DISPLAY' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="itemsPerPage">Items Per Page</label>
-                  <small>Number of items to display in tables</small>
+                  <label for="itemsPerPage">{{
+                    'SETTINGS.GENERAL.ITEMS_PER_PAGE' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.ITEMS_PER_PAGE_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputNumber
                   [(ngModel)]="settings.itemsPerPage"
@@ -124,8 +150,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="dateFormat">Date Format</label>
-                  <small>Select your preferred date format</small>
+                  <label for="dateFormat">{{
+                    'SETTINGS.GENERAL.DATE_FORMAT' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.GENERAL.DATE_FORMAT_DESC' | translate
+                  }}</small>
                 </div>
                 <p-dropdown
                   [options]="dateFormatOptions"
@@ -139,14 +169,14 @@ import { ToastModule } from 'primeng/toast';
             <div class="settings-actions">
               <button
                 pButton
-                label="Reset to Defaults"
+                label="{{ 'SETTINGS.ACTIONS.RESET' | translate }}"
                 icon="pi pi-refresh"
                 class="p-button-outlined p-button-secondary"
                 (click)="resetGeneralSettings()"
               ></button>
               <button
                 pButton
-                label="Save Changes"
+                label="{{ 'SETTINGS.ACTIONS.SAVE' | translate }}"
                 icon="pi pi-check"
                 (click)="saveSettings('general')"
               ></button>
@@ -155,15 +185,19 @@ import { ToastModule } from 'primeng/toast';
         </p-tabPanel>
 
         <!-- Drone Settings -->
-        <p-tabPanel header="Drone Control">
+        <p-tabPanel [header]="'SETTINGS.DRONE.TITLE' | translate">
           <p-card>
             <div class="settings-section">
-              <h2>Default Drone Settings</h2>
+              <h2>{{ 'SETTINGS.DRONE.DEFAULT_SETTINGS' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="defaultOrientation">Default Orientation</label>
-                  <small>Initial orientation for new drones</small>
+                  <label for="defaultOrientation">{{
+                    'SETTINGS.DRONE.DEFAULT_ORIENTATION' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.DEFAULT_ORIENTATION_DESC' | translate
+                  }}</small>
                 </div>
                 <p-dropdown
                   [options]="orientationOptions"
@@ -175,10 +209,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="autoPosition">Auto-Position</label>
-                  <small
-                    >Automatically position new drones at matrix origin</small
-                  >
+                  <label for="autoPosition">{{
+                    'SETTINGS.DRONE.AUTO_POSITION' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.AUTO_POSITION_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.autoPosition"
@@ -190,15 +226,16 @@ import { ToastModule } from 'primeng/toast';
             <p-divider></p-divider>
 
             <div class="settings-section">
-              <h2>Flight Controls</h2>
+              <h2>{{ 'SETTINGS.DRONE.FLIGHT_CONTROLS' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="confirmCommands">Confirm Commands</label>
-                  <small
-                    >Show confirmation dialog before executing flight
-                    commands</small
-                  >
+                  <label for="confirmCommands">{{
+                    'SETTINGS.DRONE.CONFIRM_COMMANDS' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.CONFIRM_COMMANDS_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.confirmCommands"
@@ -208,10 +245,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="commandDelay">Command Execution Delay (ms)</label>
-                  <small
-                    >Delay between command executions for visualization</small
-                  >
+                  <label for="commandDelay">{{
+                    'SETTINGS.DRONE.COMMAND_DELAY' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.COMMAND_DELAY_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputNumber
                   [(ngModel)]="settings.commandDelay"
@@ -225,10 +264,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="boundaryCheck">Boundary Checking</label>
-                  <small
-                    >Prevent drones from moving outside matrix boundaries</small
-                  >
+                  <label for="boundaryCheck">{{
+                    'SETTINGS.DRONE.BOUNDARY_CHECK' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.BOUNDARY_CHECK_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.boundaryCheck"
@@ -238,8 +279,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="collisionDetection">Collision Detection</label>
-                  <small>Prevent drones from occupying the same position</small>
+                  <label for="collisionDetection">{{
+                    'SETTINGS.DRONE.COLLISION_DETECTION' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.DRONE.COLLISION_DETECTION_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.collisionDetection"
@@ -251,14 +296,14 @@ import { ToastModule } from 'primeng/toast';
             <div class="settings-actions">
               <button
                 pButton
-                label="Reset to Defaults"
+                label="{{ 'SETTINGS.ACTIONS.RESET' | translate }}"
                 icon="pi pi-refresh"
                 class="p-button-outlined p-button-secondary"
                 (click)="resetDroneSettings()"
               ></button>
               <button
                 pButton
-                label="Save Changes"
+                label="{{ 'SETTINGS.ACTIONS.SAVE' | translate }}"
                 icon="pi pi-check"
                 (click)="saveSettings('drone')"
               ></button>
@@ -267,15 +312,17 @@ import { ToastModule } from 'primeng/toast';
         </p-tabPanel>
 
         <!-- API Settings -->
-        <p-tabPanel header="API Configuration">
+        <p-tabPanel [header]="'SETTINGS.API.TITLE' | translate">
           <p-card>
             <div class="settings-section">
-              <h2>API Connection</h2>
+              <h2>{{ 'SETTINGS.API.CONNECTION' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="apiUrl">API URL</label>
-                  <small>Base URL for the drone control API</small>
+                  <label for="apiUrl">{{
+                    'SETTINGS.API.API_URL' | translate
+                  }}</label>
+                  <small>{{ 'SETTINGS.API.API_URL_DESC' | translate }}</small>
                 </div>
                 <input
                   pInputText
@@ -286,8 +333,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="apiTimeout">Request Timeout (ms)</label>
-                  <small>Maximum time to wait for API responses</small>
+                  <label for="apiTimeout">{{
+                    'SETTINGS.API.REQUEST_TIMEOUT' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.API.REQUEST_TIMEOUT_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputNumber
                   [(ngModel)]="settings.apiTimeout"
@@ -301,8 +352,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="retryAttempts">Retry Attempts</label>
-                  <small>Number of times to retry failed API requests</small>
+                  <label for="retryAttempts">{{
+                    'SETTINGS.API.RETRY_ATTEMPTS' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.API.RETRY_ATTEMPTS_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputNumber
                   [(ngModel)]="settings.retryAttempts"
@@ -318,12 +373,14 @@ import { ToastModule } from 'primeng/toast';
             <p-divider></p-divider>
 
             <div class="settings-section">
-              <h2>Authentication</h2>
+              <h2>{{ 'SETTINGS.API.AUTHENTICATION' | translate }}</h2>
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="apiKey">API Key</label>
-                  <small>Authentication key for API access</small>
+                  <label for="apiKey">{{
+                    'SETTINGS.API.API_KEY' | translate
+                  }}</label>
+                  <small>{{ 'SETTINGS.API.API_KEY_DESC' | translate }}</small>
                 </div>
                 <input
                   pInputText
@@ -335,8 +392,12 @@ import { ToastModule } from 'primeng/toast';
 
               <div class="setting-item">
                 <div class="setting-label">
-                  <label for="tokenRefresh">Auto Token Refresh</label>
-                  <small>Automatically refresh authentication tokens</small>
+                  <label for="tokenRefresh">{{
+                    'SETTINGS.API.TOKEN_REFRESH' | translate
+                  }}</label>
+                  <small>{{
+                    'SETTINGS.API.TOKEN_REFRESH_DESC' | translate
+                  }}</small>
                 </div>
                 <p-inputSwitch
                   [(ngModel)]="settings.tokenRefresh"
@@ -348,21 +409,21 @@ import { ToastModule } from 'primeng/toast';
             <div class="settings-actions">
               <button
                 pButton
-                label="Test Connection"
+                label="{{ 'SETTINGS.ACTIONS.TEST_CONNECTION' | translate }}"
                 icon="pi pi-link"
                 class="p-button-outlined"
                 (click)="testApiConnection()"
               ></button>
               <button
                 pButton
-                label="Reset to Defaults"
+                label="{{ 'SETTINGS.ACTIONS.RESET' | translate }}"
                 icon="pi pi-refresh"
                 class="p-button-outlined p-button-secondary"
                 (click)="resetApiSettings()"
               ></button>
               <button
                 pButton
-                label="Save Changes"
+                label="{{ 'SETTINGS.ACTIONS.SAVE' | translate }}"
                 icon="pi pi-check"
                 (click)="saveSettings('api')"
               ></button>
@@ -482,13 +543,7 @@ export class SettingsComponent {
   };
 
   // Dropdown options
-  languageOptions = [
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-    { code: 'pt', name: 'Portuguese' },
-  ];
+  languageOptions: Language[] = [];
 
   dateFormatOptions = [
     { value: 'MM/dd/yyyy', label: 'MM/DD/YYYY' },
@@ -504,7 +559,32 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
-  constructor(private readonly messageService: MessageService) {}
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly themeService: ThemeService,
+    private readonly translationService: TranslationService
+  ) {
+    // Initialize language options
+    this.languageOptions = this.translationService.availableLanguages;
+
+    // Initialize settings from services
+    this.themeService.currentTheme$.subscribe((theme) => {
+      this.settings.darkMode = theme === 'dark';
+    });
+
+    this.translationService.currentLanguage$.subscribe((language) => {
+      this.settings.language = language;
+    });
+  }
+
+  onThemeChange() {
+    const theme: Theme = this.settings.darkMode ? 'dark' : 'light';
+    this.themeService.setTheme(theme);
+  }
+
+  onLanguageChange() {
+    this.translationService.setLanguage(this.settings.language);
+  }
 
   saveSettings(section: string) {
     this.messageService.add({
@@ -519,8 +599,12 @@ export class SettingsComponent {
 
   resetGeneralSettings() {
     this.settings.darkMode = false;
+    this.themeService.setTheme('light');
+
     this.settings.animations = true;
     this.settings.language = { code: 'en', name: 'English' };
+    this.translationService.setLanguage(this.settings.language);
+
     this.settings.notifications = true;
     this.settings.itemsPerPage = 10;
     this.settings.dateFormat = { value: 'MM/dd/yyyy', label: 'MM/DD/YYYY' };
@@ -565,7 +649,7 @@ export class SettingsComponent {
   }
 
   testApiConnection() {
-    // Simulation
+    // Simulate API connection test
     setTimeout(() => {
       this.messageService.add({
         severity: 'success',
