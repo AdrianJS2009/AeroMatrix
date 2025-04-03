@@ -25,7 +25,7 @@ export interface UpdateDroneRequest {
   providedIn: 'root',
 })
 export class DroneService {
-  private path = '/drones';
+  private readonly path = '/drones';
 
   constructor(private readonly apiService: ApiService) {}
 

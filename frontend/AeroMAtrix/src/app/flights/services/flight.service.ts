@@ -20,9 +20,9 @@ export interface BatchDroneCommandRequest {
   providedIn: 'root',
 })
 export class FlightService {
-  private path = '/flights';
+  private readonly path = '/flights';
 
-  constructor(private apiService: ApiService) {}
+  constructor(private readonly apiService: ApiService) {}
 
   sendCommands(droneId: number, commands: string[]): Observable<Drone> {
     return this.apiService
