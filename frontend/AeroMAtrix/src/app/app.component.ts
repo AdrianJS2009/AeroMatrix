@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import type { MenuItem } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -114,88 +114,104 @@ import { Language, TranslationService } from './core/translation.service';
         </div>
       </header>
 
-      <!-- Sidebar -->
-      <p-sidebar
-        [(visible)]="sidebarVisible"
-        [showCloseIcon]="false"
-        [modal]="false"
-        styleClass="app-sidebar"
-        [baseZIndex]="10000"
-      >
-        <div class="sidebar-header">
-          <i class="pi pi-send"></i>
-          <span>{{ 'SIDEBAR.NAVIGATION' | translate }}</span>
+      <div class="main-container">
+        <!-- Sidebar -->
+        <p-sidebar
+          [(visible)]="sidebarVisible"
+          [showCloseIcon]="false"
+          [modal]="false"
+          styleClass="app-sidebar"
+          [baseZIndex]="10000"
+          position="left"
+        >
+          <div class="sidebar-header">
+            <i class="pi pi-send"></i>
+            <span>{{ 'SIDEBAR.NAVIGATION' | translate }}</span>
 
-          <button
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-angle-left"
-            class="p-button-text p-button-rounded collapse-btn"
-            (click)="collapseSidebar()"
-            pTooltip="{{ 'SIDEBAR.COLLAPSE' | translate }}"
-          ></button>
-        </div>
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-angle-left"
+              class="p-button-text p-button-rounded collapse-btn"
+              (click)="collapseSidebar()"
+              pTooltip="{{ 'SIDEBAR.COLLAPSE' | translate }}"
+            ></button>
+          </div>
 
-        <div class="sidebar-menu">
-          <ul>
-            <li
-              *ngFor="let item of menuItems"
-              [ngClass]="{ active: isActive(item.routerLink) }"
-              (click)="navigateTo(item.routerLink)"
-            >
-              <i [class]="item.icon"></i>
-              <span>{{ item.label ?? '' | translate }}</span>
-              <div class="hover-indicator"></div>
-            </li>
-          </ul>
-        </div>
+          <div class="sidebar-menu">
+            <ul>
+              <li
+                *ngFor="let item of menuItems"
+                [ngClass]="{ active: isActive(item.routerLink) }"
+                (click)="navigateTo(item.routerLink)"
+              >
+                <i [class]="item.icon"></i>
+                <span>{{ item.label ?? '' | translate }}</span>
+                <div class="hover-indicator"></div>
+              </li>
+            </ul>
+          </div>
 
-        <div class="sidebar-footer">
-          <div class="system-info">
-            <span>{{ 'SIDEBAR.SYSTEM_INFO' | translate }}</span>
-            <span class="version">v1.2.0</span>
+          <div class="sidebar-footer">
+            <div class="system-info">
+              <span>{{ 'SIDEBAR.SYSTEM_INFO' | translate }}</span>
+              <span class="version">v1.2.0</span>
+            </div>
+          </div>
+        </p-sidebar>
+
+        <!-- Collapsed Sidebar -->
+        <div
+          class="collapsed-sidebar"
+          *ngIf="sidebarCollapsed && !sidebarVisible"
+        >
+          <div class="collapsed-sidebar-content">
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-angle-right"
+              class="p-button-text p-button-rounded expand-btn"
+              (click)="expandSidebar()"
+              pTooltip="{{ 'SIDEBAR.EXPAND' | translate }}"
+            ></button>
+
+            <ul class="collapsed-menu">
+              <li
+                *ngFor="let item of menuItems"
+                [ngClass]="{ active: isActive(item.routerLink) }"
+                (click)="navigateTo(item.routerLink)"
+                pTooltip="{{ item.label ?? '' | translate }}"
+                tooltipPosition="right"
+              >
+                <i [class]="item.icon"></i>
+              </li>
+            </ul>
           </div>
         </div>
-      </p-sidebar>
 
-      <!-- Collapsed Sidebar -->
-      <div
-        class="collapsed-sidebar"
-        *ngIf="sidebarCollapsed && !sidebarVisible"
-      >
-        <div class="collapsed-sidebar-content">
-          <button
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-angle-right"
-            class="p-button-text p-button-rounded expand-btn"
-            (click)="expandSidebar()"
-            pTooltip="{{ 'SIDEBAR.EXPAND' | translate }}"
-          ></button>
-
-          <ul class="collapsed-menu">
-            <li
-              *ngFor="let item of menuItems"
-              [ngClass]="{ active: isActive(item.routerLink) }"
-              (click)="navigateTo(item.routerLink)"
-              pTooltip="{{ item.label ?? '' | translate }}"
-              tooltipPosition="right"
-            >
-              <i [class]="item.icon"></i>
-            </li>
-          </ul>
-        </div>
+        <!-- Main Content -->
+        <main
+          class="app-content"
+          [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''"
+        >
+          <router-outlet #o="outlet"></router-outlet>
+        </main>
       </div>
 
-      <!-- Main Content -->
-      <main
-        class="app-content"
-        [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''"
-      >
-        <router-outlet #o="outlet"></router-outlet>
-      </main>
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <div class="copyright">
+            &copy; {{ currentYear }} AeroMatrix.
+            {{ 'FOOTER.RIGHTS' | translate }}
+          </div>
+          <div class="attribution">
+            {{ 'FOOTER.CREATED_BY' | translate }}
+          </div>
+        </div>
+      </footer>
 
       <!-- Notification Panel -->
       <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '350px' }">
@@ -308,19 +324,6 @@ import { Language, TranslationService } from './core/translation.service';
         acceptButtonStyleClass="p-button-danger"
         rejectButtonStyleClass="p-button-text"
       ></p-confirmDialog>
-
-      <!-- Footer -->
-      <footer class="app-footer">
-        <div class="footer-content">
-          <div class="copyright">
-            &copy; {{ currentYear }} AeroMatrix.
-            {{ 'FOOTER.RIGHTS' | translate }}
-          </div>
-          <div class="attribution">
-            {{ 'FOOTER.CREATED_BY' | translate }}
-          </div>
-        </div>
-      </footer>
     </div>
   `,
   styles: [
@@ -334,9 +337,11 @@ import { Language, TranslationService } from './core/translation.service';
       .app-container {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: 100vh;
+        width: 100vw;
         background-color: var(--surface-ground);
         transition: all 0.3s ease;
+        overflow: hidden;
       }
 
       /* Header Styles */
@@ -346,6 +351,7 @@ import { Language, TranslationService } from './core/translation.service';
         padding: 0.5rem 1.5rem;
         z-index: 1000;
         position: relative;
+        flex-shrink: 0;
       }
 
       .header-content {
@@ -410,14 +416,28 @@ import { Language, TranslationService } from './core/translation.service';
         transform: scale(1.1);
       }
 
+      /* Main Container */
+      .main-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+      }
+
       /* Sidebar Styles */
       :host ::ng-deep .app-sidebar {
         width: 250px !important;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 999;
+        height: 100%;
       }
 
       :host ::ng-deep .app-sidebar .p-sidebar-content {
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
 
       .sidebar-header {
@@ -444,6 +464,8 @@ import { Language, TranslationService } from './core/translation.service';
 
       .sidebar-menu {
         padding: 1rem 0;
+        flex: 1;
+        overflow-y: auto;
       }
 
       .sidebar-menu ul {
@@ -521,6 +543,8 @@ import { Language, TranslationService } from './core/translation.service';
         background-color: var(--surface-card);
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 999;
+        height: 100%;
+        flex-shrink: 0;
       }
 
       .collapsed-sidebar-content {
@@ -539,6 +563,8 @@ import { Language, TranslationService } from './core/translation.service';
         list-style: none;
         padding: 0;
         margin: 0;
+        flex: 1;
+        overflow-y: auto;
       }
 
       .collapsed-menu li {
@@ -580,16 +606,24 @@ import { Language, TranslationService } from './core/translation.service';
         padding: 1.5rem;
         overflow-y: auto;
         transition: all 0.3s ease;
+        height: 100%;
       }
 
-      .sidebar-open .app-content {
-        margin-left: 250px;
-        width: calc(100% - 250px);
+      /* Footer */
+      .app-footer {
+        background-color: var(--surface-card);
+        border-top: 1px solid var(--surface-border);
+        padding: 1rem 1.5rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+        flex-shrink: 0;
       }
 
-      .sidebar-collapsed .app-content {
-        margin-left: 60px;
-        width: calc(100% - 60px);
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
       }
 
       /* Notification Panel */
@@ -741,22 +775,6 @@ import { Language, TranslationService } from './core/translation.service';
         width: 1.5rem;
       }
 
-      /* Footer */
-      .app-footer {
-        background-color: var(--surface-card);
-        border-top: 1px solid var(--surface-border);
-        padding: 1rem 1.5rem;
-        text-align: center;
-        font-size: 0.875rem;
-        color: var(--text-color-secondary);
-      }
-
-      .footer-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
       /* Custom Confirm Dialog */
       :host ::ng-deep .custom-confirm-dialog .p-dialog-content {
         padding: 2rem 1.5rem 1rem;
@@ -764,22 +782,16 @@ import { Language, TranslationService } from './core/translation.service';
 
       /* Responsive Adjustments */
       @media screen and (max-width: 768px) {
-        .sidebar-open .app-content,
-        .sidebar-collapsed .app-content {
-          margin-left: 0;
-          width: 100%;
-        }
-
-        :host ::ng-deep .app-sidebar {
-          width: 100% !important;
-        }
-
         .collapsed-sidebar {
           display: none;
         }
 
         .logo-text {
           font-size: 1.1rem;
+        }
+
+        :host ::ng-deep .app-sidebar {
+          width: 100% !important;
         }
       }
     `,

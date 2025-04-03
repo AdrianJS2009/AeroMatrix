@@ -20,18 +20,19 @@ export class TranslationService {
     { code: 'de', name: 'Deutsch' },
   ];
 
-  private readonly currentLanguageSubject = new BehaviorSubject<Language>(
-    this.getInitialLanguage()
-  );
+  private readonly currentLanguageSubject = new BehaviorSubject<Language>({
+    code: 'en',
+    name: 'English',
+  });
   currentLanguage$ = this.currentLanguageSubject.asObservable();
 
   constructor(private readonly translate: TranslateService) {
-    // Initialize
-    translate.addLangs(this.availableLanguages.map((lang) => lang.code));
-    translate.setDefaultLang('en');
+    const initialLang = this.getInitialLanguage();
 
-    // Set initial language
-    this.setLanguage(this.currentLanguageSubject.value);
+    this.translate.addLangs(this.availableLanguages.map((lang) => lang.code));
+    this.translate.setDefaultLang('en');
+
+    this.setLanguage(initialLang);
   }
 
   setLanguage(language: Language): void {
@@ -46,12 +47,11 @@ export class TranslationService {
       return JSON.parse(savedLanguage);
     }
 
-    // Try to detect browser language
     const browserLang = this.translate.getBrowserLang();
     const matchedLang = this.availableLanguages.find(
       (lang) => lang.code === browserLang
     );
 
-    return matchedLang || this.availableLanguages[0]; // Default to English
+    return matchedLang || this.availableLanguages[0];
   }
 }

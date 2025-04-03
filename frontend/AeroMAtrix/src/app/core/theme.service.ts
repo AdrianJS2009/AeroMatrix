@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export type Theme = 'light' | 'dark';
@@ -11,11 +11,16 @@ export class ThemeService {
   private readonly currentThemeSubject = new BehaviorSubject<Theme>(
     this.getInitialTheme()
   );
+  private readonly renderer: Renderer2;
 
   currentTheme$ = this.currentThemeSubject.asObservable();
 
-  constructor() {
+  constructor(rendererFactory: RendererFactory2) {
+    this.renderer = rendererFactory.createRenderer(null, null);
     this.applyTheme(this.currentThemeSubject.value);
+
+    // Listen for system theme changes
+    this.listenForSystemThemeChanges();
   }
 
   toggleTheme(): void {
@@ -48,15 +53,46 @@ export class ThemeService {
   }
 
   private applyTheme(theme: Theme): void {
-    document.documentElement.setAttribute('data-theme', theme);
+    this.renderer.setAttribute(document.documentElement, 'data-theme', theme);
 
-    // Apply theme class to body
     if (theme === 'dark') {
-      document.body.classList.add('dark-theme');
-      document.body.classList.remove('light-theme');
+      this.renderer.addClass(document.body, 'dark-theme');
+      this.renderer.removeClass(document.body, 'light-theme');
+
+      this.updatePrimeNGTheme('lara-dark-blue');
     } else {
-      document.body.classList.add('light-theme');
-      document.body.classList.remove('dark-theme');
+      this.renderer.addClass(document.body, 'light-theme');
+      this.renderer.removeClass(document.body, 'dark-theme');
+
+      this.updatePrimeNGTheme('lara-light-blue');
+    }
+  }
+
+  private updatePrimeNGTheme(themeName: string): void {
+    let themeLink = document.getElementById('app-theme') as HTMLLinkElement;
+
+    if (!themeLink) {
+      themeLink = document.createElement('link');
+      themeLink.id = 'app-theme';
+      themeLink.rel = 'stylesheet';
+      document.head.appendChild(themeLink);
+    }
+
+    themeLink.href = `${themeName}/theme.css`;
+  }
+
+  private listenForSystemThemeChanges(): void {
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      // Add listener for theme changes
+      mediaQuery.addEventListener('change', (e) => {
+        if (!localStorage.getItem(this.themeKey)) {
+          const newTheme: Theme = e.matches ? 'dark' : 'light';
+          this.currentThemeSubject.next(newTheme);
+          this.applyTheme(newTheme);
+        }
+      });
     }
   }
 }

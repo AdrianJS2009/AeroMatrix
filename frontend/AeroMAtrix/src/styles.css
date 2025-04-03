@@ -1,8 +1,15 @@
+/* Update the styles.css file to improve theme handling */
+
+/* Import PrimeNG base theme - the specific theme will be loaded dynamically */
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";
 
+/* Import fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* Light theme variables (default) */
 :root {
   /* Primary color palette */
   --primary-50: #f0f7ff;
@@ -73,29 +80,54 @@
   --info-800: #075985;
   --info-900: #0c4a6e;
 
+  /* Surface colors */
+  --surface-ground: #f8f9fa;
+  --surface-section: #ffffff;
+  --surface-card: #ffffff;
+  --surface-overlay: #ffffff;
+  --surface-border: #dee2e6;
+  --surface-hover: #f1f3f5;
+
+  /* Text colors */
+  --text-color: #1e293b;
+  --text-color-secondary: #64748b;
+  --text-color-tertiary: #94a3b8;
+
   /* Font settings */
   --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
-  --text-color: #1e293b;
-  --text-color-secondary: #64748b;
 }
 
 /* Dark theme variables */
 [data-theme="dark"] {
+  /* Surface colors */
   --surface-ground: #121212;
   --surface-section: #1e1e1e;
   --surface-card: #262626;
   --surface-overlay: #2e2e2e;
   --surface-border: #383838;
   --surface-hover: #2a2a2a;
+
+  /* Text colors */
   --text-color: #f8f9fa;
   --text-color-secondary: #adb5bd;
+  --text-color-tertiary: #ced4da;
+
+  /* Primary color adjustments for dark theme */
   --primary-color: #4dabf7;
   --primary-color-text: #121212;
+  --primary-50: #0c1929;
+  --primary-100: #162c4c;
+  --primary-200: #1e3a64;
+  --primary-300: #2a4d85;
+  --primary-400: #3a67b3;
+  --primary-500: #4dabf7;
+  --primary-600: #5fb8ff;
+  --primary-700: #81c7ff;
+  --primary-800: #a3d5ff;
+  --primary-900: #d1e9ff;
 }
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 body {
   font-family: var(--font-family);
@@ -104,6 +136,7 @@ body {
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -120,7 +153,8 @@ body {
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  background-color: var(--surface-card);
 }
 
 .p-card:hover {
@@ -154,30 +188,34 @@ body {
 
 /* Table styling */
 .p-datatable .p-datatable-header {
-  background: var(--surface-50);
-  border: 1px solid var(--surface-200);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
   border-width: 1px 0 1px 0;
   padding: 1rem;
   font-weight: 600;
+  color: var(--text-color);
 }
 
 .p-datatable .p-datatable-thead > tr > th {
-  background: var(--surface-100);
+  background: var(--surface-section);
   color: var(--text-color);
   font-weight: 600;
+  border-color: var(--surface-border);
 }
 
 .p-datatable .p-datatable-tbody > tr:hover {
-  background: var(--surface-100);
+  background: var(--surface-hover);
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 0.75rem 1rem;
+  border-color: var(--surface-border);
+  color: var(--text-color);
 }
 
 /* Chip styling */
 .p-chip {
-  background: var(--surface-200);
+  background: var(--surface-hover);
   color: var(--text-color);
   border-radius: 1rem;
   padding: 0 0.5rem;
@@ -193,19 +231,23 @@ body {
 .p-dialog .p-dialog-header {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
-  background: var(--surface-50);
+  background: var(--surface-section);
   padding: 1.25rem 1.5rem;
+  color: var(--text-color);
 }
 
 .p-dialog .p-dialog-title {
   font-weight: 600;
   font-size: 1.25rem;
+  color: var(--text-color);
 }
 
 .p-dialog .p-dialog-content {
   border-bottom-left-radius: 0.75rem;
   border-bottom-right-radius: 0.75rem;
   padding: 1.5rem;
+  background: var(--surface-card);
+  color: var(--text-color);
 }
 
 /* Form styling */
@@ -228,16 +270,31 @@ body {
 .p-dropdown,
 .p-inputnumber {
   border-radius: 0.5rem;
+  background: var(--surface-card);
+  color: var(--text-color);
+  border-color: var(--surface-border);
+}
+
+.p-dropdown-panel {
+  background: var(--surface-card);
+  color: var(--text-color);
+  border-color: var(--surface-border);
 }
 
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
   padding: 0.75rem 1.25rem;
+  color: var(--text-color);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: var(--surface-hover);
 }
 
 /* Tab styling */
 .p-tabview .p-tabview-nav {
   border-width: 0 0 2px 0;
-  border-color: var(--surface-200);
+  border-color: var(--surface-border);
+  background: var(--surface-card);
 }
 
 .p-tabview .p-tabview-nav li .p-tabview-nav-link {
@@ -245,11 +302,17 @@ body {
   color: var(--text-color-secondary);
   transition: all 0.2s ease;
   border-radius: 0.5rem 0.5rem 0 0;
+  background: var(--surface-card);
 }
 
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-  color: var(--primary-600);
-  border-bottom: 2px solid var(--primary-500);
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.p-tabview .p-tabview-panels {
+  background: var(--surface-card);
+  color: var(--text-color);
 }
 
 /* Toast styling */
@@ -257,10 +320,12 @@ body {
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: var(--surface-card);
 }
 
 .p-toast .p-toast-message-content {
   padding: 1rem 1.25rem;
+  color: var(--text-color);
 }
 
 /* Badge styling */
@@ -319,4 +384,10 @@ body {
 /* Dark theme overrides for Three.js canvas */
 [data-theme="dark"] canvas {
   filter: brightness(0.9);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
 }

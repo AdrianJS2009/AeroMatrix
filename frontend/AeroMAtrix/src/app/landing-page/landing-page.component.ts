@@ -550,18 +550,89 @@ export class LandingPageComponent implements OnInit {
     setInterval(() => {
       step++;
 
-      // Move drones in different patterns
-      this.demoDrones[0].x = 2 + Math.floor(Math.sin(step / 10) * 2);
-      this.demoDrones[0].y = 3 + Math.floor(Math.cos(step / 10) * 2);
+      // Create a copy of current positions to check for collisions
+      const newPositions = this.demoDrones.map((drone) => ({
+        id: drone.id,
+        x: drone.x,
+        y: drone.y,
+      }));
 
-      this.demoDrones[1].x = 5 + Math.floor(Math.cos(step / 15) * 3);
-      this.demoDrones[1].y = 7 + Math.floor(Math.sin(step / 15) * 2);
+      // Move drones in different patterns with boundary checks
+      // Drone 1: Circular pattern
+      newPositions[0].x = 2 + Math.floor(Math.sin(step / 10) * 2);
+      newPositions[0].y = 3 + Math.floor(Math.cos(step / 10) * 2);
 
-      this.demoDrones[2].x = 8 + Math.floor(Math.sin(step / 20) * 1);
-      this.demoDrones[2].y = 2 + Math.floor(Math.cos(step / 20) * 3);
+      // Ensure within boundaries
+      newPositions[0].x = Math.max(
+        0,
+        Math.min(newPositions[0].x, this.demoMatrix.maxX - 1)
+      );
+      newPositions[0].y = Math.max(
+        0,
+        Math.min(newPositions[0].y, this.demoMatrix.maxY - 1)
+      );
 
-      this.demoDrones[3].x = 4 + Math.floor(Math.cos(step / 12) * 2);
-      this.demoDrones[3].y = 5 + Math.floor(Math.sin(step / 12) * 2);
+      // Drone 2: Figure-8 pattern
+      newPositions[1].x = 5 + Math.floor(Math.cos(step / 15) * 3);
+      newPositions[1].y = 7 + Math.floor(Math.sin((step / 15) * 2) * 2);
+
+      // Ensure within boundaries
+      newPositions[1].x = Math.max(
+        0,
+        Math.min(newPositions[1].x, this.demoMatrix.maxX - 1)
+      );
+      newPositions[1].y = Math.max(
+        0,
+        Math.min(newPositions[1].y, this.demoMatrix.maxY - 1)
+      );
+
+      // Drone 3: Vertical oscillation
+      newPositions[2].x = 8 + Math.floor(Math.sin(step / 20) * 1);
+      newPositions[2].y = 2 + Math.floor(Math.cos(step / 20) * 3);
+
+      // Ensure within boundaries
+      newPositions[2].x = Math.max(
+        0,
+        Math.min(newPositions[2].x, this.demoMatrix.maxX - 1)
+      );
+      newPositions[2].y = Math.max(
+        0,
+        Math.min(newPositions[2].y, this.demoMatrix.maxY - 1)
+      );
+
+      // Drone 4: Diagonal pattern
+      newPositions[3].x = 4 + Math.floor(Math.cos(step / 12) * 2);
+      newPositions[3].y = 5 + Math.floor(Math.sin(step / 12) * 2);
+
+      // Ensure within boundaries
+      newPositions[3].x = Math.max(
+        0,
+        Math.min(newPositions[3].x, this.demoMatrix.maxX - 1)
+      );
+      newPositions[3].y = Math.max(
+        0,
+        Math.min(newPositions[3].y, this.demoMatrix.maxY - 1)
+      );
+
+      // Check for collisions and adjust positions if needed
+      for (let i = 0; i < newPositions.length; i++) {
+        for (let j = i + 1; j < newPositions.length; j++) {
+          if (
+            newPositions[i].x === newPositions[j].x &&
+            newPositions[i].y === newPositions[j].y
+          ) {
+            // Collision detected, adjust position of the second drone
+            newPositions[j].x = (newPositions[j].x + 1) % this.demoMatrix.maxX;
+            newPositions[j].y = (newPositions[j].y + 1) % this.demoMatrix.maxY;
+          }
+        }
+      }
+
+      // Apply new positions
+      this.demoDrones.forEach((drone, index) => {
+        drone.x = newPositions[index].x;
+        drone.y = newPositions[index].y;
+      });
 
       // Update orientations occasionally
       if (step % 20 === 0) {
