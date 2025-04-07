@@ -1,0 +1,44 @@
+// Primary colors
+$primary-color: #3498db; // Blue for primary actions and navigation
+$primary-dark: #2980b9; // Darker blue for hover states
+$primary-light: #e3f2fd; // Light blue for backgrounds and highlights
+
+// Secondary colors
+$secondary-color: #2ecc71; // Green for success states and positive actions
+$secondary-dark: #27ae60; // Darker green for hover states
+$secondary-light: #e8f5e9; // Light green for backgrounds
+
+// Accent colors
+$accent-color: #f39c12; // Orange for warnings and attention
+$accent-dark: #d35400; // Dark orange for critical actions
+$accent-light: #fff8e1; // Light yellow for backgrounds
+
+// Neutral colors
+$neutral-900: #212121; // Nearly black for text
+$neutral-800: #424242; // Dark gray for secondary text
+$neutral-700: #616161; // Medium gray for tertiary text
+$neutral-600: #757575; // Light gray for disabled text
+$neutral-500: #9e9e9e; // Gray for borders
+$neutral-400: #bdbdbd; // Light gray for dividers
+$neutral-300: #e0e0e0; // Very light gray for backgrounds
+$neutral-200: #eeeeee; // Almost white for card backgrounds
+$neutral-100: #f5f5f5; // Off-white for page backgrounds
+$neutral-50: #fafafa; // White for components
+
+// Semantic colors
+$success-color: #2ecc71; // Green for success messages
+$warning-color: #f39c12; // Orange for warnings
+$error-color: #e74c3c; // Red for errors
+$info-color: #3498db; // Blue for information
+
+// Drone status colors
+$drone-active: #2ecc71; // Green for active drones
+$drone-idle: #3498db; // Blue for idle drones
+$drone-error: #e74c3c; // Red for drones with errors
+$drone-charging: #f39c12; // Orange for charging drones
+
+// Matrix grid colors
+$matrix-grid: #e0e0e0; // Light gray for grid lines
+$matrix-occupied: rgba(52, 152, 219, 0.2); // Light blue for occupied cells
+$matrix-highlight: rgba(46, 204, 113, 0.3); // Light green for highlighted cells
+$matrix-path: rgba(243, 156, 18, 0.4); // Light orange for drone paths
