@@ -6,7 +6,7 @@ import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { SidebarModule } from 'primeng/sidebar';
-import type { ThemeService } from '../core/theme.service';
+import { ThemeService } from '../core/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -33,7 +33,7 @@ import type { ThemeService } from '../core/theme.service';
             routerLinkActive="active"
           >
             <i [class]="item.icon"></i>
-            <span>{{ item.label | translate }}</span>
+            <span>{{ item.label || 'Unknown' | translate }}</span>
           </li>
         </ul>
       </div>
@@ -132,7 +132,7 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [];
   isDarkMode = false;
 
-  constructor(private themeService: ThemeService) {}
+  constructor(private readonly themeService: ThemeService) {}
 
   ngOnInit() {
     this.menuItems = [
@@ -178,9 +178,9 @@ export class SidebarComponent implements OnInit {
       },
     ];
 
-    this.themeService.theme$.subscribe((theme) => {
-      this.isDarkMode = theme === 'dark';
-    });
+    // this.themeService.theme$.subscribe((theme) => {
+    //   this.isDarkMode = theme === 'dark';
+    // });
   }
 
   toggleTheme() {
