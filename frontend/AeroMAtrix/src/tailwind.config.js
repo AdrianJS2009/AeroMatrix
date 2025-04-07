@@ -1,6 +1,4 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+const config = {
   content: ["./src/app/**/*.{html,ts}", "./src/index.html"],
   theme: {
     extend: {
