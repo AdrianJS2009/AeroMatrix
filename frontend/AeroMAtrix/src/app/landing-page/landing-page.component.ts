@@ -119,17 +119,6 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
         <div class="features-grid">
           <div class="feature-card" @slideIn>
             <div class="feature-icon">
-              <i class="pi pi-cube"></i>
-            </div>
-            <h3>Interactive 3D View</h3>
-            <p>
-              Switch between 2D and 3D perspectives with realistic drone models
-              and animations
-            </p>
-          </div>
-
-          <div class="feature-card" @slideIn>
-            <div class="feature-icon">
               <i class="pi pi-arrows-alt"></i>
             </div>
             <h3>Advanced Controls</h3>
