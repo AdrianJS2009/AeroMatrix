@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from './core/theme.service';
 import { Language, TranslationService } from './core/translation.service';
+import { SidebarComponent } from './layout/sidebar.component';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ import { Language, TranslationService } from './core/translation.service';
     ToastModule,
     ConfirmDialogModule,
     SidebarModule,
+    SidebarComponent,
     ButtonModule,
     RippleModule,
     AvatarModule,
@@ -148,6 +150,7 @@ import { Language, TranslationService } from './core/translation.service';
 
       <div class="main-container">
         <!-- Sidebar -->
+        <!-- Sidebar -->
         <p-sidebar
           [(visible)]="sidebarVisible"
           [showCloseIcon]="false"
@@ -157,42 +160,8 @@ import { Language, TranslationService } from './core/translation.service';
           position="left"
           @slideInOut
         >
-          <div class="sidebar-header">
-            <i class="pi pi-send"></i>
-            <span>{{ 'SIDEBAR.NAVIGATION' | translate }}</span>
-
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-angle-left"
-              class="p-button-text p-button-rounded collapse-btn"
-              (click)="collapseSidebar()"
-              pTooltip="{{ 'SIDEBAR.COLLAPSE' | translate }}"
-            ></button>
-          </div>
-
-          <div class="sidebar-menu">
-            <ul>
-              <li
-                *ngFor="let item of menuItems"
-                [ngClass]="{ active: isActive(item.routerLink) }"
-                (click)="navigateTo(item.routerLink)"
-                @slideUpDown
-              >
-                <i [class]="item.icon"></i>
-                <span>{{ item.label ?? '' | translate }}</span>
-                <div class="hover-indicator"></div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="sidebar-footer">
-            <div class="system-info">
-              <span>{{ 'SIDEBAR.SYSTEM_INFO' | translate }}</span>
-              <span class="version">v1.2.0</span>
-            </div>
-          </div>
+          <!-- Renderiza el componente Sidebar solo cuando está visible -->
+          <app-sidebar *ngIf="sidebarVisible" />
         </p-sidebar>
 
         <!-- Collapsed Sidebar -->

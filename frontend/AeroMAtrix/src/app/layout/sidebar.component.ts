@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, type OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { SidebarModule } from 'primeng/sidebar';
-import type { Theme } from '../core/theme.service';
+import { PanelMenuModule } from 'primeng/panelmenu';
 import { ThemeService } from '../core/theme.service';
 
 @Component({
@@ -16,175 +14,149 @@ import { ThemeService } from '../core/theme.service';
     CommonModule,
     RouterModule,
     TranslateModule,
-    MenuModule,
-    SidebarModule,
+    PanelMenuModule,
     ButtonModule,
   ],
   template: `
-    <div class="sidebar">
-      <div class="logo-container">
-        <img src="assets/logo.png" alt="Logo" class="logo" />
-        <h2>DroneMatrix</h2>
+    <div class="sidebar-wrapper">
+      <div class="sidebar-header">
+        <i class="pi pi-sitemap logo-icon"></i>
+        <h2 class="brand-name">AeroMatrix</h2>
       </div>
-      <div class="menu-container">
-        <ul class="menu">
-          <li
-            *ngFor="let item of menuItems"
-            [routerLink]="item.routerLink"
-            routerLinkActive="active"
-          >
-            <i [class]="item.icon"></i>
-            <span>{{ item.label || 'Unknown' | translate }}</span>
-          </li>
-        </ul>
-      </div>
+
+      <p-panelMenu
+        [model]="menuItems"
+        [style]="{ width: '100%' }"
+        styleClass="custom-panel-menu"
+      ></p-panelMenu>
+
       <div class="theme-toggle">
-        <p-button
+        <button
+          pButton
           icon="pi pi-sun"
-          (onClick)="toggleTheme()"
-          [styleClass]="
-            isDarkMode
-              ? 'p-button-rounded p-button-text'
-              : 'p-button-rounded p-button-text p-button-secondary'
-          "
-        ></p-button>
-        <p-button
+          (click)="toggleTheme()"
+          [class.p-button-secondary]="!isDarkMode"
+          class="p-button-text p-button-rounded"
+        ></button>
+        <button
+          pButton
           icon="pi pi-moon"
-          (onClick)="toggleTheme()"
-          [styleClass]="
-            !isDarkMode
-              ? 'p-button-rounded p-button-text'
-              : 'p-button-rounded p-button-text p-button-secondary'
-          "
-        ></p-button>
+          (click)="toggleTheme()"
+          [class.p-button-secondary]="isDarkMode"
+          class="p-button-text p-button-rounded"
+        ></button>
       </div>
     </div>
   `,
   styles: [
     `
-      .sidebar {
-        height: 100%;
-        width: 250px;
-        background-color: var(--surface-card);
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.02), 0 0 2px rgba(0, 0, 0, 0.05),
-          0 1px 4px rgba(0, 0, 0, 0.08);
+      .sidebar-wrapper {
         display: flex;
         flex-direction: column;
+        height: 100%;
+        background-color: var(--surface-card);
+        padding: 1rem;
       }
 
-      .logo-container {
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        border-bottom: 1px solid var(--surface-border);
-      }
-
-      .logo {
-        width: 40px;
-        height: 40px;
-      }
-
-      .menu-container {
-        flex: 1;
-        padding: 1rem 0;
-        overflow-y: auto;
-      }
-
-      .menu {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .menu li {
-        padding: 0.75rem 1.5rem;
+      .sidebar-header {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        margin-bottom: 1rem;
       }
 
-      .menu li:hover {
-        background-color: var(--surface-hover);
+      .logo-icon {
+        font-size: 1.75rem;
+        color: var(--primary-500);
       }
 
-      .menu li.active {
-        background-color: var(--primary-color);
-        color: var(--primary-color-text);
-      }
-
-      .menu li i {
-        font-size: 1.25rem;
+      .brand-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-color);
       }
 
       .theme-toggle {
-        padding: 1rem 1.5rem;
         display: flex;
         justify-content: center;
         gap: 0.5rem;
+        margin-top: auto;
+        padding-top: 1rem;
         border-top: 1px solid var(--surface-border);
+      }
+
+      :host ::ng-deep .custom-panel-menu .p-menuitem {
+        border-radius: 6px;
+      }
+
+      :host ::ng-deep .custom-panel-menu .p-menuitem:hover {
+        background-color: var(--surface-hover);
       }
     `,
   ],
 })
 export class SidebarComponent implements OnInit {
-  menuItems: MenuItem[] = [];
   isDarkMode = false;
+
+  menuItems: MenuItem[] = [];
 
   constructor(private readonly themeService: ThemeService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.menuItems = [
+      {
+        label: 'Dashboard',
+        icon: 'pi pi-home',
+        routerLink: ['/'],
+      },
       {
         label: 'Drones',
         icon: 'pi pi-send',
-        routerLink: '/drones',
+        routerLink: ['/drones'],
       },
       {
         label: 'Matrices',
         icon: 'pi pi-th-large',
-        routerLink: '/matrices',
+        routerLink: ['/matrices'],
       },
       {
         label: 'Flights',
-        icon: 'pi pi-map',
-        routerLink: '/flights',
+        icon: 'pi pi-compass',
+        routerLink: ['/flights'],
       },
       {
         label: 'Analytics',
         icon: 'pi pi-chart-bar',
-        routerLink: '/analytics',
-      },
-      {
-        label: 'Features',
-        icon: 'pi pi-star',
-        routerLink: '/features',
-      },
-      {
-        label: 'Support',
-        icon: 'pi pi-question-circle',
-        routerLink: '/support',
-      },
-      {
-        label: 'About Us',
-        icon: 'pi pi-info-circle',
-        routerLink: '/about',
+        routerLink: ['/analytics'],
       },
       {
         label: 'Settings',
         icon: 'pi pi-cog',
-        routerLink: '/settings',
+        routerLink: ['/settings'],
+      },
+      {
+        label: 'About',
+        icon: 'pi pi-info-circle',
+        routerLink: ['/about'],
+      },
+      {
+        label: 'Features',
+        icon: 'pi pi-star',
+        routerLink: ['/features'],
+      },
+      {
+        label: 'Support',
+        icon: 'pi pi-question-circle',
+        routerLink: ['/support'],
       },
     ];
 
-    this.themeService.currentTheme$.subscribe((theme: Theme) => {
+    this.themeService.currentTheme$.subscribe((theme) => {
       this.isDarkMode = theme === 'dark';
     });
   }
 
-  toggleTheme() {
+  toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 }
