@@ -201,8 +201,10 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
             </ul>
           </div>
           <div class="footer-social">
-            <a href="#"><i class="pi pi-github"></i></a>
-            <a href="#"><i class="pi pi-twitter"></i></a>
+            <a href="https://github.com/AdrianJS2009"
+              ><i class="pi pi-github"></i
+            ></a>
+
             <a href="#"><i class="pi pi-linkedin"></i></a>
           </div>
         </div>
