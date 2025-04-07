@@ -6,6 +6,7 @@ import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { SidebarModule } from 'primeng/sidebar';
+import type { Theme } from '../core/theme.service';
 import { ThemeService } from '../core/theme.service';
 
 @Component({
@@ -178,9 +179,9 @@ export class SidebarComponent implements OnInit {
       },
     ];
 
-    // this.themeService.theme$.subscribe((theme) => {
-    //   this.isDarkMode = theme === 'dark';
-    // });
+    this.themeService.currentTheme$.subscribe((theme: Theme) => {
+      this.isDarkMode = theme === 'dark';
+    });
   }
 
   toggleTheme() {
