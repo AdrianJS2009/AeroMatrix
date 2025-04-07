@@ -151,7 +151,7 @@ import { FlightService } from '../services/flight.service';
                         filterBy="name"
                         [showClear]="true"
                         styleClass="w-full"
-                        (onChange)="onDroneSelect($event)"
+                        (onChange)="onDroneSelect()"
                       >
                         <ng-template pTemplate="selectedItem">
                           <div
@@ -1253,7 +1253,7 @@ export class FlightControlComponent implements OnInit {
     });
   }
 
-  onDroneSelect(event: any) {
+  onDroneSelect() {
     if (this.selectedDrone) {
       this.loadMatrixForDrone(this.selectedDrone.matrixId);
     } else {

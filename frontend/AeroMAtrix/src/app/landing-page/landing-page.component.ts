@@ -194,10 +194,22 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
           </div>
           <div class="footer-links">
             <ul>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">Documentation</a></li>
-              <li><a href="#">Support</a></li>
+              <li>
+                <a (click)="navigateTo('/about')" class="cursor-pointer"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a (click)="navigateTo('/features')" class="cursor-pointer"
+                  >Features</a
+                >
+              </li>
+              <li><a href="#" target="_blank">Documentation</a></li>
+              <li>
+                <a (click)="navigateTo('/support')" class="cursor-pointer"
+                  >Support</a
+                >
+              </li>
             </ul>
           </div>
           <div class="footer-social">

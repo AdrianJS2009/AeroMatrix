@@ -78,7 +78,7 @@ export class ThemeService {
       document.head.appendChild(themeLink);
     }
 
-    themeLink.href = `${themeName}/theme.css`;
+    themeLink.href = `assets/themes/${themeName}/theme.css`;
   }
 
   private listenForSystemThemeChanges(): void {
