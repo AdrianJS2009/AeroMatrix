@@ -112,5 +112,27 @@
       "SAVE": "Save Changes",
       "TEST_CONNECTION": "Test Connection"
     }
+  },
+  "sidebar": {
+    "management": "Management",
+    "drones": "Drones",
+    "matrices": "Matrices",
+    "flights": "Flights",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "information": "Information",
+    "about": "About Us",
+    "features": "Features",
+    "support": "Support",
+    "version": "Version"
+  },
+  "error": {
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundMessage": "The page you are looking for doesn't exist or has been moved.",
+    "returnHome": "Return Home",
+    "goBack": "Go Back",
+    "technicalInfo": "Technical Information",
+    "technicalMessage": "The requested URL was not found on this server. If you entered the URL manually, please check your spelling and try again.",
+    "requestedUrl": "Requested URL"
   }
 }

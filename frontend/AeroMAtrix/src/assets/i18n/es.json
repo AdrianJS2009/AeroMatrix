@@ -7,7 +7,13 @@
     "NAVIGATION": "Navegación",
     "SYSTEM_INFO": "Sistema de Control de Drones",
     "COLLAPSE": "Colapsar barra lateral",
-    "EXPAND": "Expandir barra lateral"
+    "EXPAND": "Expandir barra lateral",
+    "MANAGEMENT": "Gestión",
+    "INFORMATION": "Información",
+    "ABOUT": "Sobre Nosotros",
+    "FEATURES": "Características",
+    "SUPPORT": "Soporte",
+    "VERSION": "Versión"
   },
   "MENU": {
     "DASHBOARD": "Panel",
@@ -112,5 +118,14 @@
       "SAVE": "Guardar Cambios",
       "TEST_CONNECTION": "Probar Conexión"
     }
+  },
+  "ERROR": {
+    "PAGE_NOT_FOUND": "Página No Encontrada",
+    "PAGE_NOT_FOUND_MESSAGE": "La página que estás buscando no existe o ha sido movida.",
+    "RETURN_HOME": "Volver al Inicio",
+    "GO_BACK": "Regresar",
+    "TECHNICAL_INFO": "Información Técnica",
+    "TECHNICAL_MESSAGE": "La URL solicitada no se encontró en este servidor. Si ingresó la URL manualmente, verifique su ortografía e intente nuevamente.",
+    "REQUESTED_URL": "URL solicitada"
   }
 }

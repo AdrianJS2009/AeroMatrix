@@ -60,4 +60,15 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: '404',
+    loadComponent: () =>
+      import('./not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
+  },
+  {
+    path: '**',
+    redirectTo: '404',
+  },
 ];
