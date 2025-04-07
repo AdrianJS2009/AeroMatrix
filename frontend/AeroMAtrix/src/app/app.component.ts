@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { MenuItem } from 'primeng/api';
+import type { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -38,9 +38,41 @@ import { Language, TranslationService } from './core/translation.service';
     trigger('fadeAnimation', [
       transition(':enter', [
         style({ opacity: 0 }),
-        animate('300ms ease-in', style({ opacity: 1 })),
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1 })),
       ]),
-      transition(':leave', [animate('300ms ease-out', style({ opacity: 0 }))]),
+      transition(':leave', [
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 0 })),
+      ]),
+    ]),
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateX(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateX(-100%)' })
+        ),
+      ]),
+    ]),
+    trigger('slideUpDown', [
+      transition(':enter', [
+        style({ transform: 'translateY(20px)', opacity: 0 }),
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateY(0)', opacity: 1 })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateY(20px)', opacity: 0 })
+        ),
+      ]),
     ]),
   ],
   template: `
@@ -66,7 +98,7 @@ import { Language, TranslationService } from './core/translation.service';
             ></button>
             <div class="logo-container" (click)="navigateHome()">
               <i class="pi pi-send logo-icon"></i>
-              <h1 class="logo-text">AeroMatrix</h1>
+              <h1 class="logo-text gradient-text">AeroMatrix</h1>
             </div>
           </div>
 
@@ -123,6 +155,7 @@ import { Language, TranslationService } from './core/translation.service';
           styleClass="app-sidebar"
           [baseZIndex]="10000"
           position="left"
+          @slideInOut
         >
           <div class="sidebar-header">
             <i class="pi pi-send"></i>
@@ -145,6 +178,7 @@ import { Language, TranslationService } from './core/translation.service';
                 *ngFor="let item of menuItems"
                 [ngClass]="{ active: isActive(item.routerLink) }"
                 (click)="navigateTo(item.routerLink)"
+                @slideUpDown
               >
                 <i [class]="item.icon"></i>
                 <span>{{ item.label ?? '' | translate }}</span>
@@ -184,6 +218,7 @@ import { Language, TranslationService } from './core/translation.service';
                 (click)="navigateTo(item.routerLink)"
                 pTooltip="{{ item.label ?? '' | translate }}"
                 tooltipPosition="right"
+                @slideUpDown
               >
                 <i [class]="item.icon"></i>
               </li>
@@ -218,7 +253,7 @@ import { Language, TranslationService } from './core/translation.service';
         <ng-template pTemplate>
           <div class="notification-panel">
             <h3>{{ 'NOTIFICATIONS.TITLE' | translate }}</h3>
-            <div class="notification-item unread">
+            <div class="notification-item unread" @slideUpDown>
               <i class="pi pi-exclamation-circle"></i>
               <div class="notification-content">
                 <h4>{{ 'NOTIFICATIONS.DRONE_ALERT' | translate }}</h4>
@@ -228,7 +263,7 @@ import { Language, TranslationService } from './core/translation.service';
                 }}</span>
               </div>
             </div>
-            <div class="notification-item unread">
+            <div class="notification-item unread" @slideUpDown>
               <i class="pi pi-check-circle"></i>
               <div class="notification-content">
                 <h4>{{ 'NOTIFICATIONS.FLIGHT_COMPLETED' | translate }}</h4>
@@ -238,7 +273,7 @@ import { Language, TranslationService } from './core/translation.service';
                 }}</span>
               </div>
             </div>
-            <div class="notification-item">
+            <div class="notification-item" @slideUpDown>
               <i class="pi pi-info-circle"></i>
               <div class="notification-content">
                 <h4>{{ 'NOTIFICATIONS.SYSTEM_UPDATE' | translate }}</h4>
@@ -269,6 +304,7 @@ import { Language, TranslationService } from './core/translation.service';
                 *ngFor="let lang of availableLanguages"
                 [ngClass]="{ active: currentLanguage.code === lang.code }"
                 (click)="setLanguage(lang)"
+                @slideUpDown
               >
                 <span>{{ lang.name }}</span>
                 <i
@@ -301,14 +337,14 @@ import { Language, TranslationService } from './core/translation.service';
               </div>
             </div>
             <ul class="user-menu">
-              <li>
+              <li @slideUpDown>
                 <i class="pi pi-user-edit"></i>
                 {{ 'USER.EDIT_PROFILE' | translate }}
               </li>
-              <li (click)="navigateTo('/settings')">
+              <li (click)="navigateTo('/settings')" @slideUpDown>
                 <i class="pi pi-cog"></i> {{ 'USER.SETTINGS' | translate }}
               </li>
-              <li>
+              <li @slideUpDown>
                 <i class="pi pi-sign-out"></i> {{ 'USER.LOGOUT' | translate }}
               </li>
             </ul>
@@ -347,8 +383,8 @@ import { Language, TranslationService } from './core/translation.service';
       /* Header Styles */
       .app-header {
         background-color: var(--surface-card);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        padding: 0.5rem 1.5rem;
+        box-shadow: var(--shadow-md);
+        padding: 0.75rem 1.5rem;
         z-index: 1000;
         position: relative;
         flex-shrink: 0;
@@ -370,9 +406,9 @@ import { Language, TranslationService } from './core/translation.service';
       .logo-container {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: transform 0.3s ease;
       }
 
       .logo-container:hover {
@@ -381,20 +417,14 @@ import { Language, TranslationService } from './core/translation.service';
 
       .logo-icon {
         font-size: 1.5rem;
-        color: var(--primary-color);
+        color: var(--primary-500);
       }
 
       .logo-text {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: 1.35rem;
+        font-weight: 700;
         margin: 0;
-        background: linear-gradient(
-          90deg,
-          var(--primary-color) 0%,
-          var(--primary-600) 100%
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.02em;
       }
 
       .sidebar-toggle {
@@ -408,12 +438,13 @@ import { Language, TranslationService } from './core/translation.service';
       .theme-toggle,
       .user-avatar {
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, background-color 0.2s ease;
       }
 
       .theme-toggle:hover,
       .user-avatar:hover {
         transform: scale(1.1);
+        background-color: var(--surface-hover);
       }
 
       /* Main Container */
@@ -426,8 +457,8 @@ import { Language, TranslationService } from './core/translation.service';
 
       /* Sidebar Styles */
       :host ::ng-deep .app-sidebar {
-        width: 250px !important;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 280px !important;
+        box-shadow: var(--shadow-lg);
         position: relative;
         z-index: 999;
         height: 100%;
@@ -438,13 +469,14 @@ import { Language, TranslationService } from './core/translation.service';
         display: flex;
         flex-direction: column;
         height: 100%;
+        background-color: var(--surface-card);
       }
 
       .sidebar-header {
         padding: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
         border-bottom: 1px solid var(--surface-border);
         font-size: 1.2rem;
         font-weight: 600;
@@ -452,7 +484,7 @@ import { Language, TranslationService } from './core/translation.service';
       }
 
       .sidebar-header i {
-        color: var(--primary-color);
+        color: var(--primary-500);
       }
 
       .collapse-btn {
@@ -475,13 +507,15 @@ import { Language, TranslationService } from './core/translation.service';
       }
 
       .sidebar-menu li {
-        padding: 0.75rem 1.5rem;
+        padding: 0.85rem 1.5rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.85rem;
         cursor: pointer;
         position: relative;
         transition: all 0.2s ease;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0.75rem;
       }
 
       .sidebar-menu li:hover {
@@ -490,11 +524,12 @@ import { Language, TranslationService } from './core/translation.service';
 
       .sidebar-menu li.active {
         background-color: var(--primary-50);
-        color: var(--primary-color);
+        color: var(--primary-700);
+        font-weight: 500;
       }
 
       .sidebar-menu li.active i {
-        color: var(--primary-color);
+        color: var(--primary-600);
       }
 
       .sidebar-menu li i {
@@ -509,9 +544,10 @@ import { Language, TranslationService } from './core/translation.service';
         top: 0;
         bottom: 0;
         width: 4px;
-        background-color: var(--primary-color);
+        background-color: var(--primary-500);
         transform: scaleY(0);
         transition: transform 0.2s ease;
+        border-radius: 0 4px 4px 0;
       }
 
       .sidebar-menu li:hover .hover-indicator,
@@ -520,7 +556,7 @@ import { Language, TranslationService } from './core/translation.service';
       }
 
       .sidebar-footer {
-        padding: 1rem 1.5rem;
+        padding: 1.25rem 1.5rem;
         border-top: 1px solid var(--surface-border);
         margin-top: auto;
       }
@@ -535,13 +571,14 @@ import { Language, TranslationService } from './core/translation.service';
       .version {
         font-size: 0.75rem;
         opacity: 0.7;
+        margin-top: 0.25rem;
       }
 
       /* Collapsed Sidebar */
       .collapsed-sidebar {
-        width: 60px;
+        width: 70px;
         background-color: var(--surface-card);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-md);
         z-index: 999;
         height: 100%;
         flex-shrink: 0;
@@ -556,7 +593,7 @@ import { Language, TranslationService } from './core/translation.service';
 
       .expand-btn {
         align-self: center;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
       }
 
       .collapsed-menu {
@@ -575,6 +612,8 @@ import { Language, TranslationService } from './core/translation.service';
         cursor: pointer;
         position: relative;
         transition: all 0.2s ease;
+        margin: 0.5rem 0.5rem;
+        border-radius: 0.5rem;
       }
 
       .collapsed-menu li i {
@@ -583,11 +622,15 @@ import { Language, TranslationService } from './core/translation.service';
       }
 
       .collapsed-menu li.active i {
-        color: var(--primary-color);
+        color: var(--primary-600);
       }
 
       .collapsed-menu li:hover {
         background-color: var(--surface-hover);
+      }
+
+      .collapsed-menu li.active {
+        background-color: var(--primary-50);
       }
 
       .collapsed-menu li.active::before {
@@ -597,7 +640,8 @@ import { Language, TranslationService } from './core/translation.service';
         top: 0;
         bottom: 0;
         width: 4px;
-        background-color: var(--primary-color);
+        background-color: var(--primary-500);
+        border-radius: 0 4px 4px 0;
       }
 
       /* Main Content */
@@ -629,15 +673,17 @@ import { Language, TranslationService } from './core/translation.service';
       /* Notification Panel */
       .notification-panel h3 {
         margin-top: 0;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.75rem;
         border-bottom: 1px solid var(--surface-border);
+        font-size: 1.1rem;
+        font-weight: 600;
       }
 
       .notification-item {
         display: flex;
-        padding: 0.75rem 0;
+        padding: 0.85rem 0;
         border-bottom: 1px solid var(--surface-200);
-        gap: 0.75rem;
+        gap: 0.85rem;
         cursor: pointer;
         transition: background-color 0.2s ease;
       }
@@ -648,7 +694,7 @@ import { Language, TranslationService } from './core/translation.service';
 
       .notification-item i {
         font-size: 1.2rem;
-        color: var(--primary-color);
+        color: var(--primary-500);
         margin-top: 0.25rem;
       }
 
@@ -659,19 +705,21 @@ import { Language, TranslationService } from './core/translation.service';
       .notification-content h4 {
         margin: 0 0 0.25rem 0;
         font-size: 0.95rem;
+        font-weight: 600;
       }
 
       .notification-content p {
         margin: 0;
         font-size: 0.85rem;
         color: var(--text-color-secondary);
+        line-height: 1.4;
       }
 
       .notification-time {
         font-size: 0.75rem;
         color: var(--text-color-secondary);
         display: block;
-        margin-top: 0.25rem;
+        margin-top: 0.35rem;
       }
 
       .notification-item.unread h4::after {
@@ -680,26 +728,35 @@ import { Language, TranslationService } from './core/translation.service';
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: var(--primary-color);
+        background-color: var(--primary-500);
         margin-left: 0.5rem;
       }
 
       .view-all {
         text-align: center;
-        padding: 0.5rem 0 0;
+        padding: 0.75rem 0 0;
       }
 
       .view-all a {
-        color: var(--primary-color);
+        color: var(--primary-600);
         text-decoration: none;
         font-size: 0.875rem;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .view-all a:hover {
+        color: var(--primary-700);
+        text-decoration: underline;
       }
 
       /* Language Panel */
       .language-panel h3 {
         margin-top: 0;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.75rem;
         border-bottom: 1px solid var(--surface-border);
+        font-size: 1.1rem;
+        font-weight: 600;
       }
 
       .language-list {
@@ -712,10 +769,11 @@ import { Language, TranslationService } from './core/translation.service';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 0.5rem;
+        padding: 0.75rem 0.75rem;
         cursor: pointer;
-        border-radius: 4px;
+        border-radius: 0.5rem;
         transition: background-color 0.2s ease;
+        margin: 0.25rem 0;
       }
 
       .language-list li:hover {
@@ -724,29 +782,31 @@ import { Language, TranslationService } from './core/translation.service';
 
       .language-list li.active {
         background-color: var(--primary-50);
-        color: var(--primary-color);
+        color: var(--primary-700);
+        font-weight: 500;
       }
 
       /* User Panel */
       .user-panel {
-        padding: 0.5rem 0;
+        padding: 0.75rem 0;
       }
 
       .user-info {
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 0.5rem 1rem 1rem;
+        padding: 0.75rem 1rem 1.25rem;
         border-bottom: 1px solid var(--surface-border);
       }
 
       .user-details h4 {
         margin: 0;
         font-size: 1rem;
+        font-weight: 600;
       }
 
       .user-details p {
-        margin: 0;
+        margin: 0.25rem 0 0;
         font-size: 0.875rem;
         color: var(--text-color-secondary);
       }
@@ -754,16 +814,18 @@ import { Language, TranslationService } from './core/translation.service';
       .user-menu {
         list-style: none;
         padding: 0;
-        margin: 0.5rem 0 0;
+        margin: 0.75rem 0 0;
       }
 
       .user-menu li {
-        padding: 0.5rem 1rem;
+        padding: 0.65rem 1rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
         transition: background-color 0.2s ease;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0.5rem;
       }
 
       .user-menu li:hover {
@@ -773,11 +835,12 @@ import { Language, TranslationService } from './core/translation.service';
       .user-menu li i {
         font-size: 1rem;
         width: 1.5rem;
+        color: var(--primary-600);
       }
 
       /* Custom Confirm Dialog */
       :host ::ng-deep .custom-confirm-dialog .p-dialog-content {
-        padding: 2rem 1.5rem 1rem;
+        padding: 2rem 1.5rem 1.5rem;
       }
 
       /* Responsive Adjustments */
@@ -792,6 +855,10 @@ import { Language, TranslationService } from './core/translation.service';
 
         :host ::ng-deep .app-sidebar {
           width: 100% !important;
+        }
+
+        .header-right {
+          gap: 0.5rem;
         }
       }
     `,
