@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import type { TooltipItem } from 'chart.js';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
@@ -25,8 +26,35 @@ import { TableModule } from 'primeng/table';
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(20px)' }),
         animate(
-          '400ms ease-out',
+          '500ms cubic-bezier(0.4, 0, 0.2, 1)',
           style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+    trigger('cardAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.95)' }),
+        animate(
+          '500ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ opacity: 1, transform: 'scale(1)' })
+        ),
+      ]),
+    ]),
+    trigger('chartAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(30px)' }),
+        animate(
+          '600ms 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+    trigger('tableAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate(
+          '500ms 400ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ opacity: 1 })
         ),
       ]),
     ]),
@@ -45,6 +73,7 @@ import { TableModule } from 'primeng/table';
           optionLabel="label"
           placeholder="Select Time Range"
           (onChange)="updateCharts()"
+          styleClass="time-range-dropdown"
         ></p-dropdown>
 
         <button
@@ -57,7 +86,7 @@ import { TableModule } from 'primeng/table';
       </div>
 
       <div class="stats-cards">
-        <p-card styleClass="stats-card">
+        <p-card styleClass="stats-card" @cardAnimation>
           <div class="stats-content">
             <div class="stats-icon drone-icon">
               <i class="pi pi-send"></i>
@@ -72,7 +101,7 @@ import { TableModule } from 'primeng/table';
           </div>
         </p-card>
 
-        <p-card styleClass="stats-card">
+        <p-card styleClass="stats-card" @cardAnimation>
           <div class="stats-content">
             <div class="stats-icon flight-icon">
               <i class="pi pi-compass"></i>
@@ -87,7 +116,7 @@ import { TableModule } from 'primeng/table';
           </div>
         </p-card>
 
-        <p-card styleClass="stats-card">
+        <p-card styleClass="stats-card" @cardAnimation>
           <div class="stats-content">
             <div class="stats-icon matrix-icon">
               <i class="pi pi-th-large"></i>
@@ -102,7 +131,7 @@ import { TableModule } from 'primeng/table';
           </div>
         </p-card>
 
-        <p-card styleClass="stats-card">
+        <p-card styleClass="stats-card" @cardAnimation>
           <div class="stats-content">
             <div class="stats-icon error-icon">
               <i class="pi pi-exclamation-triangle"></i>
@@ -119,7 +148,11 @@ import { TableModule } from 'primeng/table';
       </div>
 
       <div class="chart-row">
-        <p-card header="Flight Activity" styleClass="chart-card">
+        <p-card
+          header="Flight Activity"
+          styleClass="chart-card"
+          @chartAnimation
+        >
           <p-chart
             type="line"
             [data]="flightActivityData"
@@ -127,7 +160,11 @@ import { TableModule } from 'primeng/table';
           ></p-chart>
         </p-card>
 
-        <p-card header="Drone Distribution by Matrix" styleClass="chart-card">
+        <p-card
+          header="Drone Distribution by Matrix"
+          styleClass="chart-card"
+          @chartAnimation
+        >
           <p-chart
             type="doughnut"
             [data]="droneDistributionData"
@@ -137,7 +174,7 @@ import { TableModule } from 'primeng/table';
       </div>
 
       <div class="chart-row">
-        <p-card header="Command Usage" styleClass="chart-card">
+        <p-card header="Command Usage" styleClass="chart-card" @chartAnimation>
           <p-chart
             type="bar"
             [data]="commandUsageData"
@@ -145,7 +182,7 @@ import { TableModule } from 'primeng/table';
           ></p-chart>
         </p-card>
 
-        <p-card header="Error Types" styleClass="chart-card">
+        <p-card header="Error Types" styleClass="chart-card" @chartAnimation>
           <p-chart
             type="pie"
             [data]="errorTypesData"
@@ -154,7 +191,11 @@ import { TableModule } from 'primeng/table';
         </p-card>
       </div>
 
-      <p-card header="Recent Flight Activity" styleClass="table-card">
+      <p-card
+        header="Recent Flight Activity"
+        styleClass="table-card"
+        @tableAnimation
+      >
         <p-table
           [value]="recentFlights"
           [paginator]="true"
@@ -198,58 +239,76 @@ import { TableModule } from 'primeng/table';
   styles: [
     `
       .analytics-dashboard {
-        padding: 1rem;
+        padding: 1.5rem;
       }
 
       .page-header {
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
       }
 
       .page-header h1 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
+        font-size: 2.25rem;
+        margin-bottom: 0.75rem;
         color: var(--text-color);
+        font-weight: 700;
+        letter-spacing: -0.02em;
       }
 
       .page-header p {
         color: var(--text-color-secondary);
         font-size: 1.1rem;
+        max-width: 600px;
       }
 
       .filter-bar {
         display: flex;
         gap: 1rem;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
         align-items: center;
         flex-wrap: wrap;
+        background-color: var(--surface-card);
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .time-range-dropdown {
+        min-width: 200px;
       }
 
       .stats-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
       }
 
       :host ::ng-deep .stats-card .p-card-body {
-        padding: 1rem;
+        padding: 1.5rem;
+      }
+
+      :host ::ng-deep .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
       }
 
       .stats-content {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
       }
 
       .stats-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        font-size: 1.5rem;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        font-size: 1.75rem;
         color: white;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
       }
 
       .drone-icon {
@@ -263,24 +322,24 @@ import { TableModule } from 'primeng/table';
       .flight-icon {
         background: linear-gradient(
           135deg,
-          var(--green-500) 0%,
-          var(--green-700) 100%
+          var(--success-500) 0%,
+          var(--success-700) 100%
         );
       }
 
       .matrix-icon {
         background: linear-gradient(
           135deg,
-          var(--orange-500) 0%,
-          var(--orange-700) 100%
+          var(--warning-500) 0%,
+          var(--warning-700) 100%
         );
       }
 
       .error-icon {
         background: linear-gradient(
           135deg,
-          var(--red-500) 0%,
-          var(--red-700) 100%
+          var(--danger-500) 0%,
+          var(--danger-700) 100%
         );
       }
 
@@ -290,30 +349,33 @@ import { TableModule } from 'primeng/table';
       }
 
       .stats-label {
-        font-size: 0.875rem;
+        font-size: 0.95rem;
         color: var(--text-color-secondary);
+        font-weight: 500;
       }
 
       .stats-value {
-        font-size: 1.75rem;
+        font-size: 2rem;
         font-weight: 700;
         color: var(--text-color);
-        margin: 0.25rem 0;
+        margin: 0.35rem 0;
+        letter-spacing: -0.02em;
       }
 
       .stats-change {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.35rem;
+        font-weight: 500;
       }
 
       .stats-change.positive {
-        color: var(--green-500);
+        color: var(--success-600);
       }
 
       .stats-change.negative {
-        color: var(--red-500);
+        color: var(--danger-600);
       }
 
       .stats-change.neutral {
@@ -322,18 +384,25 @@ import { TableModule } from 'primeng/table';
 
       .chart-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
         gap: 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
       }
 
       :host ::ng-deep .chart-card .p-card-body {
-        padding: 1rem;
+        padding: 1.5rem;
       }
 
       :host ::ng-deep .chart-card .p-card-title {
         font-size: 1.25rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      :host ::ng-deep .chart-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
       }
 
       :host ::ng-deep .table-card .p-card-body {
@@ -344,32 +413,54 @@ import { TableModule } from 'primeng/table';
         padding: 0;
       }
 
+      :host ::ng-deep .table-card .p-card-title {
+        padding: 1.5rem 1.5rem 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
       .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
+        letter-spacing: 0.025em;
       }
 
       .status-badge.completed {
-        background-color: var(--green-100);
-        color: var(--green-700);
+        background-color: var(--success-100);
+        color: var(--success-700);
       }
 
       .status-badge.in-progress {
-        background-color: var(--blue-100);
-        color: var(--blue-700);
+        background-color: var(--info-100);
+        color: var(--info-700);
       }
 
       .status-badge.failed {
-        background-color: var(--red-100);
-        color: var(--red-700);
+        background-color: var(--danger-100);
+        color: var(--danger-700);
       }
 
       @media screen and (max-width: 768px) {
         .chart-row {
           grid-template-columns: 1fr;
+        }
+
+        .page-header h1 {
+          font-size: 1.75rem;
+        }
+
+        .stats-value {
+          font-size: 1.75rem;
+        }
+
+        .stats-icon {
+          width: 56px;
+          height: 56px;
+          font-size: 1.5rem;
         }
       }
     `,
@@ -502,6 +593,7 @@ export class AnalyticsComponent implements OnInit {
           backgroundColor: documentStyle.getPropertyValue('--primary-100'),
           borderColor: documentStyle.getPropertyValue('--primary-500'),
           tension: 0.4,
+          borderWidth: 2,
         },
       ],
     };
@@ -513,6 +605,29 @@ export class AnalyticsComponent implements OnInit {
         legend: {
           labels: {
             color: textColor,
+            font: {
+              weight: 500,
+            },
+          },
+        },
+        tooltip: {
+          backgroundColor: documentStyle.getPropertyValue('--surface-card'),
+          titleColor: textColor,
+          bodyColor: textColorSecondary,
+          borderColor: surfaceBorder,
+          borderWidth: 1,
+          padding: 10,
+          boxPadding: 6,
+          usePointStyle: true,
+          titleFont: {
+            weight: 600,
+            size: 14,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          callbacks: {
+            label: (context: TooltipItem<'line'>) => `Flights: ${context.raw}`,
           },
         },
       },
@@ -520,19 +635,31 @@ export class AnalyticsComponent implements OnInit {
         x: {
           ticks: {
             color: textColorSecondary,
+            font: {
+              weight: 500,
+            },
           },
           grid: {
             color: surfaceBorder,
+            drawBorder: false,
           },
         },
         y: {
           ticks: {
             color: textColorSecondary,
+            font: {
+              weight: 500,
+            },
           },
           grid: {
             color: surfaceBorder,
+            drawBorder: false,
           },
         },
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart',
       },
     };
 
@@ -556,6 +683,7 @@ export class AnalyticsComponent implements OnInit {
             documentStyle.getPropertyValue('--primary-300'),
             documentStyle.getPropertyValue('--primary-200'),
           ],
+          borderWidth: 0,
         },
       ],
     };
@@ -567,11 +695,40 @@ export class AnalyticsComponent implements OnInit {
         legend: {
           labels: {
             color: textColor,
+            font: {
+              weight: 500,
+            },
           },
           position: 'right',
         },
+        tooltip: {
+          backgroundColor: documentStyle.getPropertyValue('--surface-card'),
+          titleColor: textColor,
+          bodyColor: textColorSecondary,
+          borderColor: surfaceBorder,
+          borderWidth: 1,
+          padding: 10,
+          boxPadding: 6,
+          usePointStyle: true,
+          titleFont: {
+            weight: 600,
+            size: 14,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          callbacks: {
+            label: (context: TooltipItem<'line'>) => `Drones: ${context.raw}`,
+          },
+        },
       },
-      cutout: '60%',
+      cutout: '65%',
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1000,
+        easing: 'easeOutQuart',
+      },
     };
 
     // Command Usage Chart
@@ -582,16 +739,17 @@ export class AnalyticsComponent implements OnInit {
           label: 'Command Count',
           data: [1250, 820, 940],
           backgroundColor: [
-            documentStyle.getPropertyValue('--green-500'),
-            documentStyle.getPropertyValue('--blue-500'),
-            documentStyle.getPropertyValue('--orange-500'),
+            documentStyle.getPropertyValue('--success-500'),
+            documentStyle.getPropertyValue('--info-500'),
+            documentStyle.getPropertyValue('--warning-500'),
           ],
           borderColor: [
-            documentStyle.getPropertyValue('--green-500'),
-            documentStyle.getPropertyValue('--blue-500'),
-            documentStyle.getPropertyValue('--orange-500'),
+            documentStyle.getPropertyValue('--success-500'),
+            documentStyle.getPropertyValue('--info-500'),
+            documentStyle.getPropertyValue('--warning-500'),
           ],
-          borderWidth: 1,
+          borderWidth: 0,
+          borderRadius: 8,
         },
       ],
     };
@@ -603,6 +761,26 @@ export class AnalyticsComponent implements OnInit {
         legend: {
           labels: {
             color: textColor,
+            font: {
+              weight: 500,
+            },
+          },
+        },
+        tooltip: {
+          backgroundColor: documentStyle.getPropertyValue('--surface-card'),
+          titleColor: textColor,
+          bodyColor: textColorSecondary,
+          borderColor: surfaceBorder,
+          borderWidth: 1,
+          padding: 10,
+          boxPadding: 6,
+          usePointStyle: true,
+          titleFont: {
+            weight: 600,
+            size: 14,
+          },
+          bodyFont: {
+            size: 13,
           },
         },
       },
@@ -610,19 +788,31 @@ export class AnalyticsComponent implements OnInit {
         x: {
           ticks: {
             color: textColorSecondary,
+            font: {
+              weight: 500,
+            },
           },
           grid: {
             color: surfaceBorder,
+            drawBorder: false,
           },
         },
         y: {
           ticks: {
             color: textColorSecondary,
+            font: {
+              weight: 500,
+            },
           },
           grid: {
             color: surfaceBorder,
+            drawBorder: false,
           },
         },
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart',
       },
     };
 
@@ -639,19 +829,20 @@ export class AnalyticsComponent implements OnInit {
         {
           data: [35, 25, 22, 15, 3],
           backgroundColor: [
-            documentStyle.getPropertyValue('--red-500'),
-            documentStyle.getPropertyValue('--orange-500'),
-            documentStyle.getPropertyValue('--yellow-500'),
-            documentStyle.getPropertyValue('--blue-500'),
-            documentStyle.getPropertyValue('--gray-500'),
+            documentStyle.getPropertyValue('--danger-500'),
+            documentStyle.getPropertyValue('--warning-500'),
+            documentStyle.getPropertyValue('--warning-400'),
+            documentStyle.getPropertyValue('--info-500'),
+            documentStyle.getPropertyValue('--secondary-400'),
           ],
           hoverBackgroundColor: [
-            documentStyle.getPropertyValue('--red-600'),
-            documentStyle.getPropertyValue('--orange-600'),
-            documentStyle.getPropertyValue('--yellow-600'),
-            documentStyle.getPropertyValue('--blue-600'),
-            documentStyle.getPropertyValue('--gray-600'),
+            documentStyle.getPropertyValue('--danger-600'),
+            documentStyle.getPropertyValue('--warning-600'),
+            documentStyle.getPropertyValue('--warning-500'),
+            documentStyle.getPropertyValue('--info-600'),
+            documentStyle.getPropertyValue('--secondary-500'),
           ],
+          borderWidth: 0,
         },
       ],
     };
@@ -663,9 +854,38 @@ export class AnalyticsComponent implements OnInit {
         legend: {
           labels: {
             color: textColor,
+            font: {
+              weight: 500,
+            },
           },
           position: 'right',
         },
+        tooltip: {
+          backgroundColor: documentStyle.getPropertyValue('--surface-card'),
+          titleColor: textColor,
+          bodyColor: textColorSecondary,
+          borderColor: surfaceBorder,
+          borderWidth: 1,
+          padding: 10,
+          boxPadding: 6,
+          usePointStyle: true,
+          titleFont: {
+            weight: 600,
+            size: 14,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          callbacks: {
+            label: (context: TooltipItem<'line'>) => `Count: ${context.raw}`,
+          },
+        },
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1000,
+        easing: 'easeOutQuart',
       },
     };
   }
@@ -690,7 +910,7 @@ export class AnalyticsComponent implements OnInit {
       this.errorRate = 2.2;
     }
 
-    // Update chart data (simplified for demo)
+    // Update chart data
     const randomFactor = Math.random() * 0.5 + 0.75;
     this.flightActivityData.datasets[0].data =
       this.flightActivityData.datasets[0].data.map((val: number) =>

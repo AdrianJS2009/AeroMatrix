@@ -24,7 +24,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(20px)' }),
         animate(
-          '600ms ease-out',
+          '800ms cubic-bezier(0.4, 0, 0.2, 1)',
           style({ opacity: 1, transform: 'translateY(0)' })
         ),
       ]),
@@ -33,7 +33,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(-50px)' }),
         animate(
-          '800ms 300ms ease-out',
+          '800ms 300ms cubic-bezier(0.4, 0, 0.2, 1)',
           style({ opacity: 1, transform: 'translateX(0)' })
         ),
       ]),
@@ -42,8 +42,17 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(50px)' }),
         animate(
-          '800ms 300ms ease-out',
+          '800ms 300ms cubic-bezier(0.4, 0, 0.2, 1)',
           style({ opacity: 1, transform: 'translateX(0)' })
+        ),
+      ]),
+    ]),
+    trigger('scaleIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.9)' }),
+        animate(
+          '600ms 500ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ opacity: 1, transform: 'scale(1)' })
         ),
       ]),
     ]),
@@ -54,7 +63,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
       <section class="hero-section">
         <div class="hero-content">
           <div class="hero-text" @fadeIn>
-            <h1>Advanced Drone Control System</h1>
+            <h1 class="gradient-text">Advanced Drone Control System</h1>
             <p>
               Precision flight management with interactive 3D matrix
               visualization
@@ -78,7 +87,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
             </div>
           </div>
 
-          <div class="hero-matrix" @slideInRight>
+          <div class="hero-matrix glass-effect" @slideInRight>
             <div class="matrix-demo">
               <!-- Demo Matrix -->
               <app-drone-matrix
@@ -88,6 +97,12 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
               ></app-drone-matrix>
             </div>
           </div>
+        </div>
+
+        <div class="hero-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
         </div>
       </section>
 
@@ -148,7 +163,6 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
         </div>
       </section>
 
-      <!-- Call to Action -->
       <section class="cta-section" @fadeIn>
         <div class="cta-content">
           <h2>Ready to take control?</h2>
@@ -164,6 +178,11 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
             (click)="navigateTo('/flights')"
           ></button>
         </div>
+
+        <div class="cta-shapes">
+          <div class="shape shape-4"></div>
+          <div class="shape shape-5"></div>
+        </div>
       </section>
 
       <!-- Footer -->
@@ -171,7 +190,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
         <div class="footer-content">
           <div class="footer-logo">
             <i class="pi pi-send"></i>
-            <span>DroneMatrix</span>
+            <span class="gradient-text">AeroMatrix</span>
           </div>
           <div class="footer-links">
             <ul>
@@ -188,304 +207,433 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix.componen
           </div>
         </div>
         <div class="footer-bottom">
-          <p>&copy; 2025 DroneMatrix Control System. All rights reserved.</p>
+          <p>&copy; 2025 AeroMatrix Control System. All rights reserved.</p>
         </div>
       </footer>
     </div>
   `,
   styles: [
     `
-    :host {
-      display: block;
-    }
-    
-    .landing-container {
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    
-    /* Hero Section */
-    .hero-section {
-      background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-700) 100%);
-      color: white;
-      padding: 4rem 2rem;
-      position: relative;
-    }
-    
-    .hero-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-    }
-    
-    .hero-text {
-      flex: 1;
-      max-width: 600px;
-    }
-    
-    .hero-text h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      line-height: 1.2;
-    }
-    
-    .hero-text p {
-      font-size: 1.25rem;
-      margin-bottom: 2.5rem;
-      opacity: 0.9;
-    }
-    
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .hero-matrix {
-      flex: 1;
-      max-width: 700px;
-      height: 500px;
-    }
-    
-    .matrix-demo {
-      height: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Features Section */
-    .features-section {
-      background-color: var(--surface-ground);
-      padding: 5rem 2rem;
-    }
-    
-    .section-header {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 4rem;
-    }
-    
-    .section-header h2 {
-      font-size: 2.5rem;
-      color: var(--text-color);
-      margin-bottom: 1rem;
-    }
-    
-    .section-header p {
-      font-size: 1.2rem;
-      color: var(--text-color-secondary);
-    }
-    
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .feature-card {
-      background-color: var(--surface-card);
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .feature-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .feature-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, var(--primary-200) 0%, var(--primary-400) 100%);
-      border-radius: 50%;
-      margin-bottom: 1.5rem;
-    }
-    
-    .feature-icon i {
-      font-size: 2rem;
-      color: white;
-    }
-    
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--text-color);
-    }
-    
-    .feature-card p {
-      color: var(--text-color-secondary);
-      line-height: 1.6;
-    }
-    
-    /* CTA Section */
-    .cta-section {
-      background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-900) 100%);
-      color: white;
-      padding: 5rem 2rem;
-      text-align: center;
-    }
-    
-    .cta-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .cta-content h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .cta-content p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    
-    /* Footer */
-    .landing-footer {
-      background-color: var(--surface-900);
-      color: white;
-      padding: 4rem 2rem 1rem;
-    }
-    
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-    
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-    
-    .footer-links ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
-    
-    .footer-links a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    
-    .footer-links a:255,255,0.8);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    
-    .footer-links a:hover {
-      color: white;
-    }
-    
-    .footer-social {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .footer-social a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      transition: background-color 0.2s ease;
-    }
-    
-    .footer-social a:hover {
-      background-color: var(--primary-color);
-    }
-    
-    .footer-bottom {
-      text-align: center;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-    
-    /* Responsive Adjustments */
-    @media screen and (max-width: 1200px) {
-      .hero-content {
-        flex-direction: column;
+      :host {
+        display: block;
       }
-      
-      .hero-text {
-        max-width: 100%;
-        text-align: center;
+
+      .landing-container {
+        min-height: 100vh;
+        overflow-x: hidden;
       }
-      
-      .hero-buttons {
-        justify-content: center;
-      }
-      
-      .hero-matrix {
-        max-width: 100%;
-      }
-    }
-    
-    @media screen and (max-width: 768px) {
+
+      /* Hero  */
       .hero-section {
-        padding: 3rem 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-900) 0%,
+          var(--primary-800) 100%
+        );
+        color: white;
+        padding: 6rem 2rem;
+        position: relative;
+        overflow: hidden;
       }
-      
+
+      .hero-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 3rem;
+        position: relative;
+        z-index: 10;
+      }
+
+      .hero-text {
+        flex: 1;
+        max-width: 600px;
+      }
+
       .hero-text h1 {
-        font-size: 2.5rem;
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
       }
-      
+
       .hero-text p {
-        font-size: 1.1rem;
+        font-size: 1.35rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.9;
+        line-height: 1.6;
       }
-      
-      .section-header h2 {
-        font-size: 2rem;
-      }
-      
-      .cta-content h2 {
-        font-size: 2rem;
-      }
-      
-      .footer-content {
-        flex-direction: column;
-        gap: 2rem;
-      }
-      
-      .footer-links ul {
-        flex-direction: column;
+
+      .hero-buttons {
+        display: flex;
         gap: 1rem;
       }
-    }
-  `,
+
+      .hero-matrix {
+        flex: 1;
+        max-width: 700px;
+        height: 500px;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .matrix-demo {
+        height: 100%;
+      }
+
+      .hero-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .shape {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.1;
+      }
+
+      .shape-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--primary-300);
+        top: -100px;
+        right: -100px;
+        animation: float 15s ease-in-out infinite;
+      }
+
+      .shape-2 {
+        width: 300px;
+        height: 300px;
+        background: var(--secondary-400);
+        bottom: -50px;
+        left: 10%;
+        animation: float 20s ease-in-out infinite reverse;
+      }
+
+      .shape-3 {
+        width: 200px;
+        height: 200px;
+        background: var(--primary-500);
+        top: 20%;
+        left: 20%;
+        animation: float 25s ease-in-out infinite;
+      }
+
+      /* Features */
+      .features-section {
+        background-color: var(--surface-ground);
+        padding: 6rem 2rem;
+      }
+
+      .section-header {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 5rem;
+      }
+
+      .section-header h2 {
+        font-size: 3rem;
+        color: var(--text-color);
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .section-header p {
+        font-size: 1.25rem;
+        color: var(--text-color-secondary);
+        line-height: 1.6;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .feature-card {
+        background-color: var(--surface-card);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-100) 0%,
+          var(--primary-200) 100%
+        );
+        border-radius: 20px;
+        margin-bottom: 2rem;
+      }
+
+      .feature-icon i {
+        font-size: 2.25rem;
+        color: var(--primary-600);
+      }
+
+      .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      .feature-card p {
+        color: var(--text-color-secondary);
+        line-height: 1.6;
+        margin-top: auto;
+      }
+
+      /* CTA  */
+      .cta-section {
+        background: linear-gradient(
+          135deg,
+          var(--primary-700) 0%,
+          var(--primary-900) 100%
+        );
+        color: white;
+        padding: 6rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 10;
+      }
+
+      .cta-content h2 {
+        font-size: 3rem;
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .cta-content p {
+        font-size: 1.25rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.9;
+        line-height: 1.6;
+      }
+
+      .cta-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .shape-4 {
+        width: 500px;
+        height: 500px;
+        background: var(--primary-600);
+        opacity: 0.1;
+        border-radius: 50%;
+        position: absolute;
+        top: -250px;
+        left: -100px;
+        animation: float 20s ease-in-out infinite;
+      }
+
+      .shape-5 {
+        width: 300px;
+        height: 300px;
+        background: var(--secondary-500);
+        opacity: 0.1;
+        border-radius: 50%;
+        position: absolute;
+        bottom: -150px;
+        right: 10%;
+        animation: float 15s ease-in-out infinite reverse;
+      }
+
+      /* Footer */
+      .landing-footer {
+        background-color: var(--surface-900);
+        color: white;
+        padding: 4rem 2rem 1.5rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 3rem;
+        margin-bottom: 3rem;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      .footer-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        font-size: 1.1rem;
+      }
+
+      .footer-links a:hover {
+        color: white;
+      }
+
+      .footer-social {
+        display: flex;
+        gap: 1.25rem;
+      }
+
+      .footer-social a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.2s ease;
+      }
+
+      .footer-social a:hover {
+        background-color: var(--primary-500);
+        transform: translateY(-3px);
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(20px, 20px) rotate(5deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+
+      /* Responsive  */
+      @media screen and (max-width: 1200px) {
+        .hero-content {
+          flex-direction: column;
+        }
+
+        .hero-text {
+          max-width: 100%;
+          text-align: center;
+        }
+
+        .hero-buttons {
+          justify-content: center;
+        }
+
+        .hero-matrix {
+          max-width: 100%;
+        }
+
+        .hero-text h1 {
+          font-size: 3.25rem;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .hero-section,
+        .features-section,
+        .cta-section {
+          padding: 4rem 1.5rem;
+        }
+
+        .hero-text h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-text p {
+          font-size: 1.1rem;
+        }
+
+        .section-header h2,
+        .cta-content h2 {
+          font-size: 2.25rem;
+        }
+
+        .footer-content {
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .footer-links ul {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .feature-card {
+          padding: 2rem;
+        }
+
+        .feature-icon {
+          width: 70px;
+          height: 70px;
+        }
+      }
+    `,
   ],
 })
 export class LandingPageComponent implements OnInit {
-  // Demo matrix and drones for the landing page
   demoMatrix = {
     id: 1,
     maxX: 10,
@@ -550,7 +698,7 @@ export class LandingPageComponent implements OnInit {
     setInterval(() => {
       step++;
 
-      // Create a copy of current positions to check for collisions
+      // check for collisions
       const newPositions = this.demoDrones.map((drone) => ({
         id: drone.id,
         x: drone.x,
