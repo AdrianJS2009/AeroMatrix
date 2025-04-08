@@ -1,0 +1,248 @@
+<div class="matrix-container" @fadeIn>
+  <div class="matrix-header">
+    <div class="matrix-title">
+      <h2>Drone Matrix Visualization</h2>
+      <p>Interactive grid for monitoring drone positions and movements</p>
+    </div>
+    <div class="matrix-controls">
+      <div class="control-group">
+        <button
+          pButton
+          icon="pi pi-plus"
+          class="p-button-rounded p-button-outlined"
+          (click)="zoomIn()"
+          pTooltip="Zoom In"
+          tooltipPosition="bottom"
+          aria-label="Zoom In"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-minus"
+          class="p-button-rounded p-button-outlined"
+          (click)="zoomOut()"
+          pTooltip="Zoom Out"
+          tooltipPosition="bottom"
+          aria-label="Zoom Out"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-refresh"
+          class="p-button-rounded p-button-outlined"
+          (click)="resetView()"
+          pTooltip="Reset View"
+          tooltipPosition="bottom"
+          aria-label="Reset View"
+        ></button>
+      </div>
+      <div class="view-options">
+        <button
+          pButton
+          [icon]="view3D ? 'pi pi-table' : 'pi pi-cube'"
+          [label]="view3D ? '2D View' : '3D View'"
+          class="p-button-sm p-button-outlined"
+          (click)="toggleView()"
+          aria-label="Toggle between 2D and 3D view"
+        ></button>
+        <div class="p-inputswitch-container">
+          <label for="showLabels" class="switch-label">Show Labels</label>
+          <p-inputSwitch
+            [(ngModel)]="showLabels"
+            inputId="showLabels"
+            aria-label="Toggle coordinate labels"
+          ></p-inputSwitch>
+        </div>
+        <div class="p-inputswitch-container" *ngIf="!view3D">
+          <label for="showGridlines" class="switch-label">Enhanced Grid</label>
+          <p-inputSwitch
+            [(ngModel)]="enhancedGrid"
+            inputId="showGridlines"
+            aria-label="Toggle enhanced grid lines"
+            (onChange)="updateGridStyle()"
+          ></p-inputSwitch>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-divider></p-divider>
+
+  <!-- 2D Matrix View -->
+  <div
+    class="matrix-viewport"
+    #viewport
+    *ngIf="!view3D"
+    (mousedown)="startPan($event)"
+    (mousemove)="pan($event)"
+    (mouseup)="endPan()"
+    (mouseleave)="endPan()"
+    [attr.aria-label]="'Matrix grid with ' + (drones.length || 0) + ' drones'"
+  >
+    <div
+      class="matrix-grid"
+      [style.transform]="
+        'scale(' + scale + ') translate(' + panX + 'px, ' + panY + 'px)'
+      "
+      [style.width.px]="cellSize * (matrix?.maxX || 1)"
+      [style.height.px]="cellSize * (matrix?.maxY || 1)"
+    >
+      <!-- Grid Lines -->
+      <div class="grid-lines" [ngClass]="{ enhanced: enhancedGrid }">
+        <div class="horizontal-lines">
+          <div
+            class="grid-line horizontal"
+            *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
+            [style.top.px]="(matrix!.maxY - 1 - y) * cellSize"
+            [ngClass]="{ 'axis-line': y === 0 }"
+          ></div>
+        </div>
+        <div class="vertical-lines">
+          <div
+            class="grid-line vertical"
+            *ngFor="let x of getArrayFromSize(matrix?.maxX || 0)"
+            [style.left.px]="x * cellSize"
+            [ngClass]="{ 'axis-line': x === 0 }"
+          ></div>
+        </div>
+
+        <!-- Grid Cells for enhanced view -->
+        <div class="grid-cells" *ngIf="enhancedGrid">
+          <div
+            class="grid-cell"
+            *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
+            [style.top.px]="(matrix!.maxY - 1 - y) * cellSize"
+            [style.width.px]="cellSize * (matrix?.maxX || 1)"
+            [style.height.px]="cellSize"
+            [ngClass]="{ 'alternate-row': y % 2 === 1 }"
+          ></div>
+          <div
+            class="grid-cell vertical"
+            *ngFor="let x of getArrayFromSize(matrix?.maxX || 0)"
+            [style.left.px]="x * cellSize"
+            [style.width.px]="cellSize"
+            [style.height.px]="cellSize * (matrix?.maxY || 1)"
+            [ngClass]="{ 'alternate-column': x % 2 === 1 }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Coordinate Labels -->
+      <ng-container *ngIf="showLabels">
+        <div
+          class="coordinate-label x-label"
+          *ngFor="let x of getArrayFromSize(matrix?.maxX || 0)"
+          [style.left.px]="(x + 0.5) * cellSize"
+          [style.top.px]="-25"
+        >
+          {{ x }}
+        </div>
+        <div
+          class="coordinate-label y-label"
+          *ngFor="let y of getArrayFromSize(matrix?.maxY || 0)"
+          [style.top.px]="(matrix!.maxY - 1 - y + 0.5) * cellSize"
+          [style.left.px]="-25"
+        >
+          {{ y }}
+        </div>
+      </ng-container>
+
+      <!-- Render drones -->
+      <ng-container *ngFor="let drone of drones">
+        <div
+          class="drone"
+          [ngClass]="{
+            selected: drone.id === selectedDroneId,
+            'drone-north': drone.orientation === 'N',
+            'drone-south': drone.orientation === 'S',
+            'drone-east': drone.orientation === 'E',
+            'drone-west': drone.orientation === 'W' || drone.orientation === 'O'
+          }"
+          [style.left.px]="drone.x * cellSize"
+          [style.top.px]="(matrix!.maxY - 1 - drone.y) * cellSize"
+          [style.width.px]="cellSize"
+          [style.height.px]="cellSize"
+          (click)="selectDrone(drone)"
+          [attr.aria-label]="
+            'Drone ' +
+            drone.name +
+            ' at position ' +
+            drone.x +
+            ',' +
+            drone.y +
+            ' facing ' +
+            getOrientationLabel(drone.orientation)
+          "
+          [attr.aria-selected]="drone.id === selectedDroneId"
+          (keydown.enter)="selectDrone(drone)"
+          @scaleIn
+        >
+          <div class="drone-body">
+            <div class="drone-propeller propeller-1"></div>
+            <div class="drone-propeller propeller-2"></div>
+            <div class="drone-propeller propeller-3"></div>
+            <div class="drone-propeller propeller-4"></div>
+            <div class="drone-direction-indicator"></div>
+            <div
+              class="drone-info"
+              [ngClass]="{
+                visible: showLabels || drone.id === selectedDroneId
+              }"
+            >
+              <span class="drone-id">{{ drone.name }}</span>
+              <span class="drone-position">({{ drone.x }}, {{ drone.y }})</span>
+            </div>
+          </div>
+          <div class="position-marker" *ngIf="enhancedGrid"></div>
+        </div>
+      </ng-container>
+
+      <!-- Grid Coordinates Overlay -->
+      <div class="grid-coordinates" *ngIf="showCoordinates">
+        <span>{{ currentCoordinates }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D Matrix View -->
+  <div
+    class="matrix-3d-container"
+    #container3d
+    *ngIf="view3D"
+    [attr.aria-label]="
+      '3D Matrix visualization with ' + (drones.length || 0) + ' drones'
+    "
+  >
+    <div class="matrix-3d-controls">
+      <div class="control-hint">
+        <i class="pi pi-info-circle"></i>
+        <span>Use mouse to rotate, zoom and pan the 3D view</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matrix Information -->
+  <div class="matrix-info">
+    <div class="info-item">
+      <span class="info-label">Matrix:</span>
+      <span class="info-value">{{ matrix?.id || "None" }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Dimensions:</span>
+      <span class="info-value"
+        >{{ matrix?.maxX || 0 }}x{{ matrix?.maxY || 0 }}</span
+      >
+    </div>
+    <div class="info-item">
+      <span class="info-label">Drones:</span>
+      <p-badge
+        [value]="(drones.length || 0).toString()"
+        severity="info"
+      ></p-badge>
+    </div>
+    <div class="info-item" *ngIf="selectedDroneId">
+      <span class="info-label">Selected:</span>
+      <span class="info-value selected-drone">{{
+        getSelectedDroneName()
+      }}</span>
+    </div>
+  </div>
+</div>
