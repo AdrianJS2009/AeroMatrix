@@ -1,0 +1,175 @@
+<div class="matrix-list-container" @fadeIn>
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Matrix Management</h1>
+        <p>Configure operational boundaries for your drone fleet</p>
+      </div>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-plus"
+        label="New Matrix"
+        (click)="openForm()"
+        class="p-button-rounded"
+        pTooltip="Add a new matrix"
+        tooltipPosition="left"
+      ></button>
+    </div>
+  </div>
+
+  <div class="card-container">
+    <p-card styleClass="matrix-list-card">
+      <div class="table-header">
+        <div class="table-title">
+          <i class="pi pi-th-large"></i>
+          <h2>Matrix Configurations</h2>
+          <p-badge
+            [value]="matrices.length.toString()"
+            severity="info"
+            styleClass="matrix-count"
+          ></p-badge>
+        </div>
+      </div>
+
+      <p-table
+        [value]="matrices"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 25]"
+        [loading]="loading"
+        styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        responsiveLayout="scroll"
+        [rowHover]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id" style="width: 5rem" scope="col">
+              ID <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th scope="col">Dimensions</th>
+            <th scope="col">Drones</th>
+            <th style="width: 8rem" scope="col">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-matrix>
+          <tr @rowAnimation>
+            <td>
+              <p-badge
+                [value]="matrix.id.toString()"
+                styleClass="matrix-id-badge"
+              ></p-badge>
+            </td>
+            <td>
+              <div class="matrix-dimensions">
+                <p-tag
+                  [value]="matrix.maxX + ' x ' + matrix.maxY"
+                  [rounded]="true"
+                  severity="info"
+                  icon="pi pi-th-large"
+                ></p-tag>
+                <span class="dimensions-label">
+                  {{ matrix.maxX * matrix.maxY }} cells total
+                </span>
+              </div>
+            </td>
+            <td>
+              <div *ngIf="matrix.drones.length === 0" class="no-drones">
+                <i class="pi pi-info-circle"></i>
+                <span>No drones assigned</span>
+              </div>
+              <div *ngIf="matrix.drones.length > 0" class="drone-chips">
+                <p-chip
+                  *ngFor="let drone of matrix.drones.slice(0, 3)"
+                  [label]="drone.name + ' (' + drone.x + ',' + drone.y + ')'"
+                  styleClass="drone-chip"
+                ></p-chip>
+                <p-chip
+                  *ngIf="matrix.drones.length > 3"
+                  [label]="'+' + (matrix.drones.length - 3) + ' more'"
+                  styleClass="more-chip"
+                ></p-chip>
+              </div>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-text p-button-sm"
+                  (click)="openForm(matrix)"
+                  pTooltip="Edit"
+                  tooltipPosition="top"
+                  title="Edit {{ matrix.id }}"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                  (click)="confirmDelete(matrix)"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  [disabled]="matrix.drones.length > 0"
+                  title="Delete matrix (only if no drones are assigned)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center p-4">
+              <div *ngIf="loading" class="flex flex-column align-items-center">
+                <p-skeleton
+                  height="2rem"
+                  styleClass="mb-2"
+                  width="20rem"
+                ></p-skeleton>
+                <p-skeleton
+                  height="2rem"
+                  styleClass="mb-2"
+                  width="15rem"
+                ></p-skeleton>
+                <p-skeleton height="2rem" width="10rem"></p-skeleton>
+              </div>
+              <div *ngIf="!loading" class="empty-message">
+                <i class="pi pi-inbox empty-icon"></i>
+                <span>No matrices found</span>
+                <button
+                  pButton
+                  pRipple
+                  label="Create New Matrix"
+                  icon="pi pi-plus"
+                  class="p-button-sm"
+                  (click)="openForm()"
+                  title="Create New Matrix"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Matrix form dialog -->
+  <app-matrix-form
+    [visible]="formVisible"
+    [matrixToEdit]="selectedMatrix"
+    (saved)="loadMatrices()"
+    (close)="closeForm()"
+  ></app-matrix-form>
+
+  <p-confirmDialog
+    header="Confirm Deletion"
+    icon="pi pi-exclamation-triangle"
+    acceptLabel="Yes, delete"
+    rejectLabel="Cancel"
+    acceptButtonStyleClass="p-button-danger"
+  ></p-confirmDialog>
+
+  <p-toast></p-toast>
+</div>
