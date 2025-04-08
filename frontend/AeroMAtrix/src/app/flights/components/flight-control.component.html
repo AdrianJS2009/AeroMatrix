@@ -1,0 +1,180 @@
+<div class="flight-control-container" @fadeIn>
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Flight Control Center</h1>
+        <p>Control and monitor drone movements in real-time</p>
+      </div>
+      <div class="header-actions">
+        <p-inputSwitch
+          id="darkModeSwitch"
+          [(ngModel)]="darkMode"
+          (onChange)="toggleDarkMode()"
+          class="mr-2"
+        ></p-inputSwitch>
+        <label for="darkModeSwitch" class="dark-mode-label">Dark Mode</label>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner
+      strokeWidth="4"
+      aria-label="Loading drones"
+    ></p-progressSpinner>
+    <span>Loading flight control system...</span>
+  </div>
+
+  <div
+    *ngIf="!loading"
+    class="flight-control-content"
+    [ngClass]="{ 'dark-theme': darkMode }"
+  >
+    <div class="grid">
+      <!-- Matrix Visualization -->
+      <div class="col-12 lg:col-6 xl:col-7">
+        <div class="matrix-container">
+          <app-drone-matrix
+            [matrix]="selectedMatrix"
+            [drones]="selectedMatrix?.drones || []"
+            [selectedDroneId]="selectedDrone?.id"
+            (droneSelected)="onMatrixDroneSelect($event)"
+          ></app-drone-matrix>
+        </div>
+      </div>
+
+      <!-- Flight Controls -->
+      <div class="col-12 lg:col-6 xl:col-5">
+        <p-card styleClass="flight-controls-card">
+          <p-tabView styleClass="flight-tabs">
+            <!-- SINGLE DRONE COMMANDS -->
+            <p-tabPanel header="Single Drone" leftIcon="pi pi-send">
+              <!-- Inputs and command buttons for single drone -->
+              <button
+                pButton
+                pRipple
+                label="Execute Flight"
+                icon="pi pi-play"
+                class="execute-button"
+                (click)="executeSingle()"
+                [disabled]="!selectedDrone || !commandsText || executingSingle"
+                [loading]="executingSingle"
+                title="Execute flight"
+              ></button>
+            </p-tabPanel>
+
+            <!-- MULTIPLE DRONES - SAME COMMANDS -->
+            <p-tabPanel header="Group Flight" leftIcon="pi pi-users">
+              <!-- Inputs and command buttons for group flight -->
+              <button
+                pButton
+                pRipple
+                label="Execute Group Flight"
+                icon="pi pi-play"
+                class="execute-button"
+                (click)="executeGroup()"
+                [disabled]="
+                  !multiSelectedDrones.length ||
+                  !commandsGroupText ||
+                  executingGroup
+                "
+                [loading]="executingGroup"
+                title="Execute group flight"
+              ></button>
+            </p-tabPanel>
+
+            <!-- DIFFERENT SEQUENCES PER DRONE -->
+            <p-tabPanel header="Batch Flights" leftIcon="pi pi-list">
+              <!-- Batch commands management -->
+              <div class="batch-actions">
+                <button
+                  pButton
+                  pRipple
+                  label="Add Flight"
+                  icon="pi pi-plus"
+                  class="p-button-outlined"
+                  (click)="addBatchCommand()"
+                  title="Add flight to batch"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  label="Execute All Flights"
+                  icon="pi pi-play"
+                  (click)="executeBatch()"
+                  [disabled]="!isValidBatch() || executingBatch"
+                  [loading]="executingBatch"
+                  title="Execute all batch flights"
+                ></button>
+              </div>
+            </p-tabPanel>
+          </p-tabView>
+        </p-card>
+      </div>
+    </div>
+
+    <!-- Flight History Section -->
+    <div
+      *ngIf="flightHistory.length > 0"
+      class="flight-history-section"
+      @fadeIn
+    >
+      <h2>Recent Flight Activity</h2>
+      <div class="flight-history-container">
+        <div
+          *ngFor="let flight of flightHistory; let i = index"
+          class="flight-history-item"
+          @slideInRight
+        >
+          <div class="flight-time">{{ flight.time }}</div>
+          <div class="flight-content">
+            <div class="flight-header">
+              <p-avatar
+                [label]="flight.drone.charAt(0)"
+                styleClass="mr-2"
+                [style]="{ 'background-color': getRandomColor(flight.drone) }"
+                size="normal"
+              ></p-avatar>
+              <span class="flight-drone">{{ flight.drone }}</span>
+              <p-tag
+                [value]="flight.status"
+                [severity]="getStatusSeverity(flight.status)"
+                styleClass="ml-2"
+              ></p-tag>
+            </div>
+            <div class="flight-details">
+              <div class="flight-commands">
+                <span class="commands-label">Commands:</span>
+                <div class="command-sequence small">
+                  <div
+                    *ngFor="let cmd of flight.commands.split(''); let i = index"
+                    class="command-step"
+                    [ngClass]="{
+                      'advance-step': cmd.toUpperCase() === 'A',
+                      'left-step': cmd.toUpperCase() === 'L',
+                      'right-step': cmd.toUpperCase() === 'R'
+                    }"
+                  >
+                    {{ cmd.toUpperCase() }}
+                  </div>
+                </div>
+              </div>
+              <div class="flight-positions">
+                <span class="position-label">From:</span>
+                <p-tag
+                  [value]="flight.startPosition"
+                  severity="info"
+                  styleClass="mr-3"
+                ></p-tag>
+                <span class="position-label">To:</span>
+                <p-tag [value]="flight.endPosition" severity="success"></p-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

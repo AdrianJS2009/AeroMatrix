@@ -1,0 +1,363 @@
+.flight-control-container {
+  padding: 1rem;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+  p {
+    color: var(--text-color-secondary);
+    font-size: 1.1rem;
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.dark-mode-label {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  span {
+    color: var(--text-color-secondary);
+  }
+}
+
+.flight-control-content {
+  transition: all 0.3s ease;
+  &.dark-theme {
+    background-color: var(--surface-ground);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+}
+
+/* Matrix */
+.matrix-container {
+  height: 100%;
+  min-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Flight Controls */
+:host ::ng-deep .flight-controls-card {
+  height: 100%;
+  .p-card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .p-card-content {
+    flex: 1;
+    padding: 0;
+  }
+}
+
+:host ::ng-deep .flight-tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .p-tabview-panels {
+    flex: 1;
+    padding: 1.5rem;
+  }
+  .p-tabview-nav {
+    background-color: var(--surface-ground);
+  }
+  .p-tabview-nav li .p-tabview-nav-link {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* Drone Selection */
+.drone-selection-item {
+  display: flex;
+  align-items: center;
+}
+.drone-details {
+  display: flex;
+  flex-direction: column;
+}
+.drone-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.drone-meta {
+  display: flex;
+  align-items: center;
+}
+
+/* Command Elements */
+.command-help {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+}
+
+.command-legend {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background-color: var(--surface-ground);
+  border-radius: 8px;
+  flex-direction: column;
+  @media screen and (min-width: 769px) {
+    flex-direction: row;
+  }
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.legend-color {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+}
+.legend-color.advance {
+  background: linear-gradient(135deg, var(--green-500), var(--green-700));
+}
+.legend-color.left {
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+}
+.legend-color.right {
+  background: linear-gradient(135deg, var(--orange-500), var(--orange-700));
+}
+
+.command-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.command-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 60px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  &.advance {
+    background: linear-gradient(135deg, var(--green-500), var(--green-700));
+    border-color: var(--green-700);
+  }
+  &.left {
+    background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+    border-color: var(--blue-700);
+  }
+  &.right {
+    background: linear-gradient(135deg, var(--orange-500), var(--orange-700));
+    border-color: var(--orange-700);
+  }
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.command-preview {
+  background-color: var(--surface-ground);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+  }
+}
+.command-sequence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  &.small {
+    gap: 0.25rem;
+  }
+}
+.command-step {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+  &.small {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.75rem;
+  }
+}
+.advance-step {
+  background-color: var(--green-600);
+}
+.left-step {
+  background-color: var(--blue-600);
+}
+.right-step {
+  background-color: var(--orange-600);
+}
+
+.execute-button {
+  margin-top: 1rem;
+  padding: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+  border-color: var(--primary-700);
+  transition: all 0.3s ease;
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Selected Drones */
+.selected-drones-preview {
+  background-color: var(--surface-ground);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.selected-drones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+.selected-drone-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--surface-card);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* Batch Flights */
+.batch-flights-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.batch-command-row {
+  background-color: var(--surface-ground);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.batch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.batch-number {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.batch-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Flight History */
+.flight-history-section {
+  margin-top: 2rem;
+}
+.flight-history-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+.flight-history-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.flight-history-item {
+  background-color: var(--surface-card);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.flight-time {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+}
+.flight-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+.flight-drone {
+  font-weight: 600;
+}
+.flight-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.flight-commands,
+.flight-positions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.commands-label,
+.position-label {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+}
+
+/* Custom Scrollbar */
+:host ::ng-deep .custom-scrollbar .p-scrollpanel-wrapper {
+  border-radius: 8px;
+}
+:host ::ng-deep .custom-scrollbar .p-scrollpanel-bar {
+  background-color: var(--primary-300);
+  opacity: 0.6;
+}
+:host ::ng-deep .custom-scrollbar .p-scrollpanel-bar:hover {
+  background-color: var(--primary-400);
+  opacity: 0.8;
+}
