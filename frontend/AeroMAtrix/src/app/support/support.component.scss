@@ -1,0 +1,89 @@
+// Support container and global spacing
+.support-container {
+  padding: 1rem;
+}
+
+// Hero card styles
+.hero-card {
+  background: linear-gradient(
+    135deg,
+    var(--surface-ground) 0%,
+    var(--surface-card) 100%
+  );
+}
+
+// FAQ Categories styling
+.faq-categories {
+  background-color: var(--surface-ground);
+  border-radius: var(--border-radius);
+}
+
+.category-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-list li {
+  background-color: var(--surface-card);
+  transition: background-color 0.2s, transform 0.2s;
+  cursor: pointer;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--border-radius);
+}
+
+.category-list li:hover {
+  background-color: var(--surface-hover);
+  transform: translateX(5px);
+}
+
+.category-list li.active {
+  background-color: var(--primary-color);
+  color: var(--primary-color-text);
+}
+
+// Knowledge Base Card hover effect
+.kb-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kb-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.kb-header {
+  background-color: var(--surface-ground);
+}
+
+// Emergency card header styling
+.emergency-card ::ng-deep .p-card-header {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.75rem 1.25rem;
+}
+
+.emergency-number {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+// TabView customizations
+:host ::ng-deep .p-tabview .p-tabview-nav {
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  padding: 1rem 1.5rem;
+}
+
+// Accordion styling for FAQ
+:host ::ng-deep .faq-accordion .p-accordion-header-link {
+  padding: 1.25rem;
+}
+
+:host ::ng-deep .faq-accordion .p-accordion-content {
+  padding: 1.25rem;
+}

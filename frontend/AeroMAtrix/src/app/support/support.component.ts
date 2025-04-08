@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -23,13 +23,14 @@ import { MessagesModule } from 'primeng/messages';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
 
-interface FAQ {
+// FAQ and Knowledge Base interfaces
+export interface FAQ {
   question: string;
   answer: string;
   category: string;
 }
 
-interface KnowledgeBaseArticle {
+export interface KnowledgeBaseArticle {
   id: string;
   title: string;
   summary: string;
@@ -59,6 +60,8 @@ interface KnowledgeBaseArticle {
     TranslateModule,
   ],
   providers: [MessageService],
+  templateUrl: './support.component.html',
+  styleUrls: ['./support.component.scss'],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
@@ -79,404 +82,8 @@ interface KnowledgeBaseArticle {
       ]),
     ]),
   ],
-  template: `
-    <div class="support-container p-4">
-      <p-toast></p-toast>
-
-      <div class="grid">
-        <!-- Hero Section -->
-        <div class="col-12" @fadeIn>
-          <p-card styleClass="mb-4 hero-card">
-            <div class="flex flex-column md:flex-row align-items-center">
-              <div class="md:w-7 p-4">
-                <h1 class="text-4xl font-bold mb-4">How Can We Help?</h1>
-                <p class="text-xl line-height-3 mb-4">
-                  Our support team is here to ensure you get the most out of
-                  your DroneMatrix system.
-                </p>
-                <div class="search-container p-input-icon-left w-full mb-4">
-                  <i class="pi pi-search"></i>
-                  <input
-                    type="text"
-                    pInputText
-                    placeholder="Search for help articles..."
-                    class="w-full"
-                  />
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  <p-button
-                    label="Contact Support"
-                    icon="pi pi-envelope"
-                    styleClass="p-button-outlined"
-                  ></p-button>
-                  <p-button
-                    label="View Documentation"
-                    icon="pi pi-file"
-                  ></p-button>
-                </div>
-              </div>
-              <div class="md:w-5 flex justify-content-center">
-                <img
-                  src="assets/images/support-hero.svg"
-                  alt="Support"
-                  class="w-full max-w-25rem"
-                />
-              </div>
-            </div>
-          </p-card>
-        </div>
-
-        <!-- Support Tabs -->
-        <div class="col-12">
-          <p-tabView>
-            <!-- FAQ Tab -->
-            <p-tabPanel
-              header="Frequently Asked Questions"
-              leftIcon="pi pi-question-circle"
-            >
-              <div class="grid">
-                <div class="col-12 md:col-4">
-                  <div class="faq-categories p-3">
-                    <h3 class="mb-3">Categories</h3>
-                    <ul class="category-list p-0">
-                      <li
-                        *ngFor="let category of faqCategories"
-                        (click)="selectFaqCategory(category)"
-                        [class.active]="selectedFaqCategory === category"
-                        class="p-3 mb-2 cursor-pointer border-round"
-                      >
-                        <i [class]="getCategoryIcon(category) + ' mr-2'"></i>
-                        {{ category }}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="col-12 md:col-8">
-                  <p-accordion [multiple]="true" styleClass="faq-accordion">
-                    @for (faq of filteredFaqs; track faq.question) {
-                    <p-accordionTab [header]="faq.question">
-                      <p class="line-height-3">{{ faq.answer }}</p>
-                    </p-accordionTab>
-                    }
-                  </p-accordion>
-                </div>
-              </div>
-            </p-tabPanel>
-
-            <!-- Knowledge Base Tab -->
-            <p-tabPanel header="Knowledge Base" leftIcon="pi pi-book">
-              <div class="grid">
-                @for (article of knowledgeBaseArticles; track article.id) {
-                <div class="col-12 md:col-6 lg:col-4 mb-4">
-                  <p-card styleClass="h-full kb-card">
-                    <ng-template pTemplate="header">
-                      <div class="kb-header p-3 flex align-items-center">
-                        <i
-                          [class]="'pi ' + article.icon + ' text-2xl mr-2'"
-                        ></i>
-                        <span class="text-sm font-semibold">{{
-                          article.category
-                        }}</span>
-                      </div>
-                    </ng-template>
-                    <h3 class="mb-2">{{ article.title }}</h3>
-                    <p class="line-height-3 mb-4">{{ article.summary }}</p>
-                    <div class="flex justify-content-end">
-                      <p-button
-                        label="Read Article"
-                        icon="pi pi-arrow-right"
-                        styleClass="p-button-text"
-                      ></p-button>
-                    </div>
-                  </p-card>
-                </div>
-                }
-              </div>
-            </p-tabPanel>
-
-            <!-- Contact Support Tab -->
-            <p-tabPanel header="Contact Support" leftIcon="pi pi-envelope">
-              <div class="grid">
-                <div class="col-12 md:col-6">
-                  <p-card header="Submit a Support Ticket" styleClass="h-full">
-                    <form
-                      [formGroup]="supportForm"
-                      (ngSubmit)="submitSupportRequest()"
-                    >
-                      <div class="field mb-4">
-                        <label for="name" class="block mb-2">Name</label>
-                        <input
-                          id="name"
-                          type="text"
-                          pInputText
-                          formControlName="name"
-                          class="w-full"
-                        />
-                        <small
-                          *ngIf="
-                            supportForm.get('name')?.invalid &&
-                            supportForm.get('name')?.touched
-                          "
-                          class="p-error"
-                        >
-                          Name is required
-                        </small>
-                      </div>
-
-                      <div class="field mb-4">
-                        <label for="email" class="block mb-2">Email</label>
-                        <input
-                          id="email"
-                          type="email"
-                          pInputText
-                          formControlName="email"
-                          class="w-full"
-                        />
-                        <small
-                          *ngIf="
-                            supportForm.get('email')?.invalid &&
-                            supportForm.get('email')?.touched
-                          "
-                          class="p-error"
-                        >
-                          Valid email is required
-                        </small>
-                      </div>
-
-                      <div class="field mb-4">
-                        <label for="subject" class="block mb-2">Subject</label>
-                        <input
-                          id="subject"
-                          type="text"
-                          pInputText
-                          formControlName="subject"
-                          class="w-full"
-                        />
-                        <small
-                          *ngIf="
-                            supportForm.get('subject')?.invalid &&
-                            supportForm.get('subject')?.touched
-                          "
-                          class="p-error"
-                        >
-                          Subject is required
-                        </small>
-                      </div>
-
-                      <div class="field mb-4">
-                        <label for="category" class="block mb-2"
-                          >Category</label
-                        >
-                        <p-dropdown
-                          id="category"
-                          [options]="supportCategories"
-                          formControlName="category"
-                          placeholder="Select a category"
-                          [style]="{ width: '100%' }"
-                        ></p-dropdown>
-                        <small
-                          *ngIf="
-                            supportForm.get('category')?.invalid &&
-                            supportForm.get('category')?.touched
-                          "
-                          class="p-error"
-                        >
-                          Category is required
-                        </small>
-                      </div>
-
-                      <div class="field mb-4">
-                        <label for="message" class="block mb-2">Message</label>
-                        <textarea
-                          id="message"
-                          pInputTextarea
-                          formControlName="message"
-                          rows="5"
-                          class="w-full"
-                        ></textarea>
-                        <small
-                          *ngIf="
-                            supportForm.get('message')?.invalid &&
-                            supportForm.get('message')?.touched
-                          "
-                          class="p-error"
-                        >
-                          Message is required (minimum 20 characters)
-                        </small>
-                      </div>
-
-                      <div class="field-checkbox mb-4">
-                        <p-checkbox
-                          formControlName="attachLogs"
-                          inputId="attachLogs"
-                          [binary]="true"
-                        ></p-checkbox>
-                        <label for="attachLogs" class="ml-2"
-                          >Attach system logs to help troubleshoot</label
-                        >
-                      </div>
-
-                      <div class="flex justify-content-end">
-                        <p-button
-                          type="submit"
-                          label="Submit Request"
-                          icon="pi pi-send"
-                          [disabled]="supportForm.invalid"
-                        ></p-button>
-                      </div>
-                    </form>
-                  </p-card>
-                </div>
-
-                <div class="col-12 md:col-6">
-                  <p-card header="Support Information" styleClass="mb-4">
-                    <div class="support-info">
-                      <div class="mb-4">
-                        <h3 class="mb-2">Business Hours</h3>
-                        <p class="line-height-3">
-                          Monday - Friday: 9:00 AM - 6:00 PM EST
-                        </p>
-                        <p class="line-height-3">
-                          Saturday: 10:00 AM - 2:00 PM EST
-                        </p>
-                        <p class="line-height-3">Sunday: Closed</p>
-                      </div>
-
-                      <div class="mb-4">
-                        <h3 class="mb-2">Response Times</h3>
-                        <p class="line-height-3">Critical Issues: 2-4 hours</p>
-                        <p class="line-height-3">High Priority: 24 hours</p>
-                        <p class="line-height-3">Normal Priority: 48 hours</p>
-                        <p class="line-height-3">Low Priority: 72 hours</p>
-                      </div>
-
-                      <div class="mb-4">
-                        <h3 class="mb-2">Contact Information</h3>
-                        <p class="line-height-3">
-                          <i class="pi pi-envelope mr-2"></i>
-                          support&#64;dronematrix.com
-                        </p>
-                        <p class="line-height-3">
-                          <i class="pi pi-phone mr-2"></i> +1 (555) 123-4567
-                        </p>
-                      </div>
-                    </div>
-                  </p-card>
-
-                  <p-card
-                    header="Emergency Support"
-                    styleClass="emergency-card"
-                  >
-                    <div class="emergency-support p-3">
-                      <div class="flex align-items-center mb-3">
-                        <i class="pi pi-exclamation-triangle text-3xl mr-3"></i>
-                        <h3 class="m-0">24/7 Emergency Support</h3>
-                      </div>
-                      <p class="line-height-3 mb-3">
-                        For critical issues affecting production systems or
-                        causing significant operational impact, please use our
-                        emergency support line.
-                      </p>
-                      <div
-                        class="emergency-number p-3 text-center border-round mb-3"
-                      >
-                        <span class="font-bold text-xl"
-                          >+1 (555) 911-DRONE</span
-                        >
-                      </div>
-                      <p class="text-sm">
-                        Note: This line is for genuine emergencies only. Misuse
-                        may result in additional charges.
-                      </p>
-                    </div>
-                  </p-card>
-                </div>
-              </div>
-            </p-tabPanel>
-          </p-tabView>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [
-    `
-      .hero-card {
-        background: linear-gradient(
-          135deg,
-          var(--surface-ground) 0%,
-          var(--surface-card) 100%
-        );
-      }
-
-      .faq-categories {
-        background-color: var(--surface-ground);
-        border-radius: var(--border-radius);
-      }
-
-      .category-list {
-        list-style-type: none;
-        margin: 0;
-      }
-
-      .category-list li {
-        background-color: var(--surface-card);
-        transition: background-color 0.2s, transform 0.2s;
-      }
-
-      .category-list li:hover {
-        background-color: var(--surface-hover);
-        transform: translateX(5px);
-      }
-
-      .category-list li.active {
-        background-color: var(--primary-color);
-        color: var(--primary-color-text);
-      }
-
-      .kb-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .kb-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .kb-header {
-        background-color: var(--surface-ground);
-      }
-
-      .emergency-card ::ng-deep .p-card-header {
-        background-color: #ef4444;
-        color: white;
-        padding: 0.75rem 1.25rem;
-      }
-
-      .emergency-number {
-        background-color: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
-      }
-
-      :host ::ng-deep .p-tabview .p-tabview-nav {
-        justify-content: center;
-        margin-bottom: 2rem;
-      }
-
-      :host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-        padding: 1rem 1.5rem;
-      }
-
-      :host ::ng-deep .faq-accordion .p-accordion-header-link {
-        padding: 1.25rem;
-      }
-
-      :host ::ng-deep .faq-accordion .p-accordion-content {
-        padding: 1.25rem;
-      }
-    `,
-  ],
 })
-export class SupportComponent {
+export class SupportComponent implements OnInit {
   supportForm: FormGroup;
   faqCategories: string[] = [
     'General',
@@ -502,6 +109,7 @@ export class SupportComponent {
     private readonly fb: FormBuilder,
     private readonly messageService: MessageService
   ) {
+    // Initialize the support form using reactive forms
     this.supportForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -515,14 +123,29 @@ export class SupportComponent {
     this.initializeKnowledgeBase();
   }
 
+  ngOnInit(): void {}
+
+  // Getter to filter FAQs by the selected category
   get filteredFaqs(): FAQ[] {
     return this.faqs.filter((faq) => faq.category === this.selectedFaqCategory);
   }
 
+  // TrackBy function for FAQs (improves performance on ngFor)
+  trackByFaq(index: number, faq: FAQ): string {
+    return faq.question;
+  }
+
+  // TrackBy function for knowledge base articles
+  trackByArticle(index: number, article: KnowledgeBaseArticle): string {
+    return article.id;
+  }
+
+  // Called when a FAQ category is clicked
   selectFaqCategory(category: string): void {
     this.selectedFaqCategory = category;
   }
 
+  // Returns the corresponding icon for a category or a default icon if not defined
   getCategoryIcon(category: string): string {
     const icons: { [key: string]: string } = {
       General: 'pi pi-info-circle',
@@ -536,6 +159,7 @@ export class SupportComponent {
     return icons[category] || 'pi pi-info-circle';
   }
 
+  // Submit the support request form
   submitSupportRequest(): void {
     if (this.supportForm.valid) {
       this.messageService.add({
@@ -545,11 +169,8 @@ export class SupportComponent {
           'Your support request has been submitted successfully. We will contact you shortly.',
         life: 5000,
       });
-
-      // Reset the form
-      this.supportForm.reset({
-        attachLogs: false,
-      });
+      // Reset form state, keeping attachLogs as false
+      this.supportForm.reset({ attachLogs: false });
     } else {
       this.messageService.add({
         severity: 'error',
@@ -557,15 +178,14 @@ export class SupportComponent {
         detail: 'Please fill in all required fields correctly.',
         life: 5000,
       });
-
-      // Mark all fields as touched to trigger validation messages
+      // Mark all fields as touched to display validation messages
       Object.keys(this.supportForm.controls).forEach((key) => {
-        const control = this.supportForm.get(key);
-        control?.markAsTouched();
+        this.supportForm.get(key)?.markAsTouched();
       });
     }
   }
 
+  // Initialize FAQs with sample data
   private initializeFaqs(): void {
     this.faqs = [
       {
@@ -631,6 +251,7 @@ export class SupportComponent {
     ];
   }
 
+  // Initialize knowledge base articles with sample data
   private initializeKnowledgeBase(): void {
     this.knowledgeBaseArticles = [
       {
