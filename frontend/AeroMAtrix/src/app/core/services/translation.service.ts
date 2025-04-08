@@ -20,6 +20,7 @@ export class TranslationService {
     { code: 'de', name: 'Deutsch' },
   ];
 
+  // BehaviorSubject for current language to allow reactive updates
   private readonly currentLanguageSubject = new BehaviorSubject<Language>({
     code: 'en',
     name: 'English',
@@ -27,6 +28,7 @@ export class TranslationService {
   currentLanguage$ = this.currentLanguageSubject.asObservable();
 
   constructor(private readonly translate: TranslateService) {
+    // Determine the initial language based on stored value or browser language
     const initialLang = this.getInitialLanguage();
 
     this.translate.addLangs(this.availableLanguages.map((lang) => lang.code));
@@ -35,23 +37,28 @@ export class TranslationService {
     this.setLanguage(initialLang);
   }
 
+  // Set the application language and persist it in localStorage
   setLanguage(language: Language): void {
     this.translate.use(language.code);
     localStorage.setItem(this.languageKey, JSON.stringify(language));
     this.currentLanguageSubject.next(language);
   }
 
+  // Retrieve the initial language from localStorage or browser preference
   private getInitialLanguage(): Language {
     const savedLanguage = localStorage.getItem(this.languageKey);
     if (savedLanguage) {
-      return JSON.parse(savedLanguage);
+      try {
+        return JSON.parse(savedLanguage);
+      } catch (error) {
+        console.error('Failed to parse saved language', error);
+      }
     }
 
     const browserLang = this.translate.getBrowserLang();
     const matchedLang = this.availableLanguages.find(
       (lang) => lang.code === browserLang
     );
-
     return matchedLang || this.availableLanguages[0];
   }
 }
