@@ -153,7 +153,7 @@ import { SidebarComponent } from './layout/sidebar.component';
 
       <div class="main-container">
         <!-- Sidebar -->
-        <!-- Sidebar -->
+
         <p-sidebar
           [(visible)]="sidebarVisible"
           [showCloseIcon]="false"
@@ -163,7 +163,6 @@ import { SidebarComponent } from './layout/sidebar.component';
           position="left"
           @slideInOut
         >
-          <!-- Renderiza el componente Sidebar solo cuando está visible -->
           <app-sidebar *ngIf="sidebarVisible" />
         </p-sidebar>
 
