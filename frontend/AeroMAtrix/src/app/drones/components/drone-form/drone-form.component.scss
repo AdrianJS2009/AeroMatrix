@@ -1,0 +1,49 @@
+:host ::ng-deep .drone-form-dialog .p-dialog-content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.form-section {
+  margin-bottom: 1rem;
+}
+
+.form-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  color: var(--primary-700);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+:host ::ng-deep .p-inputnumber-buttons-stacked .p-inputnumber-button-group {
+  display: flex;
+  flex-direction: column;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.75rem 1.25rem;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 2px var(--primary-100);
+  border-color: var(--primary-500);
+}
+
+:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: 0 0 0 2px var(--primary-100);
+  border-color: var(--primary-500);
+}
+
+@media screen and (max-width: 576px) {
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}

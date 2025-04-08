@@ -1,15 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  type OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
-  type FormGroup,
+  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -46,6 +40,7 @@ import { DroneService } from '../../services/drone.service';
   ],
   providers: [MessageService],
   animations: [
+    // Fade in animation for the form content
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0 }),
@@ -53,273 +48,8 @@ import { DroneService } from '../../services/drone.service';
       ]),
     ]),
   ],
-  template: `
-    <p-dialog
-      [(visible)]="visible"
-      [modal]="true"
-      [closable]="true"
-      [style]="{ width: '500px' }"
-      [draggable]="false"
-      [resizable]="false"
-      (onHide)="onCancel()"
-      [header]="droneToEdit ? 'Edit Drone' : 'Create New Drone'"
-      styleClass="drone-form-dialog"
-      [contentStyle]="{ overflow: 'visible' }"
-    >
-      <div
-        *ngIf="loading"
-        class="flex justify-content-center align-items-center"
-        style="height: 200px"
-      >
-        <p-progressSpinner
-          strokeWidth="4"
-          [style]="{ width: '50px', height: '50px' }"
-          aria-label="Loading matrices"
-        ></p-progressSpinner>
-      </div>
-
-      <form
-        *ngIf="!loading"
-        [formGroup]="droneForm"
-        (ngSubmit)="onSubmit()"
-        class="p-fluid"
-        @fadeIn
-      >
-        <div class="form-section">
-          <h3>Drone Information</h3>
-
-          <div class="field">
-            <label for="name" class="font-bold">Name</label>
-            <input
-              id="name"
-              pInputText
-              formControlName="name"
-              placeholder="Enter drone name"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && droneForm.controls['name'].invalid
-              }"
-              aria-describedby="name-help"
-            />
-            <small
-              id="name-help"
-              *ngIf="submitted && droneForm.controls['name'].invalid"
-              class="p-error"
-            >
-              Name is required
-            </small>
-          </div>
-
-          <div class="field">
-            <label for="model" class="font-bold">Model</label>
-            <input
-              id="model"
-              pInputText
-              formControlName="model"
-              placeholder="Enter drone model"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && droneForm.controls['model'].invalid
-              }"
-              aria-describedby="model-help"
-            />
-            <small
-              id="model-help"
-              *ngIf="submitted && droneForm.controls['model'].invalid"
-              class="p-error"
-            >
-              Model is required
-            </small>
-          </div>
-        </div>
-
-        <p-divider></p-divider>
-
-        <div class="form-section">
-          <h3>Position & Orientation</h3>
-
-          <div class="formgrid grid">
-            <div class="field col">
-              <label for="x" class="font-bold">X Position</label>
-              <p-inputNumber
-                id="x"
-                formControlName="x"
-                [showButtons]="true"
-                [min]="0"
-                [ngClass]="{
-                  'ng-invalid ng-dirty':
-                    submitted && droneForm.controls['x'].invalid
-                }"
-                aria-describedby="x-help"
-              ></p-inputNumber>
-              <small
-                id="x-help"
-                *ngIf="submitted && droneForm.controls['x'].invalid"
-                class="p-error"
-              >
-                X position is required
-              </small>
-            </div>
-
-            <div class="field col">
-              <label for="y" class="font-bold">Y Position</label>
-              <p-inputNumber
-                id="y"
-                formControlName="y"
-                [showButtons]="true"
-                [min]="0"
-                [ngClass]="{
-                  'ng-invalid ng-dirty':
-                    submitted && droneForm.controls['y'].invalid
-                }"
-                aria-describedby="y-help"
-              ></p-inputNumber>
-              <small
-                id="y-help"
-                *ngIf="submitted && droneForm.controls['y'].invalid"
-                class="p-error"
-              >
-                Y position is required
-              </small>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="orientation" class="font-bold">Orientation</label>
-            <p-dropdown
-              id="orientation"
-              [options]="orientationOptions"
-              optionLabel="label"
-              optionValue="value"
-              formControlName="orientation"
-              placeholder="Select orientation"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && droneForm.controls['orientation'].invalid
-              }"
-              aria-describedby="orientation-help"
-            ></p-dropdown>
-            <small
-              id="orientation-help"
-              *ngIf="submitted && droneForm.controls['orientation'].invalid"
-              class="p-error"
-            >
-              Orientation is required
-            </small>
-          </div>
-        </div>
-
-        <p-divider></p-divider>
-
-        <div class="form-section">
-          <h3>Matrix Assignment</h3>
-
-          <div class="field">
-            <label for="matrixId" class="font-bold">Matrix</label>
-            <p-dropdown
-              id="matrixId"
-              [options]="matrixOptions"
-              optionLabel="label"
-              optionValue="value"
-              formControlName="matrixId"
-              placeholder="Select matrix"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && droneForm.controls['matrixId'].invalid
-              }"
-              [filter]="true"
-              filterBy="label"
-              aria-describedby="matrix-help"
-            ></p-dropdown>
-            <small
-              id="matrix-help"
-              *ngIf="submitted && droneForm.controls['matrixId'].invalid"
-              class="p-error"
-            >
-              Matrix is required
-            </small>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button
-            pButton
-            pRipple
-            type="button"
-            label="Cancel"
-            class="p-button-outlined p-button-secondary"
-            (click)="onCancel()"
-            [disabled]="submitting"
-          ></button>
-          <button
-            pButton
-            pRipple
-            type="submit"
-            label="Save"
-            icon="pi pi-check"
-            [loading]="submitting"
-            [disabled]="submitting"
-          ></button>
-        </div>
-      </form>
-    </p-dialog>
-  `,
-  styles: [
-    `
-      :host ::ng-deep .drone-form-dialog .p-dialog-content {
-        padding: 0 1.5rem 1.5rem 1.5rem;
-      }
-
-      .form-section {
-        margin-bottom: 1rem;
-      }
-
-      .form-section h3 {
-        font-size: 1.1rem;
-        margin-bottom: 1.25rem;
-        color: var(--primary-700);
-      }
-
-      .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
-
-      :host
-        ::ng-deep
-        .p-inputnumber-buttons-stacked
-        .p-inputnumber-button-group {
-        display: flex;
-        flex-direction: column;
-      }
-
-      :host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-        padding: 0.75rem 1.25rem;
-      }
-
-      :host ::ng-deep .p-inputtext:enabled:focus {
-        box-shadow: 0 0 0 2px var(--primary-100);
-        border-color: var(--primary-500);
-      }
-
-      :host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
-        box-shadow: 0 0 0 2px var(--primary-100);
-        border-color: var(--primary-500);
-      }
-
-      @media screen and (max-width: 576px) {
-        .form-actions {
-          flex-direction: column-reverse;
-        }
-
-        .form-actions button {
-          width: 100%;
-        }
-      }
-    `,
-  ],
+  templateUrl: './drone-form.component.html',
+  styleUrls: ['./drone-form.component.scss'],
 })
 export class DroneFormComponent implements OnInit {
   @Input() visible = false;
@@ -352,7 +82,8 @@ export class DroneFormComponent implements OnInit {
     this.loadMatrices();
   }
 
-  initForm() {
+  // Initialize reactive form with validation
+  initForm(): void {
     this.droneForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(50)]],
       model: ['', [Validators.required, Validators.maxLength(50)]],
@@ -367,7 +98,8 @@ export class DroneFormComponent implements OnInit {
     }
   }
 
-  loadMatrices() {
+  // Loads matrices from the MatrixService and maps them to dropdown options
+  loadMatrices(): void {
     this.loading = true;
     this.matrixService
       .getAll()
@@ -390,7 +122,8 @@ export class DroneFormComponent implements OnInit {
       });
   }
 
-  onSubmit() {
+  // Submit form: validate and send data to create or update the drone
+  onSubmit(): void {
     this.submitted = true;
 
     if (this.droneForm.invalid) {
@@ -436,7 +169,8 @@ export class DroneFormComponent implements OnInit {
     });
   }
 
-  onCancel() {
+  // Cancel and close the form
+  onCancel(): void {
     this.submitted = false;
     this.close.emit();
   }
