@@ -14,8 +14,11 @@ import { RippleModule } from 'primeng/ripple';
 import { SidebarModule } from 'primeng/sidebar';
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs/operators';
-import { ThemeService } from './core/theme.service';
-import { Language, TranslationService } from './core/translation.service';
+import { ThemeService } from './core/services/theme.service';
+import {
+  Language,
+  TranslationService,
+} from './core/services/translation.service';
 import { SidebarComponent } from './layout/sidebar.component';
 
 @Component({

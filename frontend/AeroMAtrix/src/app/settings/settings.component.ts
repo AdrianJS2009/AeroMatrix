@@ -13,8 +13,11 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
-import { Theme, ThemeService } from '../core/theme.service';
-import { Language, TranslationService } from '../core/translation.service';
+import { Theme, ThemeService } from '../core/services/theme.service';
+import {
+  Language,
+  TranslationService,
+} from '../core/services/translation.service';
 
 @Component({
   selector: 'app-settings',

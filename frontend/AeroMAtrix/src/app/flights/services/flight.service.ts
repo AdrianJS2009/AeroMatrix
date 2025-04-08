@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { type Observable, catchError, throwError } from 'rxjs';
-import { ApiService } from '../../core/api.service';
+import { ApiService } from '../../core/services/api.service';
 import { Drone } from '../../drones/models/drone.model';
 
 export interface CommandsRequest {

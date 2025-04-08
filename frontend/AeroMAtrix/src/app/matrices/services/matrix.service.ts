@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ApiService } from '../../core/api.service';
+import { ApiService } from '../../core/services/api.service';
 import { Matrix } from '../models/matrix.model';
 
 export interface CreateMatrixRequest {

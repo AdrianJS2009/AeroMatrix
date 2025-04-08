@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { ThemeService } from '../core/theme.service';
+import { ThemeService } from '../core/services/theme.service';
 
 @Component({
   selector: 'app-sidebar',
