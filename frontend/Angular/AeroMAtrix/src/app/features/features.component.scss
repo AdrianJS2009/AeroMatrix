@@ -1,0 +1,66 @@
+/* Hero section card styling */
+.hero-card {
+  background: linear-gradient(
+    135deg,
+    var(--surface-ground) 0%,
+    var(--surface-card) 100%
+  );
+}
+
+/* Feature card styling and hover effects */
+.feature-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styling for feature cards */
+.feature-header {
+  background-color: var(--surface-ground);
+}
+
+/* Container for feature images */
+.feature-image-container {
+  height: 160px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Feature image styling with hover scale effect */
+.feature-image {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-image {
+  transform: scale(1.05);
+}
+
+/* Call-to-action (CTA) card styling */
+.cta-card {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-700) 100%
+  );
+  color: white;
+}
+
+:host ::ng-deep .cta-card .p-card-content {
+  color: white;
+}
+
+/* Center the tab view navigation and adjust padding */
+:host ::ng-deep .p-tabview .p-tabview-nav {
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  padding: 1rem 1.5rem;
+}

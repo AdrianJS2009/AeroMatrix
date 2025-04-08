@@ -1,0 +1,138 @@
+{
+  "HEADER": {
+    "TOGGLE_THEME": "Toggle theme",
+    "LANGUAGE": "Change language"
+  },
+  "SIDEBAR": {
+    "NAVIGATION": "Navigation",
+    "SYSTEM_INFO": "Drone Control System",
+    "COLLAPSE": "Collapse sidebar",
+    "EXPAND": "Expand sidebar"
+  },
+  "MENU": {
+    "DASHBOARD": "Dashboard",
+    "DRONES": "Drones",
+    "MATRICES": "Matrices",
+    "FLIGHTS": "Flights",
+    "ANALYTICS": "Analytics",
+    "SETTINGS": "Settings"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "DRONE_ALERT": "Drone Alert",
+    "DRONE_ALERT_DESC": "Drone #5 is approaching matrix boundary",
+    "FLIGHT_COMPLETED": "Flight Completed",
+    "FLIGHT_COMPLETED_DESC": "Scheduled flight for Drone #2 completed successfully",
+    "SYSTEM_UPDATE": "System Update",
+    "SYSTEM_UPDATE_DESC": "New system version available",
+    "VIEW_ALL": "View all notifications",
+    "TIME_AGO": {
+      "MINUTES": "{{minutes}} minutes ago",
+      "HOURS": "{{hours}} hour ago",
+      "DAYS": "{{days}} day ago"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Select Language"
+  },
+  "USER": {
+    "ADMIN": "Admin User",
+    "ROLE": "Administrator",
+    "EDIT_PROFILE": "Edit Profile",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Logout"
+  },
+  "FOOTER": {
+    "RIGHTS": "All rights reserved.",
+    "CREATED_BY": "Created by Adrián Jiménez Santiago as an educational activity."
+  },
+  "DRONE_MATRIX": {
+    "MATRIX": "Matrix",
+    "DIMENSIONS": "Dimensions",
+    "DRONES": "Drones",
+    "SELECTED": "Selected",
+    "VIEW": "3D (Use mouse to rotate and zoom)",
+    "ZOOM_IN": "Zoom In",
+    "ZOOM_OUT": "Zoom Out",
+    "RESET_VIEW": "Reset View",
+    "3D_VIEW": "3D View",
+    "2D_VIEW": "2D View",
+    "SHOW_LABELS": "Show Labels",
+    "HIDE_LABELS": "Hide Labels"
+  },
+  "SETTINGS": {
+    "TITLE": "System Settings",
+    "SUBTITLE": "Configure your drone control system preferences",
+    "GENERAL": {
+      "TITLE": "General",
+      "APP_SETTINGS": "Application Settings",
+      "DARK_MODE": "Dark Mode",
+      "DARK_MODE_DESC": "Enable dark theme for the application",
+      "ANIMATIONS": "UI Animations",
+      "ANIMATIONS_DESC": "Enable animations throughout the interface",
+      "LANGUAGE": "Language",
+      "LANGUAGE_DESC": "Select your preferred language",
+      "NOTIFICATIONS": "Notifications",
+      "NOTIFICATIONS_DESC": "Enable system notifications"
+    },
+    "DRONE": {
+      "TITLE": "Drone Control",
+      "DEFAULT_SETTINGS": "Default Drone Settings",
+      "DEFAULT_ORIENTATION": "Default Orientation",
+      "DEFAULT_ORIENTATION_DESC": "Initial orientation for new drones",
+      "AUTO_POSITION": "Auto-Position",
+      "AUTO_POSITION_DESC": "Automatically position new drones at matrix origin",
+      "FLIGHT_CONTROLS": "Flight Controls",
+      "CONFIRM_COMMANDS": "Confirm Commands",
+      "CONFIRM_COMMANDS_DESC": "Show confirmation dialog before executing flight commands",
+      "COMMAND_DELAY": "Command Execution Delay (ms)",
+      "COMMAND_DELAY_DESC": "Delay between command executions for visualization",
+      "BOUNDARY_CHECK": "Boundary Checking",
+      "BOUNDARY_CHECK_DESC": "Prevent drones from moving outside matrix boundaries",
+      "COLLISION_DETECTION": "Collision Detection",
+      "COLLISION_DETECTION_DESC": "Prevent drones from occupying the same position"
+    },
+    "API": {
+      "TITLE": "API Configuration",
+      "CONNECTION": "API Connection",
+      "API_URL": "API URL",
+      "API_URL_DESC": "Base URL for the drone control API",
+      "REQUEST_TIMEOUT": "Request Timeout (ms)",
+      "REQUEST_TIMEOUT_DESC": "Maximum time to wait for API responses",
+      "RETRY_ATTEMPTS": "Retry Attempts",
+      "RETRY_ATTEMPTS_DESC": "Number of times to retry failed API requests",
+      "AUTHENTICATION": "Authentication",
+      "API_KEY": "API Key",
+      "API_KEY_DESC": "Authentication key for API access",
+      "TOKEN_REFRESH": "Auto Token Refresh",
+      "TOKEN_REFRESH_DESC": "Automatically refresh authentication tokens"
+    },
+    "ACTIONS": {
+      "RESET": "Reset to Defaults",
+      "SAVE": "Save Changes",
+      "TEST_CONNECTION": "Test Connection"
+    }
+  },
+  "sidebar": {
+    "management": "Management",
+    "drones": "Drones",
+    "matrices": "Matrices",
+    "flights": "Flights",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "information": "Information",
+    "about": "About Us",
+    "features": "Features",
+    "support": "Support",
+    "version": "Version"
+  },
+  "error": {
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundMessage": "The page you are looking for doesn't exist or has been moved.",
+    "returnHome": "Return Home",
+    "goBack": "Go Back",
+    "technicalInfo": "Technical Information",
+    "technicalMessage": "The requested URL was not found on this server. If you entered the URL manually, please check your spelling and try again.",
+    "requestedUrl": "Requested URL"
+  }
+}

@@ -1,0 +1,153 @@
+<div class="landing-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text" @fadeIn>
+        <h1 class="gradient-text">Advanced Drone Control System</h1>
+        <p>
+          Precision flight management with interactive 3D matrix visualization
+        </p>
+        <div class="hero-buttons">
+          <button
+            pButton
+            pRipple
+            label="Get Started"
+            icon="pi pi-arrow-right"
+            class="p-button-lg"
+            (click)="navigateTo('/drones')"
+            title="Get Started"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Explore Features"
+            icon="pi pi-info-circle"
+            class="p-button-outlined p-button-lg"
+            (click)="navigateTo('/features')"
+            title="Explore Features"
+          ></button>
+        </div>
+      </div>
+      <div class="hero-matrix glass-effect" @slideInRight>
+        <div class="matrix-demo">
+          <!-- Demo Matrix Component -->
+          <app-drone-matrix
+            [matrix]="demoMatrix"
+            [drones]="demoDrones"
+            [selectedDroneId]="1"
+          ></app-drone-matrix>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header" @fadeIn>
+      <h2>Immersive 3D Visualization</h2>
+      <p>
+        Experience drone control like never before with our interactive 3D
+        matrix
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" @slideIn>
+        <div class="feature-icon">
+          <i class="pi pi-arrows-alt"></i>
+        </div>
+        <h3>Advanced Controls</h3>
+        <p>
+          Rotate, pan, and zoom with intuitive controls for complete spatial
+          awareness
+        </p>
+      </div>
+
+      <div class="feature-card" @slideIn>
+        <div class="feature-icon">
+          <i class="pi pi-sync"></i>
+        </div>
+        <h3>Real-time Updates</h3>
+        <p>
+          Watch drones move in real-time with smooth animations as commands are
+          executed
+        </p>
+      </div>
+
+      <div class="feature-card" @slideIn>
+        <div class="feature-icon">
+          <i class="pi pi-sliders-h"></i>
+        </div>
+        <h3>Customizable Display</h3>
+        <p>
+          Adjust visualization settings to match your operational requirements
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section" @fadeIn>
+    <div class="cta-content">
+      <h2>Ready to take control?</h2>
+      <p>Start managing your drone fleet with precision and efficiency today</p>
+      <button
+        pButton
+        pRipple
+        label="Launch Control Center"
+        icon="pi pi-arrow-right"
+        class="p-button-lg"
+        (click)="navigateTo('/flights')"
+        title="Launch Control Center"
+      ></button>
+    </div>
+    <div class="cta-shapes">
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <i class="pi pi-send"></i>
+        <span class="gradient-text">AeroMatrix</span>
+      </div>
+      <div class="footer-links">
+        <ul>
+          <li>
+            <a (click)="navigateTo('/about')" class="cursor-pointer">About</a>
+          </li>
+          <li>
+            <a (click)="navigateTo('/features')" class="cursor-pointer"
+              >Features</a
+            >
+          </li>
+          <li><a href="#" target="_blank">Documentation</a></li>
+          <li>
+            <a (click)="navigateTo('/support')" class="cursor-pointer"
+              >Support</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <a href="https://github.com/AdrianJS2009" title="Visit GitHub Profile"
+          ><i class="pi pi-github"></i
+        ></a>
+        <a href="#" title="Visit LinkedIn Profile"
+          ><i class="pi pi-linkedin"></i
+        ></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 AeroMatrix Control System. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,169 @@
+<div class="analytics-dashboard" @fadeIn>
+  <div class="page-header">
+    <h1>Analytics Dashboard</h1>
+    <p>Monitor your drone fleet performance and operational metrics</p>
+  </div>
+
+  <div class="filter-bar">
+    <p-dropdown
+      [options]="timeRanges"
+      [(ngModel)]="selectedTimeRange"
+      optionLabel="label"
+      placeholder="Select Time Range"
+      (onChange)="updateCharts()"
+      styleClass="time-range-dropdown"
+    ></p-dropdown>
+
+    <button
+      pButton
+      label="Refresh Data"
+      icon="pi pi-refresh"
+      class="p-button-outlined"
+      (click)="refreshData()"
+      title="Refresh Data"
+    ></button>
+  </div>
+
+  <div class="stats-cards">
+    <p-card styleClass="stats-card" @cardAnimation>
+      <div class="stats-content">
+        <div class="stats-icon drone-icon">
+          <i class="pi pi-send"></i>
+        </div>
+        <div class="stats-info">
+          <span class="stats-label">Active Drones</span>
+          <span class="stats-value">{{ activeCount }}</span>
+          <span class="stats-change positive">
+            <i class="pi pi-arrow-up"></i> 12% from last month
+          </span>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="stats-card" @cardAnimation>
+      <div class="stats-content">
+        <div class="stats-icon flight-icon">
+          <i class="pi pi-compass"></i>
+        </div>
+        <div class="stats-info">
+          <span class="stats-label">Total Flights</span>
+          <span class="stats-value">{{ flightCount }}</span>
+          <span class="stats-change positive">
+            <i class="pi pi-arrow-up"></i> 8% from last month
+          </span>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="stats-card" @cardAnimation>
+      <div class="stats-content">
+        <div class="stats-icon matrix-icon">
+          <i class="pi pi-th-large"></i>
+        </div>
+        <div class="stats-info">
+          <span class="stats-label">Active Matrices</span>
+          <span class="stats-value">{{ matrixCount }}</span>
+          <span class="stats-change neutral">
+            <i class="pi pi-minus"></i> No change
+          </span>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="stats-card" @cardAnimation>
+      <div class="stats-content">
+        <div class="stats-icon error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="stats-info">
+          <span class="stats-label">Error Rate</span>
+          <span class="stats-value">{{ errorRate }}%</span>
+          <span class="stats-change negative">
+            <i class="pi pi-arrow-down"></i> 5% from last month
+          </span>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <div class="chart-row">
+    <p-card header="Flight Activity" styleClass="chart-card" @chartAnimation>
+      <p-chart
+        type="line"
+        [data]="flightActivityData"
+        [options]="flightActivityOptions"
+      ></p-chart>
+    </p-card>
+
+    <p-card
+      header="Drone Distribution by Matrix"
+      styleClass="chart-card"
+      @chartAnimation
+    >
+      <p-chart
+        type="doughnut"
+        [data]="droneDistributionData"
+        [options]="droneDistributionOptions"
+      ></p-chart>
+    </p-card>
+  </div>
+
+  <div class="chart-row">
+    <p-card header="Command Usage" styleClass="chart-card" @chartAnimation>
+      <p-chart
+        type="bar"
+        [data]="commandUsageData"
+        [options]="commandUsageOptions"
+      ></p-chart>
+    </p-card>
+
+    <p-card header="Error Types" styleClass="chart-card" @chartAnimation>
+      <p-chart
+        type="pie"
+        [data]="errorTypesData"
+        [options]="errorTypesOptions"
+      ></p-chart>
+    </p-card>
+  </div>
+
+  <p-card
+    header="Recent Flight Activity"
+    styleClass="table-card"
+    @tableAnimation
+  >
+    <p-table
+      [value]="recentFlights"
+      [paginator]="true"
+      [rows]="5"
+      styleClass="p-datatable-sm"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">Drone</th>
+          <th scope="col">Matrix</th>
+          <th scope="col">Commands</th>
+          <th scope="col">Start Position</th>
+          <th scope="col">End Position</th>
+          <th scope="col">Status</th>
+          <th scope="col">Time</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-flight>
+        <tr>
+          <td>{{ flight.drone }}</td>
+          <td>{{ flight.matrix }}</td>
+          <td>{{ flight.commands }}</td>
+          <td>{{ flight.startPosition }}</td>
+          <td>{{ flight.endPosition }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="flight.status.toLowerCase()">
+              {{ flight.status }}
+            </span>
+          </td>
+          <td>{{ flight.time }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

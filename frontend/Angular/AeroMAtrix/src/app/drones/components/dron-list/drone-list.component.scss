@@ -1,0 +1,108 @@
+.drone-list-container {
+  padding: 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.page-header p {
+  color: var(--text-color-secondary);
+  font-size: 1.1rem;
+}
+
+.card-container {
+  margin-bottom: 2rem;
+}
+
+:host ::ng-deep .drone-list-card .p-card-body,
+:host ::ng-deep .drone-list-card .p-card-content {
+  padding: 0;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.table-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.table-title i {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.search-input {
+  width: 100%;
+  max-width: 300px;
+}
+
+.drone-name {
+  font-weight: 600;
+  color: var(--primary-700);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .drone-count {
+  margin-left: 0.5rem;
+}
+
+:host ::ng-deep .matrix-badge {
+  background-color: var(--primary-600);
+}
+
+.empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: var(--surface-500);
+}
+
+@media screen and (max-width: 768px) {
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: none;
+  }
+}

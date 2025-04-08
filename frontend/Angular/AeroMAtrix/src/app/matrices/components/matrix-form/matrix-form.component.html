@@ -1,0 +1,119 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onCancel()"
+  [header]="matrixToEdit ? 'Edit Matrix' : 'Create New Matrix'"
+  styleClass="matrix-form-dialog"
+>
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner
+      strokeWidth="4"
+      [style]="{ width: '50px', height: '50px' }"
+    ></p-progressSpinner>
+  </div>
+
+  <!-- Form for matrix dimensions -->
+  <form
+    *ngIf="!loading"
+    [formGroup]="matrixForm"
+    (ngSubmit)="onSubmit()"
+    class="p-fluid"
+    @fadeIn
+  >
+    <div class="form-section">
+      <h3>Matrix Dimensions</h3>
+      <p class="section-description">
+        Define the size of your operational matrix
+      </p>
+
+      <div class="formgrid grid">
+        <div class="field col">
+          <label for="maxX" class="font-bold">X Dimension</label>
+          <p-inputNumber
+            id="maxX"
+            formControlName="maxX"
+            [showButtons]="true"
+            [min]="1"
+            [ngClass]="{
+              'ng-invalid ng-dirty':
+                submitted && matrixForm.controls['maxX'].invalid
+            }"
+          ></p-inputNumber>
+          <small
+            *ngIf="submitted && matrixForm.controls['maxX'].invalid"
+            class="p-error"
+          >
+            X dimension must be greater than 0
+          </small>
+        </div>
+
+        <div class="field col">
+          <label for="maxY" class="font-bold">Y Dimension</label>
+          <p-inputNumber
+            id="maxY"
+            formControlName="maxY"
+            [showButtons]="true"
+            [min]="1"
+            [ngClass]="{
+              'ng-invalid ng-dirty':
+                submitted && matrixForm.controls['maxY'].invalid
+            }"
+          ></p-inputNumber>
+          <small
+            *ngIf="submitted && matrixForm.controls['maxY'].invalid"
+            class="p-error"
+          >
+            Y dimension must be greater than 0
+          </small>
+        </div>
+      </div>
+
+      <!-- Matrix preview grid -->
+      <div class="matrix-preview">
+        <div class="preview-label">Preview:</div>
+        <div
+          class="preview-grid"
+          [style.--grid-cols]="matrixForm.value.maxX"
+          [style.--grid-rows]="matrixForm.value.maxY"
+        >
+          <div class="preview-cell" *ngFor="let _ of getPreviewArray()"></div>
+        </div>
+        <div class="preview-info">
+          {{ matrixForm.value.maxX }} × {{ matrixForm.value.maxY }} =
+          {{ matrixForm.value.maxX * matrixForm.value.maxY }} cells
+        </div>
+      </div>
+    </div>
+
+    <!-- Form actions -->
+    <div class="form-actions">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Cancel"
+        class="p-button-outlined p-button-secondary"
+        (click)="onCancel()"
+        [disabled]="submitting"
+        title="Cancel"
+      ></button>
+      <button
+        pButton
+        pRipple
+        type="submit"
+        label="Save"
+        icon="pi pi-check"
+        [loading]="submitting"
+        [disabled]="submitting"
+        title="Save matrix"
+      ></button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast></p-toast>

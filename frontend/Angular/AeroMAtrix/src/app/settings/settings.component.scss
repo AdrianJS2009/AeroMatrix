@@ -1,0 +1,71 @@
+.settings-container {
+  padding: 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+  p {
+    color: var(--text-color-secondary);
+    font-size: 1.1rem;
+  }
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+  }
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.setting-label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 200px;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+  }
+
+  small {
+    color: var(--text-color-secondary);
+  }
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media screen and (max-width: 768px) {
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .settings-actions {
+    flex-direction: column;
+  }
+  .settings-actions button {
+    width: 100%;
+  }
+}

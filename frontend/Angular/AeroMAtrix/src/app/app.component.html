@@ -1,0 +1,260 @@
+<div
+  class="app-container"
+  [ngClass]="{
+    'sidebar-open': sidebarVisible,
+    'sidebar-collapsed': sidebarCollapsed && !sidebarVisible
+  }"
+>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-bars"
+          class="p-button-text p-button-rounded sidebar-toggle"
+          (click)="toggleSidebar()"
+          [ngClass]="{ active: sidebarVisible }"
+          title="{{ 'HEADER.TOGGLE_SIDEBAR' | translate }}"
+        ></button>
+        <div
+          class="logo-container"
+          (click)="navigateHome()"
+          (keydown.enter)="navigateHome()"
+        >
+          <i class="pi pi-send logo-icon"></i>
+          <h1 class="logo-text gradient-text">AeroMatrix</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Theme Toggle -->
+        <button
+          pButton
+          pRipple
+          type="button"
+          [icon]="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'"
+          class="p-button-text p-button-rounded theme-toggle"
+          (click)="toggleTheme()"
+          pTooltip="{{ 'HEADER.TOGGLE_THEME' | translate }}"
+          title="{{ 'HEADER.TOGGLE_THEME' | translate }}"
+        ></button>
+        <!-- Language Selector -->
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-globe"
+          class="p-button-text p-button-rounded"
+          (click)="langPanel.toggle($event)"
+          pTooltip="{{ 'HEADER.LANGUAGE' | translate }}"
+          title="{{ 'HEADER.LANGUAGE' | translate }}"
+        ></button>
+        <!-- Notifications -->
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-bell"
+          class="p-button-text p-button-rounded notification-btn"
+          (click)="op.toggle($event)"
+          pBadge
+          value="2"
+          title="{{ 'HEADER.NOTIFICATIONS' | translate }}"
+        ></button>
+        <!-- User Panel -->
+        <p-avatar
+          icon="pi pi-user"
+          shape="circle"
+          class="user-avatar"
+          (click)="userPanel.toggle($event)"
+          (keydown.enter)="userPanel.toggle($event)"
+        >
+        </p-avatar>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <p-sidebar
+      [(visible)]="sidebarVisible"
+      [showCloseIcon]="false"
+      [modal]="false"
+      styleClass="app-sidebar"
+      [baseZIndex]="10000"
+      position="left"
+      @slideInOut
+    >
+      <app-sidebar *ngIf="sidebarVisible"></app-sidebar>
+    </p-sidebar>
+
+    <!-- Collapsed Sidebar -->
+    <div class="collapsed-sidebar" *ngIf="sidebarCollapsed && !sidebarVisible">
+      <div class="collapsed-sidebar-content">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-angle-right"
+          class="p-button-text p-button-rounded expand-btn"
+          (click)="expandSidebar()"
+          pTooltip="{{ 'SIDEBAR.EXPAND' | translate }}"
+          title="{{ 'SIDEBAR.EXPAND' | translate }}"
+        ></button>
+        <ul class="collapsed-menu">
+          <li
+            *ngFor="let item of menuItems"
+            [ngClass]="{ active: isActive(item.routerLink) }"
+            (click)="navigateTo(item.routerLink)"
+            pTooltip="{{ item.label ?? 'Default Label' | translate }}"
+            tooltipPosition="right"
+            (keydown)="navigateTo(item.routerLink)"
+            @slideUpDown
+          >
+            <i [class]="item.icon"></i>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main
+      class="app-content"
+      [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''"
+    >
+      <router-outlet #o="outlet"></router-outlet>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="copyright">
+        &copy; {{ currentYear }} AeroMatrix.
+        {{ "FOOTER.RIGHTS" | translate }}
+      </div>
+      <div class="attribution">
+        {{ "FOOTER.CREATED_BY" | translate }}
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Panel -->
+  <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '350px' }">
+    <ng-template pTemplate>
+      <div class="notification-panel">
+        <h3>{{ "NOTIFICATIONS.TITLE" | translate }}</h3>
+        <div class="notification-item unread" @slideUpDown>
+          <i class="pi pi-exclamation-circle"></i>
+          <div class="notification-content">
+            <h4>{{ "NOTIFICATIONS.DRONE_ALERT" | translate }}</h4>
+            <p>{{ "NOTIFICATIONS.DRONE_ALERT_DESC" | translate }}</p>
+            <span class="notification-time">
+              {{
+                "NOTIFICATIONS.TIME_AGO.MINUTES" | translate : { minutes: 5 }
+              }}
+            </span>
+          </div>
+        </div>
+        <div class="notification-item unread" @slideUpDown>
+          <i class="pi pi-check-circle"></i>
+          <div class="notification-content">
+            <h4>{{ "NOTIFICATIONS.FLIGHT_COMPLETED" | translate }}</h4>
+            <p>{{ "NOTIFICATIONS.FLIGHT_COMPLETED_DESC" | translate }}</p>
+            <span class="notification-time">
+              {{ "NOTIFICATIONS.TIME_AGO.HOURS" | translate : { hours: 1 } }}
+            </span>
+          </div>
+        </div>
+        <div class="notification-item" @slideUpDown>
+          <i class="pi pi-info-circle"></i>
+          <div class="notification-content">
+            <h4>{{ "NOTIFICATIONS.SYSTEM_UPDATE" | translate }}</h4>
+            <p>{{ "NOTIFICATIONS.SYSTEM_UPDATE_DESC" | translate }}</p>
+            <span class="notification-time">
+              {{ "NOTIFICATIONS.TIME_AGO.DAYS" | translate : { days: 1 } }}
+            </span>
+          </div>
+        </div>
+        <div class="view-all">
+          <a href="#">{{ "NOTIFICATIONS.VIEW_ALL" | translate }}</a>
+        </div>
+      </div>
+    </ng-template>
+  </p-overlayPanel>
+
+  <!-- Language Panel -->
+  <p-overlayPanel
+    #langPanel
+    [showCloseIcon]="true"
+    [style]="{ width: '250px' }"
+  >
+    <ng-template pTemplate>
+      <div class="language-panel">
+        <h3>{{ "LANGUAGE.SELECT" | translate }}</h3>
+        <ul class="language-list">
+          <li
+            *ngFor="let lang of availableLanguages"
+            [ngClass]="{ active: currentLanguage.code === lang.code }"
+            (click)="setLanguage(lang)"
+            (keydown.enter)="setLanguage(lang)"
+            @slideUpDown
+          >
+            <span>{{ lang.name }}</span>
+            <i
+              class="pi pi-check"
+              *ngIf="currentLanguage.code === lang.code"
+            ></i>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+  </p-overlayPanel>
+
+  <!-- User Panel -->
+  <p-overlayPanel
+    #userPanel
+    [showCloseIcon]="true"
+    [style]="{ width: '250px' }"
+  >
+    <ng-template pTemplate>
+      <div class="user-panel">
+        <div class="user-info">
+          <p-avatar icon="pi pi-user" size="large" shape="circle"></p-avatar>
+          <div class="user-details">
+            <h4>{{ "USER.ADMIN" | translate }}</h4>
+            <p>{{ "USER.ROLE" | translate }}</p>
+          </div>
+        </div>
+        <ul class="user-menu">
+          <li @slideUpDown>
+            <i class="pi pi-user-edit"></i>
+            {{ "USER.EDIT_PROFILE" | translate }}
+          </li>
+          <li
+            (click)="navigateTo('/settings')"
+            (keydown.enter)="navigateTo('/settings')"
+            @slideUpDown
+          >
+            <i class="pi pi-cog"></i> {{ "USER.SETTINGS" | translate }}
+          </li>
+          <li @slideUpDown>
+            <i class="pi pi-sign-out"></i> {{ "USER.LOGOUT" | translate }}
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+  </p-overlayPanel>
+
+  <!-- Toast and Confirm Dialog -->
+  <p-toast></p-toast>
+  <p-confirmDialog
+    [style]="{ width: '450px' }"
+    styleClass="custom-confirm-dialog"
+    acceptButtonStyleClass="p-button-danger"
+    rejectButtonStyleClass="p-button-text"
+  >
+  </p-confirmDialog>
+</div>

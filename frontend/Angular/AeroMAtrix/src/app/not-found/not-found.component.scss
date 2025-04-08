@@ -1,0 +1,273 @@
+:host {
+  display: block;
+  height: 100vh;
+  width: 100%;
+}
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--surface-ground) 0%,
+    var(--surface-section) 100%
+  );
+}
+
+.not-found-content {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: var(--surface-card);
+  box-shadow: var(--card-shadow);
+}
+
+.error-code {
+  font-size: 10rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-400) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+p {
+  font-size: 1.25rem;
+  color: var(--text-color-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.error-card {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.error-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: var(--surface-section);
+  border-radius: 6px 6px 0 0;
+}
+
+.error-card-header i {
+  color: var(--yellow-500);
+  font-size: 1.25rem;
+}
+
+.error-path {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.error-path code {
+  background-color: var(--surface-section);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.background-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(var(--surface-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--surface-border) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.1;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.05;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--primary-color);
+  top: -100px;
+  right: -100px;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--primary-color);
+  bottom: -50px;
+  left: 10%;
+}
+
+.shape-3 {
+  width: 200px;
+  height: 200px;
+  background: var(--primary-color);
+  top: 20%;
+  left: 20%;
+}
+
+.drone-animation {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 3s ease-in-out infinite alternate;
+}
+
+.drone {
+  position: relative;
+  width: 100px;
+  height: 30px;
+}
+
+.drone-body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-700);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.drone-propeller {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--primary-300);
+  border: 3px solid var(--primary-500);
+  animation: spin 0.5s linear infinite;
+}
+
+.propeller-1 {
+  top: -15px;
+  left: 0;
+}
+
+.propeller-2 {
+  top: -15px;
+  right: 0;
+}
+
+.propeller-3 {
+  bottom: -15px;
+  left: 0;
+}
+
+.propeller-4 {
+  bottom: -15px;
+  right: 0;
+}
+
+.drone-camera {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background-color: var(--surface-900);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--surface-700);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .error-code {
+    font-size: 6rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .drone {
+    transform: scale(0.8);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .not-found-content {
+    padding: 1.5rem;
+  }
+
+  .error-code {
+    font-size: 5rem;
+  }
+}
