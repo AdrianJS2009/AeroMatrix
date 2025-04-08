@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+import com.drones.fct.domain.model.Drone;
+import com.drones.fct.domain.model.Matrix;
+import com.drones.fct.domain.model.Orientation;
+
 class DroneTest {
 
   @Test

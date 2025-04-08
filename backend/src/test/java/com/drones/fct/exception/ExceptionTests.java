@@ -10,7 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import com.drones.fct.dto.ApiError;
+import com.drones.fct.api.dto.ApiError;
+import com.drones.fct.api.exception.ConflictException;
+import com.drones.fct.api.exception.GlobalExceptionHandler;
+import com.drones.fct.api.exception.NotFoundException;
+import com.drones.fct.api.exception.UnsupportedCommandException;
 
 class ExceptionTests {
 

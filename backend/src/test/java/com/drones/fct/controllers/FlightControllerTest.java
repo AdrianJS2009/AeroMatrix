@@ -15,13 +15,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.drones.fct.controller.FlightController;
-import com.drones.fct.domain.Drone;
-import com.drones.fct.domain.Matrix;
-import com.drones.fct.domain.MovementCommand;
-import com.drones.fct.domain.Orientation;
-import com.drones.fct.dto.CommandsRequest;
-import com.drones.fct.service.FlightService;
+import com.drones.fct.api.controller.FlightController;
+import com.drones.fct.api.dto.CommandsRequest;
+import com.drones.fct.application.FlightService;
+import com.drones.fct.domain.model.Drone;
+import com.drones.fct.domain.model.Matrix;
+import com.drones.fct.domain.model.MovementCommand;
+import com.drones.fct.domain.model.Orientation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(FlightController.class)
