@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { RippleModule } from 'primeng/ripple';
-import { DroneMatrixComponent } from '../drones/components/drone-matrix.component';
+import { DroneMatrixComponent } from '../drones/components/drone-matrix/drone-matrix.component';
 
 @Component({
   selector: 'app-landing-page',

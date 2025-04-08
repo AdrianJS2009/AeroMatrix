@@ -23,9 +23,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
-import { MatrixService } from '../../matrices/services/matrix.service';
-import { Drone } from '../models/drone.model';
-import { DroneService } from '../services/drone.service';
+import { finalize } from 'rxjs/operators';
+import { MatrixService } from '../../../matrices/services/matrix.service';
+import { Drone } from '../../models/drone.model';
+import { DroneService } from '../../services/drone.service';
 
 @Component({
   selector: 'app-drone-form',
@@ -368,24 +369,25 @@ export class DroneFormComponent implements OnInit {
 
   loadMatrices() {
     this.loading = true;
-    this.matrixService.getAll().subscribe({
-      next: (matrices) => {
-        this.matrixOptions = matrices.map((m) => ({
-          label: `Matrix ${m.id} (${m.maxX}x${m.maxY})`,
-          value: m.id,
-        }));
-        this.loading = false;
-      },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Could not load matrices',
-          life: 5000,
-        });
-        this.loading = false;
-      },
-    });
+    this.matrixService
+      .getAll()
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (matrices) => {
+          this.matrixOptions = matrices.map((m) => ({
+            label: `Matrix ${m.id} (${m.maxX}x${m.maxY})`,
+            value: m.id,
+          }));
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Could not load matrices',
+            life: 5000,
+          });
+        },
+      });
   }
 
   onSubmit() {

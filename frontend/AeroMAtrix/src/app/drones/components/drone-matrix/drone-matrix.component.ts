@@ -22,8 +22,8 @@ import { DividerModule } from 'primeng/divider';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SliderModule } from 'primeng/slider';
 import { TooltipModule } from 'primeng/tooltip';
-import { Drone } from '../../drones/models/drone.model';
-import { Matrix } from '../../matrices/models/matrix.model';
+import { Matrix } from '../../../matrices/models/matrix.model';
+import { Drone } from '../../models/drone.model';
 
 // Import Three.js
 import * as THREE from 'three';
@@ -809,6 +809,7 @@ export class DroneMatrixComponent
 
   // Three.js properties
   private scene!: THREE.Scene;
+  private readonly clock: THREE.Clock = new THREE.Clock();
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private controls!: OrbitControls;
@@ -1524,19 +1525,37 @@ export class DroneMatrixComponent
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
   }
-
   private animate(): void {
+    const delta = this.clock.getDelta(); // Necesitarías un THREE.Clock instance
     this.animationFrameId = requestAnimationFrame(() => this.animate());
 
-    // Update controls
+    // Update orbit controls if available
     if (this.controls) {
       this.controls.update();
     }
 
-    // Animate drone movements
-    this.animateDrones();
+    // Animate drone movements con delta time (ejemplo)
+    this.droneModels.forEach((model) => {
+      const userData = (model as any).userData;
+      if (userData?.startPosition && userData?.targetPosition) {
+        userData.animationProgress += delta; // Utiliza delta time
+        if (userData.animationProgress <= 1) {
+          const newPosition = userData.startPosition
+            .clone()
+            .lerp(userData.targetPosition, userData.animationProgress);
+          const heightOffset =
+            Math.sin(userData.animationProgress * Math.PI) * 0.5;
+          newPosition.y = 0.2 + heightOffset;
+          model.position.copy(newPosition);
+        } else {
+          model.position.copy(userData.targetPosition);
+          delete userData.startPosition;
+          delete userData.targetPosition;
+          delete userData.animationProgress;
+        }
+      }
+    });
 
-    // Render scene
     if (this.renderer && this.scene && this.camera) {
       this.renderer.render(this.scene, this.camera);
     }

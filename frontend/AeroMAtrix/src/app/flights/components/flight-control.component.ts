@@ -23,7 +23,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
-import { DroneMatrixComponent } from '../../drones/components/drone-matrix.component';
+import { DroneMatrixComponent } from '../../drones/components/drone-matrix/drone-matrix.component';
 import { Drone } from '../../drones/models/drone.model';
 import { DroneService } from '../../drones/services/drone.service';
 import { Matrix } from '../../matrices/models/matrix.model';
