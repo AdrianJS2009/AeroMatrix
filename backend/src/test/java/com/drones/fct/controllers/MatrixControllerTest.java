@@ -17,11 +17,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.drones.fct.controller.MatrixController;
-import com.drones.fct.domain.Matrix;
-import com.drones.fct.dto.CreateMatrixRequest;
-import com.drones.fct.repository.DroneRepository;
-import com.drones.fct.service.MatrixService;
+import com.drones.fct.api.controller.MatrixController;
+import com.drones.fct.api.dto.CreateMatrixRequest;
+import com.drones.fct.application.MatrixService;
+import com.drones.fct.domain.model.Matrix;
+import com.drones.fct.domain.repository.DroneRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(MatrixController.class)

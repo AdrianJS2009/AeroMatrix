@@ -21,13 +21,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.drones.fct.domain.Drone;
-import com.drones.fct.domain.Matrix;
-import com.drones.fct.exception.ConflictException;
-import com.drones.fct.exception.NotFoundException;
-import com.drones.fct.repository.DroneRepository;
-import com.drones.fct.repository.MatrixRepository;
-import com.drones.fct.service.MatrixService;
+import com.drones.fct.api.exception.ConflictException;
+import com.drones.fct.api.exception.NotFoundException;
+import com.drones.fct.application.MatrixService;
+import com.drones.fct.domain.model.Drone;
+import com.drones.fct.domain.model.Matrix;
+import com.drones.fct.domain.repository.DroneRepository;
+import com.drones.fct.domain.repository.MatrixRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MatrixServiceTest {

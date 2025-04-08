@@ -21,14 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-import com.drones.fct.domain.Drone;
-import com.drones.fct.domain.Matrix;
-import com.drones.fct.domain.MovementCommand;
-import com.drones.fct.domain.Orientation;
-import com.drones.fct.exception.ConflictException;
-import com.drones.fct.exception.UnsupportedCommandException;
-import com.drones.fct.repository.DroneRepository;
-import com.drones.fct.service.FlightService;
+import com.drones.fct.api.exception.ConflictException;
+import com.drones.fct.api.exception.UnsupportedCommandException;
+import com.drones.fct.application.FlightService;
+import com.drones.fct.domain.model.Drone;
+import com.drones.fct.domain.model.Matrix;
+import com.drones.fct.domain.model.MovementCommand;
+import com.drones.fct.domain.model.Orientation;
+import com.drones.fct.domain.repository.DroneRepository;
 
 @ExtendWith(MockitoExtension.class)
 class FlightServiceTest {
@@ -121,7 +121,7 @@ class FlightServiceTest {
                 .when(droneRepository).findByXAndYAndMatrixId(anyInt(), anyInt(), anyLong());
 
         ConflictException exception = assertThrows(ConflictException.class, () -> flightService.executeBatchCommands(
-                List.of(new com.drones.fct.dto.BatchDroneCommandRequest.DroneCommand(100L,
+                List.of(new com.drones.fct.api.dto.BatchDroneCommandRequest.DroneCommand(100L,
                         List.of(MovementCommand.MOVE_FORWARD)))));
         assertTrue(exception.getMessage().contains("Concurrency conflict"));
     }

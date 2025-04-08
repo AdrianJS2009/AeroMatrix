@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.drones.fct.domain.model.Matrix;
+
 class MatrixTest {
 
   @Test
