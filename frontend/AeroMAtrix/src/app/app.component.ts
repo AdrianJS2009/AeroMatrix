@@ -19,7 +19,7 @@ import {
   Language,
   TranslationService,
 } from './core/services/translation.service';
-import { SidebarComponent } from './layout/sidebar.component';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',

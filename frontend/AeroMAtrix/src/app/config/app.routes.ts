@@ -1,6 +1,6 @@
 import type { Routes } from '@angular/router';
 import { LandingPageComponent } from '../landing-page/landing-page.component';
-import { ShellComponent } from '../layout/shell.component';
+import { ShellComponent } from '../layout/shell/shell.component';
 
 export const routes: Routes = [
   // Landing page route for the root path
