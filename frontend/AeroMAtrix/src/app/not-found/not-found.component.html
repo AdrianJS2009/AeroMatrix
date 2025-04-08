@@ -1,0 +1,62 @@
+<div class="not-found-container">
+  <div class="not-found-content" @fadeIn>
+    <div class="error-code">404</div>
+
+    <div class="drone-animation">
+      <div class="drone">
+        <div class="drone-body"></div>
+        <div class="drone-propeller propeller-1"></div>
+        <div class="drone-propeller propeller-2"></div>
+        <div class="drone-propeller propeller-3"></div>
+        <div class="drone-propeller propeller-4"></div>
+        <div class="drone-camera"></div>
+      </div>
+    </div>
+
+    <h1>{{ "error.pageNotFound" | translate }}</h1>
+    <p>{{ "error.pageNotFoundMessage" | translate }}</p>
+
+    <div class="action-buttons">
+      <button
+        pButton
+        pRipple
+        icon="pi pi-home"
+        [label]="'error.returnHome' | translate"
+        class="p-button-primary"
+        (click)="navigateToHome()"
+        title="{{ 'error.returnHome' | translate }}"
+      ></button>
+
+      <button
+        pButton
+        pRipple
+        icon="pi pi-arrow-left"
+        [label]="'error.goBack' | translate"
+        class="p-button-outlined"
+        (click)="goBack()"
+        title="{{ 'error.goBack' | translate }}"
+      ></button>
+    </div>
+
+    <p-card styleClass="error-card">
+      <ng-template pTemplate="header">
+        <div class="error-card-header">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ "error.technicalInfo" | translate }}</span>
+        </div>
+      </ng-template>
+      <p>{{ "error.technicalMessage" | translate }}</p>
+      <p class="error-path">
+        <span>{{ "error.requestedUrl" | translate }}:</span>
+        <code>{{ currentPath }}</code>
+      </p>
+    </p-card>
+  </div>
+
+  <div class="background-elements">
+    <div class="grid-lines"></div>
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+</div>
