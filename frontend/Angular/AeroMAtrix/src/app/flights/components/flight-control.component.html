@@ -30,6 +30,41 @@
     class="flight-control-content"
     [ngClass]="{ 'dark-theme': darkMode }"
   >
+    <!-- Matrix Selection -->
+    <div class="matrix-selection-container mb-3">
+      <p-card>
+        <div class="grid">
+          <div class="col-12 md:col-6">
+            <h3>Select Matrix</h3>
+            <p-dropdown
+              [options]="matrixOptions"
+              [(ngModel)]="selectedMatrixId"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a matrix"
+              [showClear]="false"
+              (onChange)="onMatrixSelect()"
+              styleClass="w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-12 md:col-6">
+            <h3>Select Drone</h3>
+            <p-dropdown
+              [options]="droneOptions"
+              [(ngModel)]="selectedDroneId"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a drone"
+              [showClear]="true"
+              (onChange)="onDroneSelect()"
+              styleClass="w-full"
+              [disabled]="!selectedMatrixId || droneOptions.length === 0"
+            ></p-dropdown>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
     <div class="grid">
       <!-- Matrix Visualization -->
       <div class="col-12 lg:col-6 xl:col-7">
@@ -37,7 +72,7 @@
           <app-drone-matrix
             [matrix]="selectedMatrix"
             [drones]="selectedMatrix?.drones || []"
-            [selectedDroneId]="selectedDrone?.id"
+            [selectedDroneId]="selectedDroneId"
             (droneSelected)="onMatrixDroneSelect($event)"
           ></app-drone-matrix>
         </div>
@@ -50,6 +85,149 @@
             <!-- SINGLE DRONE COMMANDS -->
             <p-tabPanel header="Single Drone" leftIcon="pi pi-send">
               <!-- Inputs and command buttons for single drone -->
+              <div class="command-input-container">
+                <label for="commandsText" class="block mb-2 font-medium"
+                  >Flight Commands</label
+                >
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">
+                    <i class="pi pi-code"></i>
+                  </span>
+                  <textarea
+                    id="commandsText"
+                    pInputTextarea
+                    [(ngModel)]="commandsText"
+                    placeholder="Enter commands (e.g., ALARA)"
+                    class="p-inputtext-lg"
+                    rows="3"
+                    [disabled]="!selectedDroneId"
+                    [ngClass]="{ 'ng-invalid': commandsTextInvalid }"
+                  ></textarea>
+                </div>
+                <small class="block mt-1 text-secondary"
+                  >Use A (Advance), L (Left), R (Right)</small
+                >
+                <small *ngIf="commandsTextInvalid" class="block mt-1 p-error">
+                  Commands must only contain A, L, and R characters
+                </small>
+              </div>
+
+              <!-- Command buttons -->
+              <div class="command-buttons-container mb-3">
+                <h4>Quick Commands</h4>
+                <div class="command-buttons">
+                  <button
+                    pButton
+                    pRipple
+                    label="A"
+                    class="command-button move-forward"
+                    (click)="addCommand('A')"
+                    [disabled]="!selectedDroneId"
+                    title="Move Forward"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    label="L"
+                    class="command-button turn-left"
+                    (click)="addCommand('L')"
+                    [disabled]="!selectedDroneId"
+                    title="Turn Left"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    label="R"
+                    class="command-button turn-right"
+                    (click)="addCommand('R')"
+                    [disabled]="!selectedDroneId"
+                    title="Turn Right"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    icon="pi pi-trash"
+                    class="p-button-outlined p-button-danger"
+                    (click)="clearCommands()"
+                    [disabled]="!selectedDroneId || !commandsText"
+                    title="Clear Commands"
+                  ></button>
+                </div>
+              </div>
+
+              <!-- Command validation -->
+              <div
+                *ngIf="commandValidationResult && commandsText"
+                class="command-validation-result mb-3"
+              >
+                <div
+                  [ngClass]="{
+                    'validation-success': !commandValidationResult.hasErrors,
+                    'validation-error': commandValidationResult.hasErrors
+                  }"
+                >
+                  <div class="validation-header">
+                    <i
+                      class="pi"
+                      [ngClass]="{
+                        'pi-check-circle': !commandValidationResult.hasErrors,
+                        'pi-exclamation-triangle':
+                          commandValidationResult.hasErrors
+                      }"
+                    ></i>
+                    <span>Command Validation</span>
+                  </div>
+                  <div class="validation-message">
+                    <span *ngIf="!commandValidationResult.hasErrors"
+                      >Commands are valid and will move the drone within matrix
+                      boundaries.</span
+                    >
+                    <span *ngIf="commandValidationResult.hasErrors">{{
+                      commandValidationResult.errorMessage
+                    }}</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      commandValidationResult.finalPosition &&
+                      !commandValidationResult.hasErrors
+                    "
+                    class="validation-details"
+                  >
+                    <span
+                      >Final position: ({{
+                        commandValidationResult.finalPosition.x
+                      }}, {{ commandValidationResult.finalPosition.y }}) facing
+                      {{
+                        getOrientationLabel(
+                          commandValidationResult.finalPosition.orientation
+                        )
+                      }}</span
+                    >
+                  </div>
+                  <div
+                    *ngIf="
+                      commandValidationResult.collisions &&
+                      commandValidationResult.collisions.length > 0
+                    "
+                    class="validation-collisions"
+                  >
+                    <span class="collision-warning"
+                      >Potential collisions detected:</span
+                    >
+                    <ul>
+                      <li
+                        *ngFor="
+                          let collision of commandValidationResult.collisions
+                        "
+                      >
+                        At position ({{ collision.x }}, {{ collision.y }}) with
+                        drone "{{ collision.droneName }}"
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <button
                 pButton
                 pRipple
@@ -57,7 +235,12 @@
                 icon="pi pi-play"
                 class="execute-button"
                 (click)="executeSingle()"
-                [disabled]="!selectedDrone || !commandsText || executingSingle"
+                [disabled]="
+                  !selectedDroneId ||
+                  !commandsText ||
+                  executingSingle ||
+                  (commandValidationResult && commandValidationResult.hasErrors)
+                "
                 [loading]="executingSingle"
                 title="Execute flight"
               ></button>
@@ -65,7 +248,148 @@
 
             <!-- MULTIPLE DRONES - SAME COMMANDS -->
             <p-tabPanel header="Group Flight" leftIcon="pi pi-users">
+              <!-- Drone selection -->
+              <div class="mb-3">
+                <label class="block mb-2 font-medium">Select Drones</label>
+                <p-multiSelect
+                  [options]="droneOptions"
+                  [(ngModel)]="multiSelectedDroneIds"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  placeholder="Select drones for group flight"
+                  styleClass="w-full"
+                  [disabled]="!selectedMatrixId"
+                  (onChange)="updateMultiSelectedDrones()"
+                ></p-multiSelect>
+              </div>
+
               <!-- Inputs and command buttons for group flight -->
+              <div class="command-input-container">
+                <label for="commandsGroupText" class="block mb-2 font-medium"
+                  >Group Flight Commands</label
+                >
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">
+                    <i class="pi pi-code"></i>
+                  </span>
+                  <textarea
+                    id="commandsGroupText"
+                    pInputTextarea
+                    [(ngModel)]="commandsGroupText"
+                    placeholder="Enter commands for all selected drones"
+                    class="p-inputtext-lg"
+                    rows="3"
+                    [disabled]="multiSelectedDroneIds.length === 0"
+                    [ngClass]="{ 'ng-invalid': commandsGroupTextInvalid }"
+                    (ngModelChange)="validateGroupCommands()"
+                  ></textarea>
+                </div>
+                <small class="block mt-1 text-secondary"
+                  >These commands will be executed by all selected drones</small
+                >
+                <small
+                  *ngIf="commandsGroupTextInvalid"
+                  class="block mt-1 p-error"
+                >
+                  Commands must only contain A, L, and R characters
+                </small>
+              </div>
+
+              <!-- Command buttons -->
+              <div class="command-buttons-container mb-3">
+                <h4>Quick Commands</h4>
+                <div class="command-buttons">
+                  <button
+                    pButton
+                    pRipple
+                    label="A"
+                    class="command-button move-forward"
+                    (click)="addGroupCommand('A')"
+                    [disabled]="multiSelectedDroneIds.length === 0"
+                    title="Move Forward"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    label="L"
+                    class="command-button turn-left"
+                    (click)="addGroupCommand('L')"
+                    [disabled]="multiSelectedDroneIds.length === 0"
+                    title="Turn Left"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    label="R"
+                    class="command-button turn-right"
+                    (click)="addGroupCommand('R')"
+                    [disabled]="multiSelectedDroneIds.length === 0"
+                    title="Turn Right"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    icon="pi pi-trash"
+                    class="p-button-outlined p-button-danger"
+                    (click)="clearGroupCommands()"
+                    [disabled]="
+                      multiSelectedDroneIds.length === 0 || !commandsGroupText
+                    "
+                    title="Clear Commands"
+                  ></button>
+                </div>
+              </div>
+
+              <!-- Group command validation -->
+              <div
+                *ngIf="groupValidationResults && commandsGroupText"
+                class="command-validation-result mb-3"
+              >
+                <div
+                  [ngClass]="{
+                    'validation-success': !hasGroupValidationErrors(),
+                    'validation-error': hasGroupValidationErrors()
+                  }"
+                >
+                  <div class="validation-header">
+                    <i
+                      class="pi"
+                      [ngClass]="{
+                        'pi-check-circle': !hasGroupValidationErrors(),
+                        'pi-exclamation-triangle': hasGroupValidationErrors()
+                      }"
+                    ></i>
+                    <span>Group Command Validation</span>
+                  </div>
+                  <div class="validation-message">
+                    <span *ngIf="!hasGroupValidationErrors()"
+                      >Commands are valid for all selected drones.</span
+                    >
+                    <span *ngIf="hasGroupValidationErrors()"
+                      >Some drones will encounter issues with these
+                      commands.</span
+                    >
+                  </div>
+                  <div
+                    *ngIf="hasGroupCollisions()"
+                    class="validation-collisions"
+                  >
+                    <span class="collision-warning"
+                      >Potential collisions detected between drones:</span
+                    >
+                    <ul>
+                      <li *ngFor="let collision of getGroupCollisions()">
+                        At position ({{ collision.x }}, {{ collision.y }})
+                        between drones "{{ collision.drone1 }}" and "{{
+                          collision.drone2
+                        }}"
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <button
                 pButton
                 pRipple
@@ -74,9 +398,10 @@
                 class="execute-button"
                 (click)="executeGroup()"
                 [disabled]="
-                  !multiSelectedDrones.length ||
+                  multiSelectedDroneIds.length === 0 ||
                   !commandsGroupText ||
-                  executingGroup
+                  executingGroup ||
+                  hasGroupValidationErrors()
                 "
                 [loading]="executingGroup"
                 title="Execute group flight"
@@ -86,6 +411,100 @@
             <!-- DIFFERENT SEQUENCES PER DRONE -->
             <p-tabPanel header="Batch Flights" leftIcon="pi pi-list">
               <!-- Batch commands management -->
+              <div class="batch-commands-container mb-3">
+                <div
+                  *ngFor="let command of batchCommands; let i = index"
+                  class="batch-command-row mb-2"
+                >
+                  <div class="grid">
+                    <div class="col-12 md:col-5">
+                      <p-dropdown
+                        [options]="droneOptions"
+                        [(ngModel)]="command.droneId"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Select drone"
+                        styleClass="w-full"
+                        [disabled]="!selectedMatrixId"
+                        (onChange)="validateBatchCommand(i)"
+                      ></p-dropdown>
+                    </div>
+                    <div class="col-12 md:col-5">
+                      <div class="p-inputgroup">
+                        <input
+                          pInputText
+                          [(ngModel)]="command.commands"
+                          placeholder="Enter command sequence"
+                          class="w-full"
+                          [ngClass]="{
+                            'ng-invalid': isBatchCommandInvalid(
+                              command.commands
+                            )
+                          }"
+                          (ngModelChange)="validateBatchCommand(i)"
+                        />
+                        <span class="p-inputgroup-addon">
+                          <i class="pi pi-code"></i>
+                        </span>
+                      </div>
+                      <small
+                        *ngIf="
+                          command.validationResult &&
+                          command.validationResult.hasErrors
+                        "
+                        class="p-error"
+                      >
+                        {{ command.validationResult.errorMessage }}
+                      </small>
+                    </div>
+                    <div class="col-12 md:col-2 text-right">
+                      <button
+                        pButton
+                        pRipple
+                        icon="pi pi-trash"
+                        class="p-button-rounded p-button-danger p-button-text"
+                        (click)="removeBatchCommand(i)"
+                        title="Remove command"
+                      ></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  *ngIf="batchCommands.length === 0"
+                  class="empty-batch-message"
+                >
+                  <i class="pi pi-info-circle"></i>
+                  <span>No batch commands added</span>
+                </div>
+              </div>
+
+              <!-- Batch validation summary -->
+              <div
+                *ngIf="hasBatchCollisions()"
+                class="batch-validation-summary mb-3"
+              >
+                <div class="validation-error">
+                  <div class="validation-header">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    <span>Batch Validation Issues</span>
+                  </div>
+                  <div class="validation-collisions">
+                    <span class="collision-warning"
+                      >Potential collisions detected in batch execution:</span
+                    >
+                    <ul>
+                      <li *ngFor="let collision of getBatchCollisions()">
+                        At position ({{ collision.x }}, {{ collision.y }})
+                        between drones "{{ collision.drone1 }}" and "{{
+                          collision.drone2
+                        }}"
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <div class="batch-actions">
                 <button
                   pButton
@@ -94,6 +513,7 @@
                   icon="pi pi-plus"
                   class="p-button-outlined"
                   (click)="addBatchCommand()"
+                  [disabled]="!selectedMatrixId"
                   title="Add flight to batch"
                 ></button>
                 <button
@@ -102,7 +522,11 @@
                   label="Execute All Flights"
                   icon="pi pi-play"
                   (click)="executeBatch()"
-                  [disabled]="!isValidBatch() || executingBatch"
+                  [disabled]="
+                    !isValidBatch() ||
+                    executingBatch ||
+                    hasBatchValidationErrors()
+                  "
                   [loading]="executingBatch"
                   title="Execute all batch flights"
                 ></button>
@@ -124,6 +548,11 @@
         <div
           *ngFor="let flight of flightHistory; let i = index"
           class="flight-history-item"
+          [ngClass]="{
+            success: flight.status === 'Completed',
+            error: flight.status === 'Failed',
+            pending: flight.status === 'Pending'
+          }"
           @slideInRight
         >
           <div class="flight-time">{{ flight.time }}</div>

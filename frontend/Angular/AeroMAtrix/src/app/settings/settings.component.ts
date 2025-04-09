@@ -94,6 +94,9 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
+  // Add this property to the class
+  hideApiKey = true;
+
   constructor(
     private readonly messageService: MessageService,
     private readonly themeService: ThemeService,
@@ -200,5 +203,35 @@ export class SettingsComponent {
         life: 3000,
       });
     }, 1500);
+  }
+
+  // Add this method to the class
+  validateApiUrl(): void {
+    if (!this.settings.apiUrl) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: 'Please enter an API URL',
+        life: 3000,
+      });
+      return;
+    }
+
+    try {
+      new URL(this.settings.apiUrl);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Validation Success',
+        detail: 'API URL format is valid',
+        life: 3000,
+      });
+    } catch (e) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: 'Invalid URL format',
+        life: 3000,
+      });
+    }
   }
 }

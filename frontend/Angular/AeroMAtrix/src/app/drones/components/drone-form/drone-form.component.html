@@ -25,165 +25,186 @@
     *ngIf="!loading"
     [formGroup]="droneForm"
     (ngSubmit)="onSubmit()"
-    class="p-fluid"
+    class="p-fluid drone-form"
     @fadeIn
   >
-    <!-- Drone Information Section -->
-    <div class="form-section">
-      <h3>Drone Information</h3>
+    <div class="form-content">
+      <!-- Drone Information Section -->
+      <div class="form-section">
+        <h3>Drone Information</h3>
 
-      <div class="field">
-        <label for="name" class="font-bold">Name</label>
-        <input
-          id="name"
-          pInputText
-          formControlName="name"
-          placeholder="Enter drone name"
-          [ngClass]="{
-            'ng-invalid ng-dirty':
-              submitted && droneForm.controls['name'].invalid
-          }"
-          aria-describedby="name-help"
-        />
-        <small
-          id="name-help"
-          *ngIf="submitted && droneForm.controls['name'].invalid"
-          class="p-error"
-        >
-          Name is required
-        </small>
-      </div>
-
-      <div class="field">
-        <label for="model" class="font-bold">Model</label>
-        <input
-          id="model"
-          pInputText
-          formControlName="model"
-          placeholder="Enter drone model"
-          [ngClass]="{
-            'ng-invalid ng-dirty':
-              submitted && droneForm.controls['model'].invalid
-          }"
-          aria-describedby="model-help"
-        />
-        <small
-          id="model-help"
-          *ngIf="submitted && droneForm.controls['model'].invalid"
-          class="p-error"
-        >
-          Model is required
-        </small>
-      </div>
-    </div>
-
-    <p-divider></p-divider>
-
-    <!-- Position & Orientation Section -->
-    <div class="form-section">
-      <h3>Position & Orientation</h3>
-
-      <div class="formgrid grid">
-        <div class="field col">
-          <label for="x" class="font-bold">X Position</label>
-          <p-inputNumber
-            id="x"
-            formControlName="x"
-            [showButtons]="true"
-            [min]="0"
+        <div class="field">
+          <label for="name" class="font-bold">Name</label>
+          <input
+            id="name"
+            pInputText
+            formControlName="name"
+            placeholder="Enter drone name"
             [ngClass]="{
               'ng-invalid ng-dirty':
-                submitted && droneForm.controls['x'].invalid
+                submitted && droneForm.controls['name'].invalid
             }"
-            aria-describedby="x-help"
-          ></p-inputNumber>
+            aria-describedby="name-help"
+          />
           <small
-            id="x-help"
-            *ngIf="submitted && droneForm.controls['x'].invalid"
+            id="name-help"
+            *ngIf="submitted && droneForm.controls['name'].invalid"
             class="p-error"
           >
-            X position is required
+            Name is required
           </small>
         </div>
 
-        <div class="field col">
-          <label for="y" class="font-bold">Y Position</label>
-          <p-inputNumber
-            id="y"
-            formControlName="y"
-            [showButtons]="true"
-            [min]="0"
+        <div class="field">
+          <label for="model" class="font-bold">Model</label>
+          <input
+            id="model"
+            pInputText
+            formControlName="model"
+            placeholder="Enter drone model"
             [ngClass]="{
               'ng-invalid ng-dirty':
-                submitted && droneForm.controls['y'].invalid
+                submitted && droneForm.controls['model'].invalid
             }"
-            aria-describedby="y-help"
-          ></p-inputNumber>
+            aria-describedby="model-help"
+          />
           <small
-            id="y-help"
-            *ngIf="submitted && droneForm.controls['y'].invalid"
+            id="model-help"
+            *ngIf="submitted && droneForm.controls['model'].invalid"
             class="p-error"
           >
-            Y position is required
+            Model is required
           </small>
         </div>
       </div>
 
-      <div class="field">
-        <label for="orientation" class="font-bold">Orientation</label>
-        <p-dropdown
-          id="orientation"
-          [options]="orientationOptions"
-          optionLabel="label"
-          optionValue="value"
-          formControlName="orientation"
-          placeholder="Select orientation"
-          [ngClass]="{
-            'ng-invalid ng-dirty':
-              submitted && droneForm.controls['orientation'].invalid
-          }"
-          aria-describedby="orientation-help"
-        ></p-dropdown>
-        <small
-          id="orientation-help"
-          *ngIf="submitted && droneForm.controls['orientation'].invalid"
-          class="p-error"
-        >
-          Orientation is required
-        </small>
+      <p-divider></p-divider>
+
+      <!-- Position & Orientation Section -->
+      <div class="form-section">
+        <h3>Position & Orientation</h3>
+
+        <div class="formgrid grid">
+          <div class="field col">
+            <label for="x" class="font-bold">X Position</label>
+            <p-inputNumber
+              id="x"
+              formControlName="x"
+              [showButtons]="true"
+              [min]="0"
+              [max]="selectedMatrixMaxX"
+              [ngClass]="{
+                'ng-invalid ng-dirty':
+                  submitted && droneForm.controls['x'].invalid
+              }"
+              aria-describedby="x-help"
+            ></p-inputNumber>
+            <small
+              id="x-help"
+              *ngIf="submitted && droneForm.controls['x'].invalid"
+              class="p-error"
+            >
+              X position is required and must be within matrix bounds (0-{{
+                selectedMatrixMaxX
+              }})
+            </small>
+          </div>
+
+          <div class="field col">
+            <label for="y" class="font-bold">Y Position</label>
+            <p-inputNumber
+              id="y"
+              formControlName="y"
+              [showButtons]="true"
+              [min]="0"
+              [max]="selectedMatrixMaxY"
+              [ngClass]="{
+                'ng-invalid ng-dirty':
+                  submitted && droneForm.controls['y'].invalid
+              }"
+              aria-describedby="y-help"
+            ></p-inputNumber>
+            <small
+              id="y-help"
+              *ngIf="submitted && droneForm.controls['y'].invalid"
+              class="p-error"
+            >
+              Y position is required and must be within matrix bounds (0-{{
+                selectedMatrixMaxY
+              }})
+            </small>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="orientation" class="font-bold">Orientation</label>
+          <p-dropdown
+            id="orientation"
+            [options]="orientationOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="orientation"
+            placeholder="Select orientation"
+            [ngClass]="{
+              'ng-invalid ng-dirty':
+                submitted && droneForm.controls['orientation'].invalid
+            }"
+            aria-describedby="orientation-help"
+          ></p-dropdown>
+          <small
+            id="orientation-help"
+            *ngIf="submitted && droneForm.controls['orientation'].invalid"
+            class="p-error"
+          >
+            Orientation is required
+          </small>
+        </div>
       </div>
-    </div>
 
-    <p-divider></p-divider>
+      <p-divider></p-divider>
 
-    <!-- Matrix Assignment Section -->
-    <div class="form-section">
-      <h3>Matrix Assignment</h3>
+      <!-- Matrix Assignment Section -->
+      <div class="form-section">
+        <h3>Matrix Assignment</h3>
 
-      <div class="field">
-        <label for="matrixId" class="font-bold">Matrix</label>
-        <p-dropdown
-          id="matrixId"
-          [options]="matrixOptions"
-          optionLabel="label"
-          optionValue="value"
-          formControlName="matrixId"
-          placeholder="Select matrix"
-          [ngClass]="{
-            'ng-invalid ng-dirty':
-              submitted && droneForm.controls['matrixId'].invalid
-          }"
-          [filter]="true"
-          filterBy="label"
-          aria-describedby="matrix-help"
-        ></p-dropdown>
-        <small
-          id="matrix-help"
-          *ngIf="submitted && droneForm.controls['matrixId'].invalid"
-          class="p-error"
+        <div class="field">
+          <label for="matrixId" class="font-bold">Matrix</label>
+          <p-dropdown
+            id="matrixId"
+            [options]="matrixOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="matrixId"
+            placeholder="Select matrix"
+            [ngClass]="{
+              'ng-invalid ng-dirty':
+                submitted && droneForm.controls['matrixId'].invalid
+            }"
+            [filter]="true"
+            filterBy="label"
+            aria-describedby="matrix-help"
+            (onChange)="onMatrixChange()"
+          ></p-dropdown>
+          <small
+            id="matrix-help"
+            *ngIf="submitted && droneForm.controls['matrixId'].invalid"
+            class="p-error"
+          >
+            Matrix is required
+          </small>
+        </div>
+
+        <div
+          *ngIf="selectedMatrixId && positionOccupied"
+          class="position-warning"
         >
-          Matrix is required
-        </small>
+          <i class="pi pi-exclamation-triangle"></i>
+          <span
+            >Warning: This position ({{ droneForm.get("x")?.value }},
+            {{ droneForm.get("y")?.value }}) is already occupied by another
+            drone.</span
+          >
+        </div>
       </div>
     </div>
 
@@ -204,10 +225,9 @@
         pRipple
         type="submit"
         label="Save"
-        s
         icon="pi pi-check"
         [loading]="submitting"
-        [disabled]="submitting"
+        [disabled]="submitting || (positionOccupied && !droneToEdit)"
         title="Save Drone"
       ></button>
     </div>

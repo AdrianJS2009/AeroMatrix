@@ -1,6 +1,12 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  type OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -56,6 +62,7 @@ export class MatrixFormComponent implements OnInit {
   loading = false;
   submitting = false;
   submitted = false;
+  Math = Math; // Add Math object for use in template
 
   constructor(
     private readonly fb: FormBuilder,

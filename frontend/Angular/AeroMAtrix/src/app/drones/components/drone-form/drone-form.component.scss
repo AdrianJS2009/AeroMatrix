@@ -1,49 +1,177 @@
-:host ::ng-deep .drone-form-dialog .p-dialog-content {
-  padding: 0 1.5rem 1.5rem 1.5rem;
+.drone-form-dialog {
+  .p-dialog-content {
+    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh !important;
+  }
 }
 
-.form-section {
+.drone-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 70vh;
+}
+
+.form-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.form-section h3 {
-  font-size: 1.1rem;
-  margin-bottom: 1.25rem;
-  color: var(--primary-700);
+.form-section {
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-border);
+  position: sticky;
+  bottom: 0;
+  background-color: var(--surface-overlay);
+  z-index: 1;
 }
 
-:host ::ng-deep .p-inputnumber-buttons-stacked .p-inputnumber-button-group {
+.loading-container {
+  min-height: 200px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-  padding: 0.75rem 1.25rem;
-}
+.field {
+  margin-bottom: 1.5rem;
 
-:host ::ng-deep .p-inputtext:enabled:focus {
-  box-shadow: 0 0 0 2px var(--primary-100);
-  border-color: var(--primary-500);
-}
-
-:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
-  box-shadow: 0 0 0 2px var(--primary-100);
-  border-color: var(--primary-500);
-}
-
-@media screen and (max-width: 576px) {
-  .form-actions {
-    flex-direction: column-reverse;
+  &:last-child {
+    margin-bottom: 0;
   }
 
-  .form-actions button {
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.position-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--yellow-50);
+  border-left: 4px solid var(--yellow-500);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+
+  i {
+    color: var(--yellow-500);
+    font-size: 1.2rem;
+  }
+
+  span {
+    color: var(--yellow-900);
+    font-size: 0.875rem;
+  }
+}
+
+:host ::ng-deep {
+  .p-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+
+    .p-dialog-content {
+      flex: 1;
+      overflow: hidden;
+    }
+  }
+
+  .p-dropdown,
+  .p-inputnumber,
+  .p-inputtext {
     width: 100%;
+  }
+
+  .p-dropdown {
+    width: 100%;
+  }
+
+  .form-field-icon {
+    color: var(--text-color-secondary);
+    margin-right: 0.5rem;
+  }
+
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding: 0.75rem 1rem;
+  }
+
+  .p-inputtext:enabled:focus {
+    box-shadow: 0 0 0 1px var(--primary-color);
+  }
+
+  .p-dropdown:not(.p-disabled).p-focus {
+    box-shadow: 0 0 0 1px var(--primary-color);
+  }
+
+  .p-inputnumber-buttons-horizontal .p-inputnumber-input {
+    text-align: center;
+  }
+
+  .custom-spinner .p-progress-spinner-circle {
+    stroke: var(--primary-color) !important;
+  }
+
+  .matrix-info {
+    background-color: var(--surface-hover);
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+
+    .matrix-label {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .matrix-value {
+      color: var(--primary-color);
+    }
+  }
+
+  .orientation-option {
+    display: flex;
+    align-items: center;
+
+    .orientation-icon {
+      margin-right: 0.5rem;
+      color: var(--primary-color);
+    }
+  }
+
+  .p-inputnumber-buttons-stacked .p-inputnumber-button-group {
+    display: flex;
+  }
+
+  .p-dialog-content {
+    padding-bottom: 1.5rem;
+  }
+
+  .p-dialog-footer {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--surface-overlay);
+    z-index: 1;
   }
 }

@@ -1,23 +1,26 @@
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
-  [closable]="true"
-  [style]="{ width: '450px' }"
   [draggable]="false"
   [resizable]="false"
+  [style]="{ width: '450px' }"
+  header="{{ matrixToEdit ? 'Edit Matrix' : 'Create New Matrix' }}"
+  [closeOnEscape]="true"
+  [dismissableMask]="true"
   (onHide)="onCancel()"
-  [header]="matrixToEdit ? 'Edit Matrix' : 'Create New Matrix'"
-  styleClass="matrix-form-dialog"
 >
-  <!-- Loading indicator -->
-  <div *ngIf="loading" class="loading-container">
-    <p-progressSpinner
-      strokeWidth="4"
-      [style]="{ width: '50px', height: '50px' }"
-    ></p-progressSpinner>
-  </div>
+  <ng-container *ngIf="loading">
+    <div class="flex justify-content-center align-items-center p-4">
+      <p-progressSpinner
+        [style]="{ width: '50px', height: '50px' }"
+        styleClass="custom-spinner"
+        strokeWidth="4"
+        fill="var(--surface-ground)"
+        animationDuration=".5s"
+      ></p-progressSpinner>
+    </div>
+  </ng-container>
 
-  <!-- Form for matrix dimensions -->
   <form
     *ngIf="!loading"
     [formGroup]="matrixForm"
@@ -25,81 +28,97 @@
     class="p-fluid"
     @fadeIn
   >
-    <div class="form-section">
-      <h3>Matrix Dimensions</h3>
-      <p class="section-description">
-        Define the size of your operational matrix
-      </p>
-
-      <div class="formgrid grid">
-        <div class="field col">
-          <label for="maxX" class="font-bold">X Dimension</label>
+    <div class="grid">
+      <div class="col-6">
+        <div class="field">
+          <label for="maxX" class="font-medium">Width (X)</label>
           <p-inputNumber
             id="maxX"
             formControlName="maxX"
             [showButtons]="true"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
             [min]="1"
-            [ngClass]="{
-              'ng-invalid ng-dirty':
-                submitted && matrixForm.controls['maxX'].invalid
-            }"
+            [max]="20"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            [inputStyleClass]="
+              submitted && matrixForm.get('maxX')?.invalid
+                ? 'ng-invalid ng-dirty'
+                : ''
+            "
           ></p-inputNumber>
           <small
-            *ngIf="submitted && matrixForm.controls['maxX'].invalid"
+            *ngIf="submitted && matrixForm.get('maxX')?.invalid"
             class="p-error"
+            >Width is required and must be at least 1</small
           >
-            X dimension must be greater than 0
-          </small>
         </div>
+      </div>
 
-        <div class="field col">
-          <label for="maxY" class="font-bold">Y Dimension</label>
+      <div class="col-6">
+        <div class="field">
+          <label for="maxY" class="font-medium">Height (Y)</label>
           <p-inputNumber
             id="maxY"
             formControlName="maxY"
             [showButtons]="true"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
             [min]="1"
-            [ngClass]="{
-              'ng-invalid ng-dirty':
-                submitted && matrixForm.controls['maxY'].invalid
-            }"
+            [max]="20"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            [inputStyleClass]="
+              submitted && matrixForm.get('maxY')?.invalid
+                ? 'ng-invalid ng-dirty'
+                : ''
+            "
           ></p-inputNumber>
           <small
-            *ngIf="submitted && matrixForm.controls['maxY'].invalid"
+            *ngIf="submitted && matrixForm.get('maxY')?.invalid"
             class="p-error"
+            >Height is required and must be at least 1</small
           >
-            Y dimension must be greater than 0
-          </small>
-        </div>
-      </div>
-
-      <!-- Matrix preview grid -->
-      <div class="matrix-preview">
-        <div class="preview-label">Preview:</div>
-        <div
-          class="preview-grid"
-          [style.--grid-cols]="matrixForm.value.maxX"
-          [style.--grid-rows]="matrixForm.value.maxY"
-        >
-          <div class="preview-cell" *ngFor="let _ of getPreviewArray()"></div>
-        </div>
-        <div class="preview-info">
-          {{ matrixForm.value.maxX }} × {{ matrixForm.value.maxY }} =
-          {{ matrixForm.value.maxX * matrixForm.value.maxY }} cells
         </div>
       </div>
     </div>
 
-    <!-- Form actions -->
-    <div class="form-actions">
+    <div class="field mt-4">
+      <label class="font-medium mb-2 block">Matrix Preview</label>
+      <div
+        class="matrix-preview border-1 surface-border border-round p-2 flex flex-wrap justify-content-center"
+      >
+        <div
+          *ngFor="let _ of getPreviewArray(); let i = index"
+          class="matrix-cell"
+          [style.width.%]="100 / matrixForm.value.maxX"
+          [attr.data-x]="i % matrixForm.value.maxX"
+          [attr.data-y]="Math.floor(i / matrixForm.value.maxX)"
+        ></div>
+      </div>
+      <small class="text-secondary">
+        This is a preview of the matrix with dimensions
+        {{ matrixForm.value.maxX }} x {{ matrixForm.value.maxY }}
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <div class="flex justify-content-end gap-2 mt-4">
       <button
         pButton
         pRipple
         type="button"
         label="Cancel"
         class="p-button-outlined p-button-secondary"
-        (click)="onCancel()"
+        icon="pi pi-times"
         [disabled]="submitting"
+        (click)="onCancel()"
         title="Cancel"
       ></button>
       <button
@@ -110,10 +129,8 @@
         icon="pi pi-check"
         [loading]="submitting"
         [disabled]="submitting"
-        title="Save matrix"
+        title="Save"
       ></button>
     </div>
   </form>
 </p-dialog>
-
-<p-toast></p-toast>

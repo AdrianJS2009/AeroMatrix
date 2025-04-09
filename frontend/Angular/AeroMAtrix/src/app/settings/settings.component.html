@@ -290,13 +290,28 @@
               }}</label>
               <small>{{ "SETTINGS.API.API_URL_DESC" | translate }}</small>
             </div>
-            <input
-              pInputText
-              [(ngModel)]="settings.apiUrl"
-              class="w-full md:w-30rem"
-              placeholder="Enter API URL"
-              title="API URL"
-            />
+            <div class="p-inputgroup w-full md:w-30rem">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-link"></i>
+              </span>
+              <input
+                pInputText
+                [(ngModel)]="settings.apiUrl"
+                placeholder="Enter API URL"
+                title="API URL"
+              />
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-check"
+                class="p-button-success"
+                pTooltip="Validate URL"
+                tooltipPosition="top"
+                (click)="validateApiUrl()"
+                title="ValidateURL"
+              ></button>
+            </div>
           </div>
 
           <!-- API Timeout Setting -->
@@ -353,14 +368,28 @@
               }}</label>
               <small>{{ "SETTINGS.API.API_KEY_DESC" | translate }}</small>
             </div>
-            <input
-              pInputText
-              [(ngModel)]="settings.apiKey"
-              type="password"
-              class="w-full md:w-30rem"
-              title="Enter your API key"
-              placeholder="API Key"
-            />
+            <div class="p-inputgroup w-full md:w-30rem">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-key"></i>
+              </span>
+              <input
+                pInputText
+                [(ngModel)]="settings.apiKey"
+                [type]="hideApiKey ? 'password' : 'text'"
+                placeholder="API Key"
+                title="Enter your API key"
+              />
+              <button
+                pButton
+                pRipple
+                type="button"
+                [icon]="hideApiKey ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                (click)="hideApiKey = !hideApiKey"
+                pTooltip="Toggle visibility"
+                tooltipPosition="top"
+                title="Toggle visibility"
+              ></button>
+            </div>
           </div>
 
           <!-- Token Refresh Setting -->

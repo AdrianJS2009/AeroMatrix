@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { type Observable, catchError, throwError } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { Drone } from '../models/drone.model';
 

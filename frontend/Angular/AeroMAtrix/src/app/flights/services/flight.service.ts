@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { type Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
 import { Drone } from '../../drones/models/drone.model';
@@ -56,7 +56,7 @@ export class FlightService {
    */
   sendCommandsToMany(droneIds: number[], commands: string[]): Observable<void> {
     const params = new URLSearchParams();
-    params.append('droneIds', droneIds.join(','));
+    droneIds.forEach((id) => params.append('droneIds', id.toString()));
 
     return this.apiService
       .post<void, CommandsRequest>(

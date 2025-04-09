@@ -1,57 +1,43 @@
-:host ::ng-deep .matrix-form-dialog .p-dialog-content {
-  padding: 0 1.5rem 1.5rem 1.5rem;
-}
+:host ::ng-deep {
+  .matrix-preview {
+    min-height: 200px;
+    background-color: var(--surface-ground);
+    transition: all 0.3s ease;
+  }
 
-.form-section {
-  margin-bottom: 1.5rem;
-}
+  .matrix-cell {
+    aspect-ratio: 1;
+    border: 1px dashed var(--surface-border);
+    margin: 2px;
+    background-color: var(--surface-card);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    position: relative;
 
-.form-section h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: var(--primary-700);
-}
+    &:hover {
+      background-color: var(--primary-color);
+      opacity: 0.7;
+      transform: scale(1.05);
+      z-index: 1;
 
-.section-description {
-  color: var(--text-color-secondary);
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
+      &::after {
+        content: attr(data-x) ", " attr(data-y);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.75rem;
+        color: var(--primary-contrast);
+        font-weight: bold;
+      }
+    }
+  }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
+  .custom-spinner .p-progress-spinner-circle {
+    stroke: var(--primary-color) !important;
+  }
 
-.matrix-preview {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: var(--surface-ground);
-  border-radius: 8px;
-}
-
-.preview-label {
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: var(--text-color-secondary);
-}
-
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--grid-cols, 3), 20px);
-  grid-template-rows: repeat(var(--grid-rows, 3), 20px);
-  gap: 2px;
-  margin-bottom: 0.75rem;
-}
-
-.preview-cell {
-  background-color: var(--primary-200);
-  border-radius: 2px;
-}
-
-.preview-info {
-  font-size: 0.875rem;
-  color: var(--text-color-secondary);
+  .p-inputnumber-buttons-horizontal .p-inputnumber-input {
+    text-align: center;
+  }
 }
