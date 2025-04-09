@@ -1,0 +1,147 @@
+{
+  "HEADER": {
+    "TOGGLE_THEME": "Thema wechseln",
+    "TOGGLE_SIDEBAR": "Seitenleiste umschalten",
+    "LANGUAGE": "Sprache ändern",
+    "NOTIFICATIONS": "Benachrichtigungen"
+  },
+  "SIDEBAR": {
+    "NAVIGATION": "Navigation",
+    "SYSTEM_INFO": "Drohnen-Steuerungssystem",
+    "COLLAPSE": "Seitenleiste einklappen",
+    "EXPAND": "Seitenleiste ausklappen",
+    "MANAGEMENT": "Verwaltung",
+    "INFORMATION": "Information",
+    "ABOUT": "Über uns",
+    "FEATURES": "Funktionen",
+    "SUPPORT": "Support",
+    "VERSION": "Version"
+  },
+  "MENU": {
+    "DASHBOARD": "Dashboard",
+    "DRONES": "Drohnen",
+    "MATRICES": "Matrizen",
+    "FLIGHTS": "Flüge",
+    "ANALYTICS": "Analysen",
+    "SETTINGS": "Einstellungen"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Benachrichtigungen",
+    "DRONE_ALERT": "Drohnen-Alarm",
+    "DRONE_ALERT_DESC": "Drohne #5 nähert sich der Matrixgrenze",
+    "FLIGHT_COMPLETED": "Flug abgeschlossen",
+    "FLIGHT_COMPLETED_DESC": "Geplanter Flug für Drohne #2 erfolgreich abgeschlossen",
+    "SYSTEM_UPDATE": "System-Update",
+    "SYSTEM_UPDATE_DESC": "Neue Systemversion verfügbar",
+    "VIEW_ALL": "Alle Benachrichtigungen anzeigen",
+    "TIME_AGO": {
+      "MINUTES": "vor {{minutes}} Minuten",
+      "HOURS": "vor {{hours}} Stunde",
+      "DAYS": "vor {{days}} Tag"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Sprache auswählen"
+  },
+  "USER": {
+    "ADMIN": "Administrator",
+    "ROLE": "Administrator",
+    "EDIT_PROFILE": "Profil bearbeiten",
+    "SETTINGS": "Einstellungen",
+    "LOGOUT": "Abmelden"
+  },
+  "FOOTER": {
+    "RIGHTS": "Alle Rechte vorbehalten.",
+    "CREATED_BY": "Erstellt von Adrián Jiménez Santiago als Bildungsaktivität."
+  },
+  "SETTINGS": {
+    "TITLE": "Systemeinstellungen",
+    "SUBTITLE": "Konfigurieren Sie die Einstellungen Ihres Drohnen-Steuerungssystems",
+    "GENERAL": {
+      "TITLE": "Allgemein",
+      "APP_SETTINGS": "Anwendungseinstellungen",
+      "DARK_MODE": "Dunkler Modus",
+      "DARK_MODE_DESC": "Dunkles Thema für die Anwendung aktivieren",
+      "ANIMATIONS": "UI-Animationen",
+      "ANIMATIONS_DESC": "Animationen in der gesamten Benutzeroberfläche aktivieren",
+      "LANGUAGE": "Sprache",
+      "LANGUAGE_DESC": "Wählen Sie Ihre bevorzugte Sprache",
+      "NOTIFICATIONS": "Benachrichtigungen",
+      "NOTIFICATIONS_DESC": "Systembenachrichtigungen aktivieren",
+      "DATA_DISPLAY": "Datenanzeige",
+      "ITEMS_PER_PAGE": "Elemente pro Seite",
+      "ITEMS_PER_PAGE_DESC": "Anzahl der Elemente, die pro Seite in Listen angezeigt werden",
+      "DATE_FORMAT": "Datumsformat",
+      "DATE_FORMAT_DESC": "Format für die Anzeige von Daten in der gesamten Anwendung"
+    },
+    "DRONE": {
+      "TITLE": "Drohnensteuerung",
+      "DEFAULT_SETTINGS": "Standard-Drohneneinstellungen",
+      "DEFAULT_ORIENTATION": "Standardausrichtung",
+      "DEFAULT_ORIENTATION_DESC": "Anfängliche Ausrichtung für neue Drohnen",
+      "AUTO_POSITION": "Automatische Positionierung",
+      "AUTO_POSITION_DESC": "Neue Drohnen automatisch am Ursprung der Matrix positionieren",
+      "FLIGHT_CONTROLS": "Flugsteuerung",
+      "CONFIRM_COMMANDS": "Befehle bestätigen",
+      "CONFIRM_COMMANDS_DESC": "Bestätigungsdialog anzeigen, bevor Flugbefehle ausgeführt werden",
+      "COMMAND_DELAY": "Befehlsausführungsverzögerung (ms)",
+      "COMMAND_DELAY_DESC": "Verzögerung zwischen Befehlsausführungen für die Visualisierung",
+      "BOUNDARY_CHECK": "Grenzprüfung",
+      "BOUNDARY_CHECK_DESC": "Verhindern, dass Drohnen sich außerhalb der Matrixgrenzen bewegen",
+      "COLLISION_DETECTION": "Kollisionserkennung",
+      "COLLISION_DETECTION_DESC": "Verhindern, dass Drohnen dieselbe Position einnehmen"
+    },
+    "API": {
+      "TITLE": "API-Konfiguration",
+      "CONNECTION": "API-Verbindung",
+      "API_URL": "API-URL",
+      "API_URL_DESC": "Basis-URL für die Drohnensteuerungs-API",
+      "REQUEST_TIMEOUT": "Anforderungs-Timeout (ms)",
+      "REQUEST_TIMEOUT_DESC": "Maximale Wartezeit für API-Antworten",
+      "RETRY_ATTEMPTS": "Wiederholungsversuche",
+      "RETRY_ATTEMPTS_DESC": "Anzahl der Wiederholungsversuche für fehlgeschlagene API-Anfragen",
+      "AUTHENTICATION": "Authentifizierung",
+      "API_KEY": "API-Schlüssel",
+      "API_KEY_DESC": "Authentifizierungsschlüssel für API-Zugriff",
+      "TOKEN_REFRESH": "Automatische Token-Aktualisierung",
+      "TOKEN_REFRESH_DESC": "Authentifizierungstoken automatisch aktualisieren",
+      "VALIDATION_ERROR": "Validierungsfehler",
+      "VALIDATION_SUCCESS": "Validierung erfolgreich",
+      "URL_REQUIRED": "Bitte geben Sie eine API-URL ein",
+      "INVALID_URL": "Ungültiges URL-Format",
+      "URL_VALID": "API-URL-Format ist gültig",
+      "CONNECTION_SUCCESS": "Verbindung erfolgreich",
+      "CONNECTION_SUCCESS_DETAIL": "API-Verbindungstest erfolgreich abgeschlossen."
+    },
+    "ACTIONS": {
+      "RESET": "Zurücksetzen",
+      "SAVE": "Änderungen speichern",
+      "TEST_CONNECTION": "Verbindung testen",
+      "SAVE_SUCCESS": "Einstellungen gespeichert",
+      "SAVE_SUCCESS_DETAIL": "{{section}}-Einstellungen wurden erfolgreich aktualisiert.",
+      "RESET_SUCCESS": "Einstellungen zurückgesetzt",
+      "RESET_SUCCESS_DETAIL": "{{section}}-Einstellungen wurden auf die Standardwerte zurückgesetzt."
+    }
+  },
+  "ERROR": {
+    "PAGE_NOT_FOUND": "Seite nicht gefunden",
+    "PAGE_NOT_FOUND_MESSAGE": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "RETURN_HOME": "Zur Startseite",
+    "GO_BACK": "Zurück",
+    "TECHNICAL_INFO": "Technische Information",
+    "TECHNICAL_MESSAGE": "Die angeforderte URL wurde auf diesem Server nicht gefunden. Wenn Sie die URL manuell eingegeben haben, überprüfen Sie bitte die Schreibweise und versuchen Sie es erneut.",
+    "REQUESTED_URL": "Angeforderte URL"
+  },
+  "ORIENTATIONS": {
+    "NORTH": "Nord",
+    "SOUTH": "Süd",
+    "EAST": "Ost",
+    "WEST": "West"
+  },
+  "STATUS": {
+    "COMPLETED": "Abgeschlossen",
+    "FAILED": "Fehlgeschlagen",
+    "PENDING": "Ausstehend",
+    "IN_PROGRESS": "In Bearbeitung"
+  }
+}

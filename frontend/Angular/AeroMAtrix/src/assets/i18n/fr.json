@@ -1,0 +1,147 @@
+{
+  "HEADER": {
+    "TOGGLE_THEME": "Changer de thème",
+    "TOGGLE_SIDEBAR": "Basculer la barre latérale",
+    "LANGUAGE": "Changer de langue",
+    "NOTIFICATIONS": "Notifications"
+  },
+  "SIDEBAR": {
+    "NAVIGATION": "Navigation",
+    "SYSTEM_INFO": "Système de Contrôle de Drones",
+    "COLLAPSE": "Réduire la barre latérale",
+    "EXPAND": "Développer la barre latérale",
+    "MANAGEMENT": "Gestion",
+    "INFORMATION": "Information",
+    "ABOUT": "À Propos",
+    "FEATURES": "Fonctionnalités",
+    "SUPPORT": "Support",
+    "VERSION": "Version"
+  },
+  "MENU": {
+    "DASHBOARD": "Tableau de bord",
+    "DRONES": "Drones",
+    "MATRICES": "Matrices",
+    "FLIGHTS": "Vols",
+    "ANALYTICS": "Analytiques",
+    "SETTINGS": "Paramètres"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "DRONE_ALERT": "Alerte Drone",
+    "DRONE_ALERT_DESC": "Le Drone #5 s'approche de la limite de la matrice",
+    "FLIGHT_COMPLETED": "Vol Terminé",
+    "FLIGHT_COMPLETED_DESC": "Le vol programmé pour le Drone #2 s'est terminé avec succès",
+    "SYSTEM_UPDATE": "Mise à jour du Système",
+    "SYSTEM_UPDATE_DESC": "Nouvelle version du système disponible",
+    "VIEW_ALL": "Voir toutes les notifications",
+    "TIME_AGO": {
+      "MINUTES": "il y a {{minutes}} minutes",
+      "HOURS": "il y a {{hours}} heure",
+      "DAYS": "il y a {{days}} jour"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Sélectionner la Langue"
+  },
+  "USER": {
+    "ADMIN": "Utilisateur Administrateur",
+    "ROLE": "Administrateur",
+    "EDIT_PROFILE": "Modifier le Profil",
+    "SETTINGS": "Paramètres",
+    "LOGOUT": "Déconnexion"
+  },
+  "FOOTER": {
+    "RIGHTS": "Tous droits réservés.",
+    "CREATED_BY": "Créé par Adrián Jiménez Santiago comme activité éducative."
+  },
+  "SETTINGS": {
+    "TITLE": "Paramètres du Système",
+    "SUBTITLE": "Configurez les préférences de votre système de contrôle de drones",
+    "GENERAL": {
+      "TITLE": "Général",
+      "APP_SETTINGS": "Paramètres de l'Application",
+      "DARK_MODE": "Mode Sombre",
+      "DARK_MODE_DESC": "Activer le thème sombre pour l'application",
+      "ANIMATIONS": "Animations UI",
+      "ANIMATIONS_DESC": "Activer les animations dans toute l'interface",
+      "LANGUAGE": "Langue",
+      "LANGUAGE_DESC": "Sélectionnez votre langue préférée",
+      "NOTIFICATIONS": "Notifications",
+      "NOTIFICATIONS_DESC": "Activer les notifications système",
+      "DATA_DISPLAY": "Affichage des Données",
+      "ITEMS_PER_PAGE": "Éléments Par Page",
+      "ITEMS_PER_PAGE_DESC": "Nombre d'éléments à afficher par page dans les listes",
+      "DATE_FORMAT": "Format de Date",
+      "DATE_FORMAT_DESC": "Format d'affichage des dates dans toute l'application"
+    },
+    "DRONE": {
+      "TITLE": "Contrôle des Drones",
+      "DEFAULT_SETTINGS": "Paramètres par Défaut des Drones",
+      "DEFAULT_ORIENTATION": "Orientation par Défaut",
+      "DEFAULT_ORIENTATION_DESC": "Orientation initiale pour les nouveaux drones",
+      "AUTO_POSITION": "Position Automatique",
+      "AUTO_POSITION_DESC": "Positionner automatiquement les nouveaux drones à l'origine de la matrice",
+      "FLIGHT_CONTROLS": "Contrôles de Vol",
+      "CONFIRM_COMMANDS": "Confirmer les Commandes",
+      "CONFIRM_COMMANDS_DESC": "Afficher une boîte de dialogue de confirmation avant d'exécuter les commandes de vol",
+      "COMMAND_DELAY": "Délai d'Exécution des Commandes (ms)",
+      "COMMAND_DELAY_DESC": "Délai entre les exécutions de commandes pour la visualisation",
+      "BOUNDARY_CHECK": "Vérification des Limites",
+      "BOUNDARY_CHECK_DESC": "Empêcher les drones de se déplacer en dehors des limites de la matrice",
+      "COLLISION_DETECTION": "Détection de Collision",
+      "COLLISION_DETECTION_DESC": "Empêcher les drones d'occuper la même position"
+    },
+    "API": {
+      "TITLE": "Configuration API",
+      "CONNECTION": "Connexion API",
+      "API_URL": "URL de l'API",
+      "API_URL_DESC": "URL de base pour l'API de contrôle des drones",
+      "REQUEST_TIMEOUT": "Délai de Requête (ms)",
+      "REQUEST_TIMEOUT_DESC": "Temps maximum d'attente pour les réponses de l'API",
+      "RETRY_ATTEMPTS": "Tentatives de Réessai",
+      "RETRY_ATTEMPTS_DESC": "Nombre de fois pour réessayer les requêtes API échouées",
+      "AUTHENTICATION": "Authentification",
+      "API_KEY": "Clé API",
+      "API_KEY_DESC": "Clé d'authentification pour l'accès à l'API",
+      "TOKEN_REFRESH": "Actualisation Automatique du Token",
+      "TOKEN_REFRESH_DESC": "Actualiser automatiquement les tokens d'authentification",
+      "VALIDATION_ERROR": "Erreur de Validation",
+      "VALIDATION_SUCCESS": "Validation Réussie",
+      "URL_REQUIRED": "Veuillez entrer une URL d'API",
+      "INVALID_URL": "Format d'URL invalide",
+      "URL_VALID": "Le format de l'URL de l'API est valide",
+      "CONNECTION_SUCCESS": "Connexion Réussie",
+      "CONNECTION_SUCCESS_DETAIL": "Test de connexion API terminé avec succès."
+    },
+    "ACTIONS": {
+      "RESET": "Réinitialiser",
+      "SAVE": "Enregistrer",
+      "TEST_CONNECTION": "Tester la Connexion",
+      "SAVE_SUCCESS": "Paramètres Enregistrés",
+      "SAVE_SUCCESS_DETAIL": "Les paramètres {{section}} ont été mis à jour avec succès.",
+      "RESET_SUCCESS": "Paramètres Réinitialisés",
+      "RESET_SUCCESS_DETAIL": "Les paramètres {{section}} ont été réinitialisés aux valeurs par défaut."
+    }
+  },
+  "ERROR": {
+    "PAGE_NOT_FOUND": "Page Non Trouvée",
+    "PAGE_NOT_FOUND_MESSAGE": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "RETURN_HOME": "Retour à l'Accueil",
+    "GO_BACK": "Retour",
+    "TECHNICAL_INFO": "Information Technique",
+    "TECHNICAL_MESSAGE": "L'URL demandée n'a pas été trouvée sur ce serveur. Si vous avez saisi l'URL manuellement, veuillez vérifier l'orthographe et réessayer.",
+    "REQUESTED_URL": "URL demandée"
+  },
+  "ORIENTATIONS": {
+    "NORTH": "Nord",
+    "SOUTH": "Sud",
+    "EAST": "Est",
+    "WEST": "Ouest"
+  },
+  "STATUS": {
+    "COMPLETED": "Terminé",
+    "FAILED": "Échoué",
+    "PENDING": "En attente",
+    "IN_PROGRESS": "En cours"
+  }
+}
