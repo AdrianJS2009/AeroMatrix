@@ -106,6 +106,79 @@
     }
   }
 
+  // Dropdown and MultiSelect Responsive Styles
+  .dropdown-responsive {
+    .p-dropdown {
+      width: 100%;
+    }
+
+    .p-dropdown-panel {
+      width: auto !important;
+      min-width: 100%;
+      max-width: 100vw;
+
+      @media screen and (max-width: 640px) {
+        width: 90vw !important;
+        left: 5vw !important;
+      }
+    }
+  }
+
+  .multiselect-responsive {
+    .p-multiselect {
+      width: 100%;
+    }
+
+    .p-multiselect-panel {
+      width: auto !important;
+      min-width: 100%;
+      max-width: 100vw;
+
+      @media screen and (max-width: 640px) {
+        width: 90vw !important;
+        left: 5vw !important;
+      }
+    }
+
+    .p-multiselect-token {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      @media screen and (max-width: 480px) {
+        max-width: 100px;
+      }
+    }
+  }
+
+  // Dialog Responsive Styles
+  .p-dialog {
+    .p-dialog-content {
+      overflow-x: hidden;
+    }
+  }
+
+  // Tab View Responsive Styles
+  .p-tabview {
+    .p-tabview-nav {
+      flex-wrap: wrap;
+
+      li {
+        margin-bottom: 0.25rem;
+
+        .p-tabview-nav-link {
+          @media screen and (max-width: 480px) {
+            padding: 0.75rem 0.5rem;
+
+            .p-tabview-left-icon {
+              margin-right: 0.25rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .flight-control-container {
     height: 100%;
     display: flex;
@@ -114,6 +187,35 @@
 
   .page-header {
     margin-bottom: 1.5rem;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      h1 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.75rem;
+
+        @media screen and (max-width: 640px) {
+          font-size: 1.5rem;
+        }
+      }
+
+      p {
+        margin: 0;
+        color: var(--text-color-secondary);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+    }
   }
 
   .flight-control-content {
@@ -155,10 +257,21 @@
     }
   }
 
+  .matrix-visualization-wrapper {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
   .matrix-container {
     height: 100%;
     min-height: 400px;
-    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    position: relative;
+
+    @media screen and (max-width: 768px) {
+      min-height: 300px;
+    }
   }
 
   .flight-controls-card {
@@ -180,6 +293,11 @@
       .p-tabview-panels {
         flex: 1;
         overflow-y: auto;
+        padding: 1.25rem;
+
+        @media screen and (max-width: 640px) {
+          padding: 1rem 0.75rem;
+        }
       }
 
       .p-tabpanel {
@@ -379,6 +497,17 @@
       &:hover {
         background-color: var(--surface-hover);
       }
+
+      .batch-command-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        @media screen and (max-width: 768px) {
+          justify-content: flex-start;
+          margin-top: 0.5rem;
+        }
+      }
     }
 
     .empty-batch-message {
@@ -429,6 +558,11 @@
         var(--surface-400)
       );
     }
+
+    @media screen and (max-width: 640px) {
+      align-self: stretch;
+      width: 100%;
+    }
   }
 
   // Batch actions styling
@@ -437,6 +571,14 @@
     justify-content: space-between;
     gap: 1rem;
     margin-top: 1rem;
+
+    @media screen and (max-width: 640px) {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
   }
 
   // Flight history styling
@@ -484,12 +626,21 @@
     &.pending {
       border-left-color: var(--yellow-500);
     }
+
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
   }
 
   .flight-time {
     font-size: 0.875rem;
     color: var(--text-color-secondary);
     white-space: nowrap;
+
+    @media screen and (max-width: 768px) {
+      align-self: flex-end;
+    }
   }
 
   .flight-content {
@@ -500,6 +651,8 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .flight-drone {
@@ -517,6 +670,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .commands-label {
@@ -527,6 +681,7 @@
   .command-sequence {
     display: flex;
     gap: 0.25rem;
+    flex-wrap: wrap;
 
     &.small {
       .command-step {
@@ -590,13 +745,54 @@
   }
 
   // Dark mode toggle
-  .header-actions {
-    display: flex;
-    align-items: center;
+  .dark-mode-label {
+    margin-left: 0.5rem;
+    color: var(--text-color-secondary);
+  }
 
-    .dark-mode-label {
-      margin-left: 0.5rem;
-      color: var(--text-color-secondary);
+  // Help dialog styling
+  .help-content {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: var(--text-color);
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .keyboard-shortcuts {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      .shortcut {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .key {
+          background-color: var(--surface-ground);
+          padding: 0.25rem 0.5rem;
+          border-radius: var(--border-radius-sm);
+          font-family: monospace;
+          font-weight: 600;
+          min-width: 3rem;
+          text-align: center;
+          box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .description {
+          color: var(--text-color-secondary);
+        }
+      }
     }
   }
 
@@ -626,6 +822,23 @@
       button {
         width: 100%;
       }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .page-header .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .header-actions {
+        align-self: flex-end;
+      }
+    }
+
+    .command-step {
+      width: 24px;
+      height: 24px;
+      font-size: 0.75rem;
     }
   }
 }

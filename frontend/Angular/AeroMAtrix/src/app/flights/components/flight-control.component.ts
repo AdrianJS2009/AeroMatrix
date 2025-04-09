@@ -8,6 +8,7 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
+import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -85,6 +86,7 @@ interface BatchCommand {
     ScrollPanelModule,
     InputSwitchModule,
     DroneMatrixComponent,
+    DialogModule,
   ],
   providers: [MessageService],
   templateUrl: './flight-control.component.html',
@@ -125,6 +127,7 @@ export class FlightControlComponent implements OnInit {
   matrices: Matrix[] = [];
   loading = true;
   darkMode = false;
+  showHelpDialog = false;
 
   // Single
   selectedDrone?: Drone;
@@ -243,6 +246,27 @@ export class FlightControlComponent implements OnInit {
     this.validateCommands();
   }
 
+  // Matrix visualization controls
+  zoomIn(): void {
+    // This method would be implemented in the DroneMatrixComponent
+    // and called via ViewChild or through an EventEmitter
+    console.log('Zoom in');
+  }
+
+  zoomOut(): void {
+    // This method would be implemented in the DroneMatrixComponent
+    console.log('Zoom out');
+  }
+
+  fitAllDrones(): void {
+    // This method would be implemented in the DroneMatrixComponent
+    console.log('Fit all drones');
+  }
+
+  toggleHelp(): void {
+    this.showHelpDialog = !this.showHelpDialog;
+  }
+
   // Validation of commands
   validateCommands(): void {
     if (
@@ -306,7 +330,6 @@ export class FlightControlComponent implements OnInit {
       };
     }
 
-    // Create a copy of the drone to simulate movement
     const simulatedDrone: Position = {
       x: drone.x,
       y: drone.y,
@@ -316,96 +339,28 @@ export class FlightControlComponent implements OnInit {
     const collisions: { x: number; y: number; droneName: string }[] = [];
     const path: Position[] = [{ ...simulatedDrone }];
 
-    // Process each command
     for (const cmd of commands.toUpperCase()) {
-      switch (cmd) {
-        case 'A': // Advance
-          let newX = simulatedDrone.x;
-          let newY = simulatedDrone.y;
+      if (cmd === 'A') {
+        const { x: newX, y: newY } = this.getNextPosition(simulatedDrone);
 
-          // Calculate new position based on orientation
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              newY += 1;
-              break;
-            case 'S':
-              newY -= 1;
-              break;
-            case 'E':
-              newX += 1;
-              break;
-            case 'W':
-              newX -= 1;
-              break;
-          }
+        if (this.isOutOfBounds(newX, newY)) {
+          return {
+            hasErrors: true,
+            errorMessage: `Command would move drone out of bounds at position (${newX}, ${newY})`,
+            finalPosition: simulatedDrone,
+          };
+        }
 
-          // Check if new position is within matrix bounds
-          if (
-            newX < 0 ||
-            newY < 0 ||
-            newX >= this.selectedMatrix.maxX ||
-            newY >= this.selectedMatrix.maxY
-          ) {
-            return {
-              hasErrors: true,
-              errorMessage: `Command would move drone out of bounds at position (${newX}, ${newY})`,
-              finalPosition: simulatedDrone,
-            };
-          }
+        simulatedDrone.x = newX;
+        simulatedDrone.y = newY;
 
-          // Update position
-          simulatedDrone.x = newX;
-          simulatedDrone.y = newY;
-
-          // Check for collisions with other drones
-          for (const otherDrone of otherDrones) {
-            if (otherDrone.x === newX && otherDrone.y === newY) {
-              collisions.push({
-                x: newX,
-                y: newY,
-                droneName: otherDrone.name || `Drone ${otherDrone.id}`,
-              });
-            }
-          }
-
-          break;
-
-        case 'L': // Turn Left
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              simulatedDrone.orientation = 'W';
-              break;
-            case 'S':
-              simulatedDrone.orientation = 'E';
-              break;
-            case 'E':
-              simulatedDrone.orientation = 'N';
-              break;
-            case 'W':
-              simulatedDrone.orientation = 'S';
-              break;
-          }
-          break;
-
-        case 'R': // Turn Right
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              simulatedDrone.orientation = 'E';
-              break;
-            case 'S':
-              simulatedDrone.orientation = 'W';
-              break;
-            case 'E':
-              simulatedDrone.orientation = 'S';
-              break;
-            case 'W':
-              simulatedDrone.orientation = 'N';
-              break;
-          }
-          break;
+        this.detectCollision(newX, newY, otherDrones, collisions);
+      } else if (cmd === 'L') {
+        simulatedDrone.orientation = this.turnLeft(simulatedDrone.orientation);
+      } else if (cmd === 'R') {
+        simulatedDrone.orientation = this.turnRight(simulatedDrone.orientation);
       }
 
-      // Add current position to path
       path.push({ ...simulatedDrone });
     }
 
@@ -414,6 +369,82 @@ export class FlightControlComponent implements OnInit {
       finalPosition: simulatedDrone,
       collisions: collisions.length > 0 ? collisions : undefined,
     };
+  }
+
+  private getNextPosition(drone: Position): { x: number; y: number } {
+    let { x, y } = drone;
+    switch (drone.orientation) {
+      case 'N':
+        y += 1;
+        break;
+      case 'S':
+        y -= 1;
+        break;
+      case 'E':
+        x += 1;
+        break;
+      case 'W':
+        x -= 1;
+        break;
+    }
+    return { x, y };
+  }
+
+  private isOutOfBounds(x: number, y: number): boolean {
+    return (
+      !this.selectedMatrix ||
+      x < 0 ||
+      y < 0 ||
+      x >= this.selectedMatrix.maxX ||
+      y >= this.selectedMatrix.maxY
+    );
+  }
+
+  private detectCollision(
+    x: number,
+    y: number,
+    otherDrones: Drone[],
+    collisions: { x: number; y: number; droneName: string }[]
+  ): void {
+    for (const other of otherDrones) {
+      if (other.x === x && other.y === y) {
+        collisions.push({
+          x,
+          y,
+          droneName: other.name ?? `Drone ${other.id}`,
+        });
+      }
+    }
+  }
+
+  private turnLeft(orientation: string): string {
+    switch (orientation) {
+      case 'N':
+        return 'W';
+      case 'W':
+        return 'S';
+      case 'S':
+        return 'E';
+      case 'E':
+        return 'N';
+      default:
+        return orientation;
+    }
+  }
+
+  private turnRight(orientation: string): string {
+    switch (orientation) {
+      case 'N':
+        return 'E';
+      case 'E':
+        return 'S';
+      case 'S':
+        return 'W';
+      case 'W':
+        return 'N';
+      default:
+        return orientation;
+    }
   }
 
   // Validate group commands
@@ -516,43 +547,14 @@ export class FlightControlComponent implements OnInit {
   }
 
   // Detect collisions between drones in group commands
-  detectGroupCollisions(simulatedPositions: Map<number, Position[]>): void {
+  private detectGroupCollisions(
+    simulatedPositions: Map<number, Position[]>
+  ): void {
     this.groupCollisions = [];
 
-    const droneIds = Array.from(simulatedPositions.keys());
-
-    // Compare each pair of drones
-    for (let i = 0; i < droneIds.length; i++) {
-      const drone1Id = droneIds[i];
-      const drone1 = this.drones.find((d) => d.id === drone1Id);
-      const path1 = simulatedPositions.get(drone1Id) || [];
-
-      for (let j = i + 1; j < droneIds.length; j++) {
-        const drone2Id = droneIds[j];
-        const drone2 = this.drones.find((d) => d.id === drone2Id);
-        const path2 = simulatedPositions.get(drone2Id) || [];
-
-        // Check for collisions at each step
-        const maxSteps = Math.max(path1.length, path2.length);
-
-        for (let step = 0; step < maxSteps; step++) {
-          const pos1 =
-            step < path1.length ? path1[step] : path1[path1.length - 1];
-          const pos2 =
-            step < path2.length ? path2[step] : path2[path2.length - 1];
-
-          if (pos1.x === pos2.x && pos1.y === pos2.y) {
-            this.groupCollisions.push({
-              x: pos1.x,
-              y: pos1.y,
-              drone1: drone1?.name || `Drone ${drone1Id}`,
-              drone2: drone2?.name || `Drone ${drone2Id}`,
-            });
-            break; // Only report the first collision between each pair
-          }
-        }
-      }
-    }
+    this.detectCollisionsBetweenPaths(simulatedPositions, (collision) => {
+      this.groupCollisions.push(collision);
+    });
   }
 
   // Check if there are any errors in group validation
@@ -617,7 +619,6 @@ export class FlightControlComponent implements OnInit {
   validateBatchCollisions(): void {
     this.batchCollisions = [];
 
-    // Generate paths for all valid batch commands
     const simulatedPositions = new Map<number, Position[]>();
 
     for (const command of this.batchCommands) {
@@ -634,39 +635,59 @@ export class FlightControlComponent implements OnInit {
       }
     }
 
-    // Check for collisions between drones
-    const droneIds = Array.from(simulatedPositions.keys());
+    this.detectCollisionsBetweenPaths(simulatedPositions, (collision) => {
+      this.batchCollisions.push(collision);
+    });
+  }
 
-    // Compare each pair of drones
+  private detectCollisionsBetweenPaths(
+    paths: Map<number, Position[]>,
+    onCollision: (collision: GroupCollision) => void
+  ): void {
+    const droneIds = Array.from(paths.keys());
+
     for (let i = 0; i < droneIds.length; i++) {
       const drone1Id = droneIds[i];
-      const drone1 = this.drones.find((d) => d.id === drone1Id);
-      const path1 = simulatedPositions.get(drone1Id) || [];
+      const path1 = paths.get(drone1Id) || [];
 
       for (let j = i + 1; j < droneIds.length; j++) {
         const drone2Id = droneIds[j];
-        const drone2 = this.drones.find((d) => d.id === drone2Id);
-        const path2 = simulatedPositions.get(drone2Id) || [];
+        const path2 = paths.get(drone2Id) || [];
 
-        // Check for collisions at each step
-        const maxSteps = Math.max(path1.length, path2.length);
+        this.checkDronePathsForCollision(
+          drone1Id,
+          drone2Id,
+          path1,
+          path2,
+          onCollision
+        );
+      }
+    }
+  }
 
-        for (let step = 0; step < maxSteps; step++) {
-          const pos1 =
-            step < path1.length ? path1[step] : path1[path1.length - 1];
-          const pos2 =
-            step < path2.length ? path2[step] : path2[path2.length - 1];
+  private checkDronePathsForCollision(
+    drone1Id: number,
+    drone2Id: number,
+    path1: Position[],
+    path2: Position[],
+    onCollision: (collision: GroupCollision) => void
+  ): void {
+    const drone1 = this.drones.find((d) => d.id === drone1Id);
+    const drone2 = this.drones.find((d) => d.id === drone2Id);
+    const maxSteps = Math.max(path1.length, path2.length);
 
-          if (pos1.x === pos2.x && pos1.y === pos2.y) {
-            this.batchCollisions.push({
-              x: pos1.x,
-              y: pos1.y,
-              drone1: drone1?.name || `Drone ${drone1Id}`,
-              drone2: drone2?.name || `Drone ${drone2Id}`,
-            });
-            break; // Only report the first collision between each pair
-          }
-        }
+    for (let step = 0; step < maxSteps; step++) {
+      const pos1 = step < path1.length ? path1[step] : path1[path1.length - 1];
+      const pos2 = step < path2.length ? path2[step] : path2[path2.length - 1];
+
+      if (pos1.x === pos2.x && pos1.y === pos2.y) {
+        onCollision({
+          x: pos1.x,
+          y: pos1.y,
+          drone1: drone1?.name ?? `Drone ${drone1Id}`,
+          drone2: drone2?.name ?? `Drone ${drone2Id}`,
+        });
+        break;
       }
     }
   }
@@ -750,6 +771,11 @@ export class FlightControlComponent implements OnInit {
                 for (let i = 0; i < this.batchCommands.length; i++) {
                   this.validateBatchCommand(i);
                 }
+
+                // Ensure all drones are visible in the matrix view
+                setTimeout(() => {
+                  this.fitAllDrones();
+                }, 300);
               }
             }
           },
@@ -784,7 +810,7 @@ export class FlightControlComponent implements OnInit {
         severity: 'error',
         summary: 'Invalid Commands',
         detail:
-          this.commandValidationResult.errorMessage ||
+          this.commandValidationResult.errorMessage ??
           'Commands would cause an error',
         life: 5000,
       });
@@ -856,7 +882,7 @@ export class FlightControlComponent implements OnInit {
 
           // Add to flight history with failed status
           this.addToFlightHistory(
-            this.selectedDrone?.name || `Drone ${droneId}`,
+            this.selectedDrone?.name ?? `Drone ${droneId}`,
             this.commandsText,
             initialPosition,
             'N/A',
@@ -916,12 +942,13 @@ export class FlightControlComponent implements OnInit {
 
     // Store initial positions for history
     const initialPositions = this.multiSelectedDrones
-      .map(
-        (drone) =>
-          `${drone.name || `Drone ${drone.id}`}: (${drone.x}, ${
-            drone.y
-          }) ${this.getOrientationLabel(drone.orientation)}`
-      )
+      .map((drone) => {
+        const name = drone.name ?? `Drone ${drone.id}`;
+        const position = `(${drone.x}, ${drone.y}) ${this.getOrientationLabel(
+          drone.orientation
+        )}`;
+        return `${name}: ${position}`;
+      })
       .join(', ');
 
     this.executingGroup = true;
@@ -1017,13 +1044,15 @@ export class FlightControlComponent implements OnInit {
     // Store initial positions for history
     const droneIds = batchPayload.map((b) => b.droneId);
     const batchDrones = this.drones.filter((d) => droneIds.includes(d.id));
+
     const initialPositions = batchDrones
-      .map(
-        (drone) =>
-          `${drone.name || `Drone ${drone.id}`}: (${drone.x}, ${
-            drone.y
-          }) ${this.getOrientationLabel(drone.orientation)}`
-      )
+      .map((drone) => {
+        const name = drone.name ?? `Drone ${drone.id}`;
+        const position = `(${drone.x}, ${drone.y}) ${this.getOrientationLabel(
+          drone.orientation
+        )}`;
+        return `${name}: ${position}`;
+      })
       .join(', ');
 
     this.executingBatch = true;
@@ -1278,6 +1307,11 @@ export class FlightControlComponent implements OnInit {
       for (let i = 0; i < this.batchCommands.length; i++) {
         this.validateBatchCommand(i);
       }
+
+      // Ensure all drones are visible in the matrix view
+      setTimeout(() => {
+        this.fitAllDrones();
+      }, 300);
     }
   }
 

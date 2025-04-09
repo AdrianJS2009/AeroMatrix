@@ -1,18 +1,17 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
+  type AfterViewInit,
   Component,
-  ElementRef,
+  type ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   NgZone,
-  OnChanges,
-  OnDestroy,
-  OnInit,
+  type OnChanges,
+  type OnDestroy,
+  type OnInit,
   Output,
-  SimpleChanges,
+  type SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -66,6 +65,7 @@ export class DroneMatrixComponent
   @Input() matrix?: Matrix;
   @Input() drones: Drone[] = [];
   @Input() selectedDroneId?: number;
+  @Input() isInteractive = true;
   @Output() droneSelected = new EventEmitter<Drone>();
 
   @ViewChild('viewport') viewportRef!: ElementRef;
@@ -86,6 +86,9 @@ export class DroneMatrixComponent
   enhancedGrid = true; // Whether enhanced grid styling is active
   showCoordinates = false; // Whether to show mouse coordinates overlay
   currentCoordinates = '(0, 0)'; // Current coordinates under mouse in grid
+  showHelp = false; // Whether to show help overlay
+  recentlyPanned = false; // Track if user recently panned the view
+  panTimeout?: any; // Timeout for tracking recent panning
 
   // Three.js properties
   private scene!: THREE.Scene;
@@ -115,8 +118,13 @@ export class DroneMatrixComponent
       }
     }
 
-    if (changes['drones'] && this.view3D && this.scene) {
-      this.updateDronePositions();
+    if (changes['drones'] && this.drones.length > 0) {
+      // When drones change, fit all drones in view
+      setTimeout(() => this.fitAllDrones(), 100);
+
+      if (this.view3D && this.scene) {
+        this.updateDronePositions();
+      }
     }
 
     if (changes['selectedDroneId'] && this.view3D && this.scene) {
@@ -128,6 +136,9 @@ export class DroneMatrixComponent
     if (this.view3D) {
       this.initThreeJs();
     }
+
+    // Initial fit all drones
+    setTimeout(() => this.fitAllDrones(), 300);
   }
 
   ngOnDestroy(): void {
@@ -136,6 +147,9 @@ export class DroneMatrixComponent
     }
     if (this.renderer) {
       this.renderer.dispose();
+    }
+    if (this.panTimeout) {
+      clearTimeout(this.panTimeout);
     }
   }
 
@@ -146,7 +160,14 @@ export class DroneMatrixComponent
 
   // Emit the selected drone
   selectDrone(drone: Drone): void {
-    this.droneSelected.emit(drone);
+    if (this.isInteractive) {
+      this.droneSelected.emit(drone);
+    }
+  }
+
+  // Clear drone selection
+  clearSelection(): void {
+    this.droneSelected.emit({} as Drone);
   }
 
   // Return the name of the selected drone
@@ -162,6 +183,7 @@ export class DroneMatrixComponent
       S: 'South',
       E: 'East',
       W: 'West',
+      O: 'West',
     };
     return orientations[orientation] || orientation;
   }
@@ -222,11 +244,111 @@ export class DroneMatrixComponent
     this.lastPanY = this.panY;
   }
 
+  // Fit all drones in the viewport
+  fitAllDrones(): void {
+    if (!this.viewportRef || !this.matrix || this.drones.length === 0) {
+      this.centerMatrix();
+      return;
+    }
+
+    // Find the bounding box of all drones
+    let minX = Number.MAX_VALUE;
+    let minY = Number.MAX_VALUE;
+    let maxX = Number.MIN_VALUE;
+    let maxY = Number.MIN_VALUE;
+
+    this.drones.forEach((drone) => {
+      minX = Math.min(minX, drone.x);
+      minY = Math.min(minY, drone.y);
+      maxX = Math.max(maxX, drone.x);
+      maxY = Math.max(maxY, drone.y);
+    });
+
+    // Add padding
+    minX = Math.max(0, minX - 1);
+    minY = Math.max(0, minY - 1);
+    maxX = Math.min(this.matrix.maxX - 1, maxX + 1);
+    maxY = Math.min(this.matrix.maxY - 1, maxY + 1);
+
+    // Calculate the center of the bounding box
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // Calculate the size of the bounding box
+    const width = maxX - minX + 1;
+    const height = maxY - minY + 1;
+
+    // Calculate the scale needed to fit the bounding box
+    const viewport = this.viewportRef.nativeElement;
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+
+    const scaleX = viewportWidth / (width * this.cellSize);
+    const scaleY = viewportHeight / (height * this.cellSize);
+
+    // Use the smaller scale to ensure everything fits
+    this.scale = Math.min(scaleX, scaleY) * 0.8; // 80% to add some margin
+    this.scale = Math.min(Math.max(this.scale, 0.3), 3); // Clamp scale between 0.3 and 3
+
+    // Calculate the pan position to center the bounding box
+    const matrixCenterX = centerX * this.cellSize;
+    const matrixCenterY = (this.matrix.maxY - 1 - centerY) * this.cellSize;
+
+    this.panX = (viewportWidth / 2 - matrixCenterX * this.scale) / this.scale;
+    this.panY = (viewportHeight / 2 - matrixCenterY * this.scale) / this.scale;
+
+    this.lastPanX = this.panX;
+    this.lastPanY = this.panY;
+  }
+
+  // Fit all drones in 3D view
+  fit3DAllDrones(): void {
+    if (!this.matrix || this.drones.length === 0 || !this.controls) return;
+
+    // Find the bounding box of all drones
+    let minX = Number.MAX_VALUE;
+    let minY = Number.MAX_VALUE;
+    let maxX = Number.MIN_VALUE;
+    let maxY = Number.MIN_VALUE;
+
+    this.drones.forEach((drone) => {
+      minX = Math.min(minX, drone.x);
+      minY = Math.min(minY, drone.y);
+      maxX = Math.max(maxX, drone.x);
+      maxY = Math.max(maxY, drone.y);
+    });
+
+    // Add padding
+    minX = Math.max(0, minX - 1);
+    minY = Math.max(0, minY - 1);
+    maxX = Math.min(this.matrix.maxX - 1, maxX + 1);
+    maxY = Math.min(this.matrix.maxY - 1, maxY + 1);
+
+    // Calculate the center of the bounding box
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // Set the camera position to look at the center
+    this.controls.target.set(centerX, 0, centerY);
+
+    // Calculate the size of the bounding box
+    const width = maxX - minX + 1;
+    const height = maxY - minY + 1;
+    const size = Math.max(width, height);
+
+    // Position the camera to see all drones
+    const distance = size * 1.5;
+    this.camera.position.set(centerX + distance, distance, centerY + distance);
+
+    this.controls.update();
+  }
+
   // Mouse down event to start panning in 2D view
   startPan(event: MouseEvent): void {
     this.isPanning = true;
     this.startPanX = event.clientX;
     this.startPanY = event.clientY;
+    this.trackRecentPan();
   }
 
   // Mouse move event to pan the 2D grid
@@ -237,6 +359,7 @@ export class DroneMatrixComponent
     this.panX = this.lastPanX + deltaX / this.scale;
     this.panY = this.lastPanY + deltaY / this.scale;
     this.updateMouseCoordinates(event);
+    this.trackRecentPan();
   }
 
   // End panning when mouse is up or leaves the viewport
@@ -246,6 +369,17 @@ export class DroneMatrixComponent
       this.lastPanX = this.panX;
       this.lastPanY = this.panY;
     }
+  }
+
+  // Track when user recently panned
+  trackRecentPan(): void {
+    this.recentlyPanned = true;
+    if (this.panTimeout) {
+      clearTimeout(this.panTimeout);
+    }
+    this.panTimeout = setTimeout(() => {
+      this.recentlyPanned = false;
+    }, 3000); // Reset after 3 seconds
   }
 
   // Update current grid coordinates based on mouse position
@@ -270,9 +404,8 @@ export class DroneMatrixComponent
     }
   }
 
-  @HostListener('wheel', ['$event'])
-  onWheel(event: WheelEvent): void {
-    if (this.view3D) return;
+  // Handle wheel event inside the component
+  onWheelInside(event: WheelEvent): void {
     event.preventDefault();
     const rect = this.viewportRef.nativeElement.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
@@ -289,6 +422,107 @@ export class DroneMatrixComponent
     this.panY = this.lastPanY + panAdjustY;
     this.lastPanX = this.panX;
     this.lastPanY = this.panY;
+    this.trackRecentPan();
+  }
+
+  // Handle keyboard navigation
+  handleKeyboardNavigation(event: KeyboardEvent): void {
+    const panStep = 20 / this.scale;
+
+    switch (event.key) {
+      case 'ArrowUp':
+        this.panY += panStep;
+        break;
+      case 'ArrowDown':
+        this.panY -= panStep;
+        break;
+      case 'ArrowLeft':
+        this.panX += panStep;
+        break;
+      case 'ArrowRight':
+        this.panX -= panStep;
+        break;
+      case '+':
+        this.zoomIn();
+        break;
+      case '-':
+        this.zoomOut();
+        break;
+      case 'Home':
+        this.fitAllDrones();
+        break;
+      case 'Escape':
+        this.clearSelection();
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    this.lastPanX = this.panX;
+    this.lastPanY = this.panY;
+    this.trackRecentPan();
+  }
+
+  // Toggle help overlay
+  toggleHelp(): void {
+    this.showHelp = !this.showHelp;
+  }
+
+  // Hide help overlay
+  hideHelp(): void {
+    this.showHelp = false;
+  }
+
+  // Get mini-map viewport position and size
+  getMiniMapViewportLeft(): number {
+    if (!this.matrix || !this.viewportRef) return 0;
+
+    const matrixWidth = this.matrix.maxX * this.cellSize * this.scale;
+
+    // Calculate visible portion of the matrix
+    const visibleLeft = -this.panX * this.scale;
+    const percentLeft = (visibleLeft / matrixWidth) * 100;
+
+    return Math.max(0, Math.min(100, percentLeft));
+  }
+
+  getMiniMapViewportTop(): number {
+    if (!this.matrix || !this.viewportRef) return 0;
+
+    const matrixHeight = this.matrix.maxY * this.cellSize * this.scale;
+
+    // Calculate visible portion of the matrix
+    const visibleTop = -this.panY * this.scale;
+    const percentTop = (visibleTop / matrixHeight) * 100;
+
+    return Math.max(0, Math.min(100, percentTop));
+  }
+
+  getMiniMapViewportWidth(): number {
+    if (!this.matrix || !this.viewportRef) return 100;
+
+    const viewport = this.viewportRef.nativeElement;
+    const viewportWidth = viewport.clientWidth;
+    const matrixWidth = this.matrix.maxX * this.cellSize * this.scale;
+
+    // Calculate percentage of matrix visible
+    const percentWidth = (viewportWidth / matrixWidth) * 100;
+
+    return Math.min(100, percentWidth);
+  }
+
+  getMiniMapViewportHeight(): number {
+    if (!this.matrix || !this.viewportRef) return 100;
+
+    const viewport = this.viewportRef.nativeElement;
+    const viewportHeight = viewport.clientHeight;
+    const matrixHeight = this.matrix.maxY * this.cellSize * this.scale;
+
+    // Calculate percentage of matrix visible
+    const percentHeight = (viewportHeight / matrixHeight) * 100;
+
+    return Math.min(100, percentHeight);
   }
 
   // Toggle between 2D and 3D views
@@ -303,11 +537,19 @@ export class DroneMatrixComponent
       if (this.renderer) {
         this.renderer.dispose();
       }
-      setTimeout(() => this.resetView(), 0);
+      setTimeout(() => {
+        this.resetView();
+        this.fitAllDrones();
+      }, 0);
     }
   }
 
-  updateGridStyle(): void {}
+  // Update the grid style based on the current settings
+  updateGridStyle(): void {
+    if (this.gridHelper) {
+      this.gridHelper.visible = this.enhancedGrid;
+    }
+  }
 
   // === Three.js Methods ===
 
@@ -345,6 +587,9 @@ export class DroneMatrixComponent
 
     window.addEventListener('resize', () => this.onWindowResize());
     this.ngZone.runOutsideAngular(() => this.animate());
+
+    // Fit all drones in 3D view
+    setTimeout(() => this.fit3DAllDrones(), 300);
   }
 
   // Create scene
