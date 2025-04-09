@@ -1,7 +1,9 @@
 {
   "HEADER": {
     "TOGGLE_THEME": "Cambiar tema",
-    "LANGUAGE": "Cambiar idioma"
+    "TOGGLE_SIDEBAR": "Alternar barra lateral",
+    "LANGUAGE": "Cambiar idioma",
+    "NOTIFICATIONS": "Notificaciones"
   },
   "SIDEBAR": {
     "NAVIGATION": "Navegación",
@@ -53,6 +55,8 @@
     "CREATED_BY": "Creado por Adrián Jiménez Santiago como actividad educativa."
   },
   "DRONE_MATRIX": {
+    "TITLE": "Visualización de Matriz de Drones",
+    "SUBTITLE": "Cuadrícula interactiva para monitorear posiciones y movimientos de drones",
     "MATRIX": "Matriz",
     "DIMENSIONS": "Dimensiones",
     "DRONES": "Drones",
@@ -64,7 +68,59 @@
     "3D_VIEW": "Vista 3D",
     "2D_VIEW": "Vista 2D",
     "SHOW_LABELS": "Mostrar Etiquetas",
-    "HIDE_LABELS": "Ocultar Etiquetas"
+    "HIDE_LABELS": "Ocultar Etiquetas",
+    "ENHANCED_GRID": "Cuadrícula Mejorada",
+    "FIT_ALL_DRONES": "Ajustar Todos los Drones",
+    "HELP": "Ayuda"
+  },
+  "FLIGHT_CONTROL": {
+    "TITLE": "Centro de Control de Vuelo",
+    "SUBTITLE": "Controla y monitorea movimientos de drones en tiempo real",
+    "SELECT_MATRIX": "Seleccionar Matriz",
+    "SELECT_DRONE": "Seleccionar Drone",
+    "DARK_MODE": "Modo Oscuro",
+    "SINGLE_DRONE": "Drone Individual",
+    "GROUP_FLIGHT": "Vuelo en Grupo",
+    "BATCH_FLIGHTS": "Vuelos por Lotes",
+    "FLIGHT_COMMANDS": "Comandos de Vuelo",
+    "COMMANDS_HINT": "Usa A (Avanzar), L (Izquierda), R (Derecha)",
+    "QUICK_COMMANDS": "Comandos Rápidos",
+    "MOVE_FORWARD": "Avanzar",
+    "TURN_LEFT": "Girar Izquierda",
+    "TURN_RIGHT": "Girar Derecha",
+    "CLEAR_COMMANDS": "Borrar Comandos",
+    "COMMAND_VALIDATION": "Validación de Comandos",
+    "VALID_COMMANDS": "Los comandos son válidos y moverán el drone dentro de los límites de la matriz.",
+    "FINAL_POSITION": "Posición final",
+    "FACING": "mirando hacia",
+    "POTENTIAL_COLLISIONS": "Colisiones potenciales detectadas:",
+    "EXECUTE_FLIGHT": "Ejecutar Vuelo",
+    "SELECT_DRONES": "Seleccionar Drones",
+    "GROUP_FLIGHT_COMMANDS": "Comandos de Vuelo en Grupo",
+    "GROUP_COMMANDS_HINT": "Estos comandos serán ejecutados por todos los drones seleccionados",
+    "GROUP_VALIDATION": "Validación de Comandos de Grupo",
+    "VALID_GROUP_COMMANDS": "Los comandos son válidos para todos los drones seleccionados.",
+    "INVALID_GROUP_COMMANDS": "Algunos drones encontrarán problemas con estos comandos.",
+    "GROUP_COLLISIONS": "Colisiones potenciales detectadas entre drones:",
+    "EXECUTE_GROUP_FLIGHT": "Ejecutar Vuelo en Grupo",
+    "BATCH_COMMANDS": "Comandos por Lotes",
+    "NO_BATCH_COMMANDS": "No hay comandos por lotes añadidos",
+    "BATCH_VALIDATION": "Problemas de Validación por Lotes",
+    "BATCH_COLLISIONS": "Colisiones potenciales detectadas en la ejecución por lotes:",
+    "ADD_FLIGHT": "Añadir Vuelo",
+    "EXECUTE_ALL_FLIGHTS": "Ejecutar Todos los Vuelos",
+    "RECENT_ACTIVITY": "Actividad de Vuelo Reciente",
+    "COMMANDS": "Comandos",
+    "FROM": "Desde",
+    "TO": "Hasta",
+    "MATRIX_HELP": "Ayuda de Navegación de Matriz",
+    "MATRIX_CONTROLS": "Controles de Matriz",
+    "KEYBOARD_SHORTCUTS": "Atajos de Teclado",
+    "PAN": "Desplazar: Haz clic y arrastra la matriz o usa las teclas de flecha",
+    "ZOOM": "Zoom: Usa la rueda del ratón o el gesto de pellizco (táctil)",
+    "SELECT_DRONE_HELP": "Seleccionar Drone: Haz clic en un drone para seleccionarlo",
+    "VIEW_ALL_DRONES": "Ver Todos los Drones: Haz clic en el botón \"Ajustar Todos los Drones\" para mostrar todos los drones",
+    "CLOSE": "Cerrar"
   },
   "SETTINGS": {
     "TITLE": "Configuración del Sistema",
@@ -79,7 +135,12 @@
       "LANGUAGE": "Idioma",
       "LANGUAGE_DESC": "Selecciona tu idioma preferido",
       "NOTIFICATIONS": "Notificaciones",
-      "NOTIFICATIONS_DESC": "Habilitar notificaciones del sistema"
+      "NOTIFICATIONS_DESC": "Habilitar notificaciones del sistema",
+      "DATA_DISPLAY": "Visualización de Datos",
+      "ITEMS_PER_PAGE": "Elementos Por Página",
+      "ITEMS_PER_PAGE_DESC": "Número de elementos a mostrar por página en listas",
+      "DATE_FORMAT": "Formato de Fecha",
+      "DATE_FORMAT_DESC": "Formato para mostrar fechas en toda la aplicación"
     },
     "DRONE": {
       "TITLE": "Control de Drones",
@@ -111,12 +172,23 @@
       "API_KEY": "Clave API",
       "API_KEY_DESC": "Clave de autenticación para acceso a API",
       "TOKEN_REFRESH": "Actualización Automática de Token",
-      "TOKEN_REFRESH_DESC": "Actualizar automáticamente tokens de autenticación"
+      "TOKEN_REFRESH_DESC": "Actualizar automáticamente tokens de autenticación",
+      "VALIDATION_ERROR": "Error de Validación",
+      "VALIDATION_SUCCESS": "Validación Exitosa",
+      "URL_REQUIRED": "Por favor ingrese una URL de API",
+      "INVALID_URL": "Formato de URL inválido",
+      "URL_VALID": "El formato de URL de API es válido",
+      "CONNECTION_SUCCESS": "Conexión Exitosa",
+      "CONNECTION_SUCCESS_DETAIL": "Prueba de conexión API completada con éxito."
     },
     "ACTIONS": {
       "RESET": "Restablecer Valores Predeterminados",
       "SAVE": "Guardar Cambios",
-      "TEST_CONNECTION": "Probar Conexión"
+      "TEST_CONNECTION": "Probar Conexión",
+      "SAVE_SUCCESS": "Configuración Guardada",
+      "SAVE_SUCCESS_DETAIL": "La configuración de {{section}} ha sido actualizada con éxito.",
+      "RESET_SUCCESS": "Configuración Restablecida",
+      "RESET_SUCCESS_DETAIL": "La configuración de {{section}} ha sido restablecida a los valores predeterminados."
     }
   },
   "ERROR": {
@@ -127,5 +199,17 @@
     "TECHNICAL_INFO": "Información Técnica",
     "TECHNICAL_MESSAGE": "La URL solicitada no se encontró en este servidor. Si ingresó la URL manualmente, verifique su ortografía e intente nuevamente.",
     "REQUESTED_URL": "URL solicitada"
+  },
+  "ORIENTATIONS": {
+    "NORTH": "Norte",
+    "SOUTH": "Sur",
+    "EAST": "Este",
+    "WEST": "Oeste"
+  },
+  "STATUS": {
+    "COMPLETED": "Completado",
+    "FAILED": "Fallido",
+    "PENDING": "Pendiente",
+    "IN_PROGRESS": "En Progreso"
   }
 }
