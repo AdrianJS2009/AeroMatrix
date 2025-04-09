@@ -115,7 +115,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Subscribe to route changes to update the currentRoute variable.
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {

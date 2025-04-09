@@ -130,7 +130,7 @@ export class SupportComponent implements OnInit {
     return this.faqs.filter((faq) => faq.category === this.selectedFaqCategory);
   }
 
-  // TrackBy function for FAQs (improves performance on ngFor)
+  // TrackBy function for FAQs
   trackByFaq(index: number, faq: FAQ): string {
     return faq.question;
   }
@@ -145,7 +145,7 @@ export class SupportComponent implements OnInit {
     this.selectedFaqCategory = category;
   }
 
-  // Returns the corresponding icon for a category or a default icon if not defined
+  // Returns the corresponding icon for a category or a default icon
   getCategoryIcon(category: string): string {
     const icons: { [key: string]: string } = {
       General: 'pi pi-info-circle',
@@ -159,7 +159,7 @@ export class SupportComponent implements OnInit {
     return icons[category] || 'pi pi-info-circle';
   }
 
-  // Submit the support request form
+  // Submit
   submitSupportRequest(): void {
     if (this.supportForm.valid) {
       this.messageService.add({
@@ -169,7 +169,7 @@ export class SupportComponent implements OnInit {
           'Your support request has been submitted successfully. We will contact you shortly.',
         life: 5000,
       });
-      // Reset form state, keeping attachLogs as false
+      // Reset form state
       this.supportForm.reset({ attachLogs: false });
     } else {
       this.messageService.add({
@@ -178,14 +178,13 @@ export class SupportComponent implements OnInit {
         detail: 'Please fill in all required fields correctly.',
         life: 5000,
       });
-      // Mark all fields as touched to display validation messages
       Object.keys(this.supportForm.controls).forEach((key) => {
         this.supportForm.get(key)?.markAsTouched();
       });
     }
   }
 
-  // Initialize FAQs with sample data
+  // Initialize FAQs with mock data
   private initializeFaqs(): void {
     this.faqs = [
       {
@@ -251,7 +250,7 @@ export class SupportComponent implements OnInit {
     ];
   }
 
-  // Initialize knowledge base articles with sample data
+  // Initialize knowledge base articles with mock data
   private initializeKnowledgeBase(): void {
     this.knowledgeBaseArticles = [
       {

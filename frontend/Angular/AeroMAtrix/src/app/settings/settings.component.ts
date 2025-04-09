@@ -94,7 +94,6 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
-  // Add this property to the class
   hideApiKey = true;
 
   constructor(
@@ -102,7 +101,7 @@ export class SettingsComponent {
     private readonly themeService: ThemeService,
     private readonly translationService: TranslationService
   ) {
-    // Initialize language options from translation service
+    // Initialize language options
     this.languageOptions = this.translationService.availableLanguages;
 
     // Subscribe to theme changes and update settings accordingly
@@ -139,7 +138,7 @@ export class SettingsComponent {
     });
   }
 
-  /** Reset general settings to default values */
+  /** Reset general settings to default  */
   resetGeneralSettings(): void {
     this.settings.darkMode = false;
     this.themeService.setTheme('light');
