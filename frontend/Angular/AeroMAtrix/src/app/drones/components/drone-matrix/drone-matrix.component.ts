@@ -66,6 +66,7 @@ export class DroneMatrixComponent
   @Input() drones: Drone[] = [];
   @Input() selectedDroneId?: number;
   @Input() isInteractive = true;
+  @Input() autoFitDrones = true;
   @Output() droneSelected = new EventEmitter<Drone>();
 
   @ViewChild('viewport') viewportRef!: ElementRef;
@@ -119,8 +120,10 @@ export class DroneMatrixComponent
     }
 
     if (changes['drones'] && this.drones.length > 0) {
-      // When drones change, fit all drones in view
-      setTimeout(() => this.fitAllDrones(), 100);
+      // When drones change, fit all drones in view only if autoFitDrones is true
+      if (this.autoFitDrones) {
+        setTimeout(() => this.fitAllDrones(), 100);
+      }
 
       if (this.view3D && this.scene) {
         this.updateDronePositions();
@@ -137,8 +140,10 @@ export class DroneMatrixComponent
       this.initThreeJs();
     }
 
-    // Initial fit all drones
-    setTimeout(() => this.fitAllDrones(), 300);
+    // Initial fit all drones only if autoFitDrones is true
+    if (this.autoFitDrones) {
+      setTimeout(() => this.fitAllDrones(), 300);
+    }
   }
 
   ngOnDestroy(): void {
@@ -891,6 +896,12 @@ export class DroneMatrixComponent
   // Update camera position to frame the matrix and drones
   private updateCameraPosition(): void {
     if (!this.matrix || this.drones.length === 0) return;
+
+    // If autoFitDrones is false and controls are already set up, don't reset camera position
+    if (!this.autoFitDrones && this.controls?.target) {
+      return;
+    }
+
     const centerX = this.matrix.maxX / 2;
     const centerZ = this.matrix.maxY / 2;
     const size = Math.max(this.matrix.maxX, this.matrix.maxY);

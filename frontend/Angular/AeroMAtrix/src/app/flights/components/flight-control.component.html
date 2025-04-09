@@ -77,6 +77,7 @@
             [matrix]="selectedMatrix"
             [drones]="selectedMatrix?.drones || []"
             [selectedDroneId]="selectedDroneId"
+            [autoFitDrones]="true"
             (droneSelected)="onMatrixDroneSelect($event)"
           ></app-drone-matrix>
         </div>
