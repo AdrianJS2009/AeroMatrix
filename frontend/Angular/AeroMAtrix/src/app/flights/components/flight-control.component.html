@@ -93,6 +93,7 @@
                     id="commandsText"
                     pInputTextarea
                     [(ngModel)]="commandsText"
+                    (ngModelChange)="validateCommands()"
                     placeholder="Enter commands (e.g., ALARA)"
                     class="p-inputtext-lg"
                     rows="3"
@@ -152,56 +153,182 @@
               </div>
 
               <!-- Command validation -->
-              <div
-                *ngIf="commandValidationResult && commandsText"
-                class="command-validation-result mb-3"
-              >
+              <div *ngIf="commandsText" class="command-validation-result mb-3">
                 <div
                   [ngClass]="{
-                    'validation-success': !commandValidationResult.hasErrors,
-                    'validation-error': commandValidationResult.hasErrors
+                    'validation-success':
+                      commandValidationResult &&
+                      !commandValidationResult.hasErrors,
+                    'validation-error':
+                      !commandValidationResult ||
+                      commandValidationResult.hasErrors,
+                    'validation-warning':
+                      commandValidationResult &&
+                      !commandValidationResult.hasErrors &&
+                      commandValidationResult.collisions
                   }"
                 >
                   <div class="validation-header">
                     <i
                       class="pi"
                       [ngClass]="{
-                        'pi-check-circle': !commandValidationResult.hasErrors,
+                        'pi-check-circle':
+                          commandValidationResult &&
+                          !commandValidationResult.hasErrors &&
+                          !commandValidationResult.collisions,
                         'pi-exclamation-triangle':
-                          commandValidationResult.hasErrors
+                          !commandValidationResult ||
+                          commandValidationResult.hasErrors,
+                        'pi-exclamation-circle':
+                          commandValidationResult &&
+                          !commandValidationResult.hasErrors &&
+                          commandValidationResult.collisions
                       }"
                     ></i>
                     <span>Command Validation</span>
                   </div>
-                  <div class="validation-message">
-                    <span *ngIf="!commandValidationResult.hasErrors"
+
+                  <!-- No validation result yet -->
+                  <div
+                    class="validation-message"
+                    *ngIf="!commandValidationResult"
+                  >
+                    <span
+                      >Please select a drone and matrix to validate
+                      commands.</span
+                    >
+                  </div>
+
+                  <!-- Error message -->
+                  <div
+                    class="validation-message"
+                    *ngIf="
+                      commandValidationResult &&
+                      commandValidationResult.hasErrors
+                    "
+                  >
+                    <span>{{ commandValidationResult.errorMessage }}</span>
+                    <div
+                      *ngIf="
+                        commandValidationResult.stepWithError !== undefined
+                      "
+                      class="validation-details"
+                    >
+                      <p>Command sequence up to error:</p>
+                      <div class="command-sequence small">
+                        <div
+                          *ngFor="
+                            let cmd of commandsText
+                              .substring(
+                                0,
+                                commandValidationResult.stepWithError
+                              )
+                              .split('');
+                            let i = index
+                          "
+                          class="command-step valid-step"
+                        >
+                          {{ cmd.toUpperCase() }}
+                        </div>
+                        <div
+                          *ngIf="
+                            commandValidationResult.stepWithError <
+                            commandsText.length
+                          "
+                          class="command-step error-step"
+                        >
+                          {{
+                            commandsText[
+                              commandValidationResult.stepWithError
+                            ].toUpperCase()
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Success message -->
+                  <div
+                    class="validation-message"
+                    *ngIf="
+                      commandValidationResult &&
+                      !commandValidationResult.hasErrors
+                    "
+                  >
+                    <span
                       >Commands are valid and will move the drone within matrix
                       boundaries.</span
                     >
-                    <span *ngIf="commandValidationResult.hasErrors">{{
-                      commandValidationResult.errorMessage
-                    }}</span>
-                  </div>
-                  <div
-                    *ngIf="
-                      commandValidationResult.finalPosition &&
-                      !commandValidationResult.hasErrors
-                    "
-                    class="validation-details"
-                  >
-                    <span
-                      >Final position: ({{
-                        commandValidationResult.finalPosition.x
-                      }}, {{ commandValidationResult.finalPosition.y }}) facing
-                      {{
-                        getOrientationLabel(
-                          commandValidationResult.finalPosition.orientation
-                        )
-                      }}</span
+
+                    <!-- Show final position details -->
+                    <div
+                      *ngIf="commandValidationResult.finalPosition"
+                      class="validation-details"
                     >
+                      <span
+                        >Final position: ({{
+                          commandValidationResult.finalPosition.x
+                        }}, {{ commandValidationResult.finalPosition.y }})
+                        facing
+                        {{
+                          getOrientationLabel(
+                            commandValidationResult.finalPosition.orientation
+                          )
+                        }}</span
+                      >
+                    </div>
+
+                    <!-- Show path visualization if available -->
+                    <div
+                      *ngIf="
+                        commandValidationResult.path &&
+                        commandValidationResult.path.length > 1
+                      "
+                      class="path-visualization"
+                    >
+                      <p>Path preview:</p>
+                      <div class="command-sequence">
+                        <div
+                          *ngFor="
+                            let step of commandsText.split('');
+                            let i = index
+                          "
+                          class="command-step"
+                          [ngClass]="{
+                            'advance-step': step.toUpperCase() === 'A',
+                            'left-step': step.toUpperCase() === 'L',
+                            'right-step': step.toUpperCase() === 'R'
+                          }"
+                          [pTooltip]="
+                            'Step ' +
+                            (i + 1) +
+                            ': ' +
+                            (step.toUpperCase() === 'A'
+                              ? 'Advance to '
+                              : step.toUpperCase() === 'L'
+                              ? 'Turn Left to '
+                              : 'Turn Right to ') +
+                            '(' +
+                            commandValidationResult.path[i + 1].x +
+                            ', ' +
+                            commandValidationResult.path[i + 1].y +
+                            ') facing ' +
+                            getOrientationLabel(
+                              commandValidationResult.path[i + 1].orientation
+                            )
+                          "
+                          [tooltipPosition]="'top'"
+                        >
+                          {{ step.toUpperCase() }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
+                  <!-- Collision warnings -->
                   <div
                     *ngIf="
+                      commandValidationResult &&
                       commandValidationResult.collisions &&
                       commandValidationResult.collisions.length > 0
                     "
@@ -216,8 +343,11 @@
                           let collision of commandValidationResult.collisions
                         "
                       >
-                        At position ({{ collision.x }}, {{ collision.y }}) with
-                        drone "{{ collision.droneName }}"
+                        At step {{ collision.stepNumber || "?" }} - position ({{
+                          collision.x
+                        }}, {{ collision.y }}) with drone "{{
+                          collision.droneName
+                        }}"
                       </li>
                     </ul>
                   </div>

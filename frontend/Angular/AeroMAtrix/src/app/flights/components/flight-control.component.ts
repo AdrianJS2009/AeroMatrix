@@ -42,7 +42,14 @@ interface CommandValidationResult {
   hasErrors: boolean;
   errorMessage?: string;
   finalPosition?: Position;
-  collisions?: { x: number; y: number; droneName: string }[];
+  collisions?: {
+    x: number;
+    y: number;
+    droneName: string;
+    stepNumber?: number;
+  }[];
+  path?: Position[];
+  stepWithError?: number;
 }
 
 interface GroupCollision {
@@ -131,7 +138,6 @@ export class FlightControlComponent implements OnInit {
   commandsTextInvalid = false;
   executingSingle = false;
   commandValidationResult?: CommandValidationResult;
-  darkMode: boolean = false;
 
   // Group
   multiSelectedDrones: Drone[] = [];
@@ -244,15 +250,26 @@ export class FlightControlComponent implements OnInit {
 
   // Validation of commands
   validateCommands(): void {
-    if (
-      !this.selectedDrone ||
-      !this.commandsText ||
-      !this.validateCommandFormat(this.commandsText)
-    ) {
+    // Clear validation result if no drone selected, no commands, or invalid format
+    if (!this.selectedDrone || !this.commandsText) {
       this.commandValidationResult = undefined;
       return;
     }
 
+    // Check command format first
+    if (!this.validateCommandFormat(this.commandsText)) {
+      this.commandsTextInvalid = true;
+      this.commandValidationResult = {
+        hasErrors: true,
+        errorMessage:
+          'Commands must only contain A (Advance), L (Left), and R (Right) characters',
+      };
+      return;
+    } else {
+      this.commandsTextInvalid = false;
+    }
+
+    // Simulate the commands to check for boundaries and collisions
     const result = this.simulateCommands(
       this.selectedDrone,
       this.commandsText,
@@ -301,7 +318,7 @@ export class FlightControlComponent implements OnInit {
     if (!this.selectedMatrix) {
       return {
         hasErrors: true,
-        errorMessage: 'No matrix selected',
+        errorMessage: 'No matrix selected for command simulation',
       };
     }
 
@@ -312,14 +329,20 @@ export class FlightControlComponent implements OnInit {
       orientation: drone.orientation,
     };
 
-    const collisions: { x: number; y: number; droneName: string }[] = [];
+    const collisions: {
+      x: number;
+      y: number;
+      droneName: string;
+      stepNumber?: number;
+    }[] = [];
+
     const path: Position[] = [{ ...simulatedDrone }];
 
     // Process each command
-    for (const cmd of commands.toUpperCase()) {
+    for (let i = 0; i < commands.toUpperCase().length; i++) {
+      const cmd = commands.toUpperCase()[i];
       switch (cmd) {
-        case 'A': {
-          // Advance
+        case 'A': // Advance
           let newX = simulatedDrone.x;
           let newY = simulatedDrone.y;
 
@@ -346,10 +369,22 @@ export class FlightControlComponent implements OnInit {
             newX >= this.selectedMatrix.maxX ||
             newY >= this.selectedMatrix.maxY
           ) {
+            // More detailed error message showing which boundary would be crossed
+            let boundaryMessage = '';
+            if (newX < 0) boundaryMessage = 'western boundary (x < 0)';
+            else if (newY < 0) boundaryMessage = 'southern boundary (y < 0)';
+            else if (newX >= this.selectedMatrix.maxX)
+              boundaryMessage = `eastern boundary (x ≥ ${this.selectedMatrix.maxX})`;
+            else if (newY >= this.selectedMatrix.maxY)
+              boundaryMessage = `northern boundary (y ≥ ${this.selectedMatrix.maxY})`;
+
             return {
               hasErrors: true,
-              errorMessage: `Command would move drone out of bounds at position (${newX}, ${newY})`,
+              errorMessage: `Command would move drone out of bounds at step ${
+                i + 1
+              } (${cmd}), crossing the ${boundaryMessage}`,
               finalPosition: simulatedDrone,
+              stepWithError: i,
             };
           }
 
@@ -364,12 +399,12 @@ export class FlightControlComponent implements OnInit {
                 x: newX,
                 y: newY,
                 droneName: otherDrone.name || `Drone ${otherDrone.id}`,
+                stepNumber: i + 1,
               });
             }
           }
 
           break;
-        }
 
         case 'L': // Turn Left
           switch (simulatedDrone.orientation) {
@@ -414,6 +449,7 @@ export class FlightControlComponent implements OnInit {
       hasErrors: false,
       finalPosition: simulatedDrone,
       collisions: collisions.length > 0 ? collisions : undefined,
+      path: path,
     };
   }
 
@@ -549,7 +585,7 @@ export class FlightControlComponent implements OnInit {
               drone1: drone1?.name ?? `Drone ${drone1Id}`,
               drone2: drone2?.name ?? `Drone ${drone2Id}`,
             });
-            break;
+            break; // Only report the first collision between each pair
           }
         }
       }
