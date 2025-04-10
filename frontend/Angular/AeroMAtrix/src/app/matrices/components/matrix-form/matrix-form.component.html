@@ -99,52 +99,154 @@
       </div>
     </div>
 
-    <div class="field mt-4">
-      <label class="font-medium mb-2 block">Matrix Preview</label>
-      <div
-        class="matrix-preview border-1 surface-border border-round p-2 flex flex-wrap justify-content-center"
-      >
-        <div
-          *ngFor="let _ of getPreviewArray(); let i = index"
-          class="matrix-cell"
-          [style.width.%]="100 / matrixForm.value.maxX"
-          [attr.data-x]="i % matrixForm.value.maxX"
-          [attr.data-y]="Math.floor(i / matrixForm.value.maxX)"
-        ></div>
+    <!-- Preview Mode Selection -->
+    <div class="field mt-3">
+      <div class="preview-header">
+        <label for="previewMode" class="font-medium mb-2">Matrix Preview</label>
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi {{ previewVisible ? 'pi-eye-slash' : 'pi-eye' }}"
+          (click)="togglePreview()"
+          class="p-button-rounded p-button-text p-button-sm"
+          [pTooltip]="previewVisible ? 'Hide Preview' : 'Show Preview'"
+          tooltipPosition="left"
+          title="{{ previewVisible ? 'Hide Preview' : 'Show Preview' }}"
+        ></button>
       </div>
-      <small class="text-secondary">
-        This is a preview of the matrix with dimensions
-        {{ matrixForm.value.maxX }} x {{ matrixForm.value.maxY }}
-      </small>
-    </div>
 
-    <p-divider></p-divider>
+      <div
+        class="preview-mode-selector"
+        *ngIf="matrixForm.value.maxX * matrixForm.value.maxY > 25"
+      >
+        <div class="*ngIf=" matrixForm.value.maxX * matrixForm.value.maxY>
+          25">
+          <div class="preview-mode-options">
+            <label for="displayMode" class="p-radiobutton-label"
+              >Display Mode:</label
+            >
+            <div class="flex align-items-center gap-2">
+              <p-radioButton
+                formControlName="previewMode"
+                value="standard"
+                inputId="standard"
+                *ngIf="matrixForm.value.maxX * matrixForm.value.maxY <= 100"
+              ></p-radioButton>
+              <label
+                for="standard"
+                class="radio-label"
+                *ngIf="matrixForm.value.maxX * matrixForm.value.maxY <= 100"
+                >Standard</label
+              >
 
-    <div class="flex justify-content-end gap-2 mt-4">
-      <button
-        pButton
-        pRipple
-        type="button"
-        label="Cancel"
-        class="p-button-outlined p-button-secondary"
-        icon="pi pi-times"
-        [disabled]="submitting"
-        (click)="onCancel()"
-        title="Cancel"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="submit"
-        label="Save"
-        icon="pi pi-check"
-        [loading]="submitting"
-        [disabled]="submitting"
-        title="Save"
-      ></button>
-    </div>
-  </form>
-</p-dialog>
+              <p-radioButton
+                formControlName="previewMode"
+                value="optimized"
+                inputId="optimized"
+              ></p-radioButton>
+              <label for="optimized" class="radio-label">Optimized</label>
 
-<p-toast position="top-right"></p-toast>
-<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+              <p-radioButton
+                formControlName="previewMode"
+                value="minimal"
+                inputId="minimal"
+              ></p-radioButton>
+              <label for="minimal" class="radio-label">Minimal</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix Preview Section -->
+      <div *ngIf="previewVisible" class="field mt-2">
+        <div
+          class="matrix-preview border-1 surface-border border-round p-2"
+          [ngClass]="{
+            'matrix-preview-standard': previewMode === 'standard',
+            'matrix-preview-optimized': previewMode === 'optimized',
+            'matrix-preview-minimal': previewMode === 'minimal'
+          }"
+        >
+          <!-- Standard DOM-based preview for small matrices -->
+          <ng-container *ngIf="!useCanvasPreview">
+            <div
+              *ngFor="let _ of getPreviewArray(); let i = index"
+              class="matrix-cell"
+              [ngStyle]="getCellStyle(i)"
+              [attr.data-x]="getCellPosition(i).x"
+              [attr.data-y]="getCellPosition(i).y"
+            ></div>
+
+            <!-- Overlay message for optimized mode -->
+            <div *ngIf="previewMode === 'optimized'" class="preview-message">
+              <small
+                >Showing optimized preview ({{ getPreviewArray().length }} of
+                {{ matrixForm.value.maxX * matrixForm.value.maxY }}
+                cells)</small
+              >
+            </div>
+
+            <!-- Overlay message for minimal mode -->
+            <div *ngIf="previewMode === 'minimal'" class="preview-message">
+              <small>Showing minimal preview (corner cells only)</small>
+            </div>
+          </ng-container>
+
+          <!-- Canvas-based preview for very large matrices -->
+          <ng-container *ngIf="useCanvasPreview">
+            <canvas
+              #matrixCanvas
+              width="400"
+              height="300"
+              class="matrix-canvas"
+              (window:resize)="drawCanvasPreview(matrixCanvas)"
+            ></canvas>
+            <div class="preview-message">
+              <small
+                >Showing optimized canvas preview ({{
+                  matrixForm.value.maxX
+                }}x{{ matrixForm.value.maxY }} matrix)</small
+              >
+            </div>
+          </ng-container>
+        </div>
+        <small class="text-secondary matrix-dimensions">
+          Matrix dimensions: {{ matrixForm.value.maxX }} x
+          {{ matrixForm.value.maxY }} ({{
+            matrixForm.value.maxX * matrixForm.value.maxY
+          }}
+          cells total)
+        </small>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="flex justify-content-end gap-2 mt-4">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Cancel"
+          class="p-button-outlined p-button-secondary"
+          icon="pi pi-times"
+          [disabled]="submitting"
+          (click)="onCancel()"
+          title="Cancel"
+        ></button>
+        <button
+          pButton
+          pRipple
+          type="submit"
+          label="Save"
+          icon="pi pi-check"
+          [loading]="submitting"
+          [disabled]="submitting"
+          title="Save"
+        ></button>
+      </div>
+
+      <p-toast position="top-right"></p-toast>
+      <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+    </div></form
+></p-dialog>

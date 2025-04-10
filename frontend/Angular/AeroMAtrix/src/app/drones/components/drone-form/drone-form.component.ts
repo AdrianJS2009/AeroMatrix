@@ -111,7 +111,7 @@ export class DroneFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // If the visibility or droneToEdit changes, reinitialize the form
     if (
-      (changes['visible'] && changes['visible'].currentValue) ||
+      changes['visible']?.currentValue ||
       (changes['droneToEdit'] && !changes['droneToEdit'].firstChange)
     ) {
       if (this.droneForm) {

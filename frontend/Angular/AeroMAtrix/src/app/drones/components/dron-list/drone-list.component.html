@@ -31,7 +31,6 @@
             styleClass="drone-count"
           ></p-badge>
         </div>
-        <!-- Fix for Issue #1: Search Input Overlay -->
         <span class="p-input-icon-left search-input">
           <i class="pi pi-search"></i>
           <input
@@ -109,7 +108,7 @@
                 [severity]="getOrientationSeverity(drone.orientation)"
               ></p-tag>
             </td>
-            <!-- Fix for Issue #3: Matrix ID Display -->
+
             <td class="matrix-id-cell">
               <p-badge
                 [value]="drone.matrixId.toString()"

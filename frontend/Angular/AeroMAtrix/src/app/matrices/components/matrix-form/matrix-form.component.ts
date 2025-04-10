@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  HostListener,
   Input,
-  type OnInit,
+  OnInit,
   Output,
 } from '@angular/core';
 import {
@@ -21,8 +22,11 @@ import { DividerModule } from 'primeng/divider';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { RippleModule } from 'primeng/ripple';
+import { SkeletonModule } from 'primeng/skeleton';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { Drone } from '../../../drones/models/drone.model';
 import { Matrix } from '../../models/matrix.model';
 import { MatrixService } from '../../services/matrix.service';
@@ -41,7 +45,10 @@ import { MatrixService } from '../../services/matrix.service';
     DividerModule,
     ProgressSpinnerModule,
     RippleModule,
+    TooltipModule,
     ConfirmDialogModule,
+    SkeletonModule,
+    RadioButtonModule,
   ],
   templateUrl: './matrix-form.component.html',
   styleUrls: ['./matrix-form.component.scss'],
@@ -77,6 +84,19 @@ export class MatrixFormComponent implements OnInit {
   // Constants for validation
   readonly MAX_DIMENSION = 100;
 
+  // For matrix preview optimization
+  previewMode: 'standard' | 'optimized' | 'minimal' = 'standard';
+  previewCellSize = 20; // in pixels
+  containerWidth = 400;
+  containerHeight = 300;
+  isInitialRender = true;
+  previewLoading = false;
+  previewVisible = true;
+  useCanvasPreview = false;
+
+  // For responsive design
+  screenSize: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'lg';
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly matrixService: MatrixService,
@@ -86,6 +106,81 @@ export class MatrixFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.checkScreenSize();
+
+    // Delay to ensure the container is rendered
+    setTimeout(() => {
+      this.updateContainerDimensions();
+      this.determineOptimalPreviewMode();
+    }, 0);
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+    this.updateContainerDimensions();
+    this.determineOptimalPreviewMode();
+  }
+
+  private checkScreenSize() {
+    const width = window.innerWidth;
+    if (width < 576) {
+      this.screenSize = 'xs';
+      this.previewCellSize = 10;
+    } else if (width < 768) {
+      this.screenSize = 'sm';
+      this.previewCellSize = 12;
+    } else if (width < 992) {
+      this.screenSize = 'md';
+      this.previewCellSize = 15;
+    } else if (width < 1200) {
+      this.screenSize = 'lg';
+      this.previewCellSize = 18;
+    } else {
+      this.screenSize = 'xl';
+      this.previewCellSize = 20;
+    }
+  }
+
+  private updateContainerDimensions() {
+    const container = document.querySelector('.matrix-preview') as HTMLElement;
+    if (container) {
+      this.containerWidth = container.clientWidth;
+      this.containerHeight = container.clientHeight;
+    }
+  }
+
+  private determineOptimalPreviewMode() {
+    const maxX = this.matrixForm.get('maxX')?.value || 3;
+    const maxY = this.matrixForm.get('maxY')?.value || 3;
+    const totalCells = maxX * maxY;
+
+    // Use canvas for very large matrices
+    this.useCanvasPreview = totalCells > 50;
+
+    // Choose preview mode based on total cells
+    if (totalCells <= 30) {
+      this.previewMode = 'standard';
+    } else if (totalCells <= 60) {
+      this.previewMode = 'optimized';
+    } else {
+      this.previewMode = 'minimal';
+    }
+
+    // Calculate max visible cells based on container dimensions
+    const maxVisibleX = Math.floor(this.containerWidth / this.previewCellSize);
+    const maxVisibleY = Math.floor(this.containerHeight / this.previewCellSize);
+
+    // Adjust cell size if needed to fit container
+    if (maxX > maxVisibleX || maxY > maxVisibleY) {
+      const scaleX = maxVisibleX / maxX;
+      const scaleY = maxVisibleY / maxY;
+      const scale = Math.min(scaleX, scaleY);
+      this.previewCellSize = Math.max(
+        4,
+        Math.floor(this.previewCellSize * scale)
+      );
+    }
   }
 
   // Initialize the form with default or edit values
@@ -107,6 +202,7 @@ export class MatrixFormComponent implements OnInit {
           Validators.max(this.MAX_DIMENSION),
         ],
       ],
+      previewMode: ['standard'],
     });
 
     if (this.matrixToEdit) {
@@ -123,23 +219,25 @@ export class MatrixFormComponent implements OnInit {
         if (this.matrixToEdit && newValue < this.originalMaxX) {
           this.checkForOutOfBoundsDrones();
         }
+        this.determineOptimalPreviewMode();
       });
 
       this.matrixForm.get('maxY')?.valueChanges.subscribe((newValue) => {
         if (this.matrixToEdit && newValue < this.originalMaxY) {
           this.checkForOutOfBoundsDrones();
         }
+        this.determineOptimalPreviewMode();
       });
     }
+
+    this.matrixForm.get('previewMode')?.valueChanges.subscribe((mode) => {
+      this.previewMode = mode;
+    });
   }
 
   // Check if reducing matrix size would make any drones out of bounds
   checkForOutOfBoundsDrones(): void {
-    if (
-      !this.matrixToEdit ||
-      !this.matrixToEdit.drones ||
-      this.matrixToEdit.drones.length === 0
-    ) {
+    if (!this.matrixToEdit?.drones || this.matrixToEdit.drones.length === 0) {
       this.outOfBoundsDrones = [];
       return;
     }
@@ -201,7 +299,11 @@ export class MatrixFormComponent implements OnInit {
       }
     }
 
-    const formValue = this.matrixForm.value;
+    const formValue = {
+      maxX: this.matrixForm.get('maxX')?.value,
+      maxY: this.matrixForm.get('maxY')?.value,
+    };
+
     this.submitting = true;
 
     const request$ = this.matrixToEdit
@@ -244,7 +346,180 @@ export class MatrixFormComponent implements OnInit {
   getPreviewArray(): number[] {
     const x = this.matrixForm.value.maxX || 3;
     const y = this.matrixForm.value.maxY || 3;
-    return Array(x * y).fill(0);
+
+    if (this.previewMode === 'standard') {
+      return Array(x * y).fill(0);
+    } else if (this.previewMode === 'optimized') {
+      // Create a subset of cells to represent the matrix
+      const maxCells = 100;
+      const totalCells = x * y;
+      const factor = Math.ceil(totalCells / maxCells);
+
+      const result: number[] = [];
+      for (let i = 0; i < y; i += factor) {
+        for (let j = 0; j < x; j += factor) {
+          result.push(i * x + j);
+        }
+      }
+      return result;
+    } else {
+      // minimal mode
+      // Just show corner cells and some in between
+      const result = [
+        0, // top-left
+        x - 1, // top-right
+        (y - 1) * x, // bottom-left
+        (y - 1) * x + (x - 1), // bottom-right
+      ];
+
+      // Add some cells in the middle if matrix is large enough
+      if (x > 2 && y > 2) {
+        const midX = Math.floor(x / 2);
+        const midY = Math.floor(y / 2);
+        result.push(midY * x + midX); // center
+      }
+
+      return result;
+    }
+  }
+
+  // Get the cell style for a specific cell in the preview
+  getCellStyle(index: number): any {
+    const x = this.matrixForm.value.maxX || 3;
+    const y = this.matrixForm.value.maxY || 3;
+
+    if (this.previewMode === 'standard') {
+      return {
+        'width.%': 100 / x,
+        'aspect-ratio': '1',
+      };
+    } else if (this.previewMode === 'optimized') {
+      return {
+        'width.px': this.previewCellSize,
+        'height.px': this.previewCellSize,
+      };
+    } else {
+      // minimal mode
+      const extraStyles: any = {};
+
+      if (index === 0) {
+        extraStyles['border-top-left-radius'] = '4px';
+        extraStyles['background-color'] = 'var(--primary-color)';
+        extraStyles['opacity'] = '0.5';
+      } else if (index === 1) {
+        extraStyles['border-top-right-radius'] = '4px';
+        extraStyles['background-color'] = 'var(--primary-color)';
+        extraStyles['opacity'] = '0.5';
+      } else if (index === 2) {
+        extraStyles['border-bottom-left-radius'] = '4px';
+        extraStyles['background-color'] = 'var(--primary-color)';
+        extraStyles['opacity'] = '0.5';
+      } else if (index === 3) {
+        extraStyles['border-bottom-right-radius'] = '4px';
+        extraStyles['background-color'] = 'var(--primary-color)';
+        extraStyles['opacity'] = '0.5';
+      } else if (index === 4) {
+        extraStyles['background-color'] = 'var(--primary-color)';
+        extraStyles['opacity'] = '0.7';
+      }
+
+      return {
+        'width.px': this.previewCellSize * 2,
+        'height.px': this.previewCellSize * 2,
+        ...extraStyles,
+      };
+    }
+  }
+
+  // Get the position (x, y) for a cell in the preview
+  getCellPosition(index: number): { x: number; y: number } {
+    const maxX = this.matrixForm.value.maxX || 3;
+
+    if (this.previewMode === 'standard') {
+      return {
+        x: index % maxX,
+        y: Math.floor(index / maxX),
+      };
+    } else if (this.previewMode === 'optimized') {
+      // For optimized mode, we need to calculate the actual positions
+      const factor = Math.ceil(
+        (maxX * (this.matrixForm.value.maxY || 3)) / 100
+      );
+      const row = Math.floor(index / Math.ceil(maxX / factor));
+      const col = index % Math.ceil(maxX / factor);
+      return {
+        x: col * factor,
+        y: row * factor,
+      };
+    } else {
+      // minimal mode
+      if (index === 0) return { x: 0, y: 0 }; // top-left
+      if (index === 1) return { x: maxX - 1, y: 0 }; // top-right
+      if (index === 2)
+        return { x: 0, y: (this.matrixForm.value.maxY || 3) - 1 }; // bottom-left
+      if (index === 3)
+        return { x: maxX - 1, y: (this.matrixForm.value.maxY || 3) - 1 }; // bottom-right
+      return {
+        x: Math.floor(maxX / 2),
+        y: Math.floor((this.matrixForm.value.maxY || 3) / 2),
+      }; // center
+    }
+  }
+
+  // Draw matrix preview on canvas
+  drawCanvasPreview(canvas: HTMLCanvasElement): void {
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const maxX = this.matrixForm.value.maxX || 3;
+    const maxY = this.matrixForm.value.maxY || 3;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate cell size to fit canvas
+    const cellWidth = canvas.width / maxX;
+    const cellHeight = canvas.height / maxY;
+    const cellSize = Math.min(cellWidth, cellHeight);
+
+    // Adjust canvas size if needed to maintain aspect ratio
+    canvas.width = cellSize * maxX;
+    canvas.height = cellSize * maxY;
+
+    // Draw grid
+    ctx.strokeStyle = 'var(--surface-border)';
+    ctx.lineWidth = 0.5;
+
+    // Draw cells
+    for (let y = 0; y < maxY; y++) {
+      for (let x = 0; x < maxX; x++) {
+        const xPos = x * cellSize;
+        const yPos = y * cellSize;
+
+        // Draw cell background
+        ctx.fillStyle = 'var(--surface-card)';
+        ctx.fillRect(xPos, yPos, cellSize, cellSize);
+
+        // Draw cell border
+        ctx.strokeRect(xPos, yPos, cellSize, cellSize);
+
+        // Draw coordinates for bigger cells only
+        if (cellSize > 12) {
+          ctx.fillStyle = 'var(--text-color-secondary)';
+          ctx.font = `${cellSize / 4}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${x},${y}`, xPos + cellSize / 2, yPos + cellSize / 2);
+        }
+      }
+    }
+
+    // Draw a border around the entire matrix
+    ctx.strokeStyle = 'var(--primary-color)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
   }
 
   // Check if the matrix dimensions have been reduced
@@ -276,5 +551,10 @@ export class MatrixFormComponent implements OnInit {
     }
 
     return '';
+  }
+
+  // Toggle preview visibility
+  togglePreview(): void {
+    this.previewVisible = !this.previewVisible;
   }
 }

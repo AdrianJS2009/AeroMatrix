@@ -2,15 +2,39 @@
   display: block;
 }
 
+// Matrix Preview Base Styles
 .matrix-preview {
+  position: relative;
   min-height: 150px;
   max-height: 300px;
   overflow: auto;
   background-color: var(--surface-ground);
+  transition: all 0.3s ease;
+
+  &-standard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &-optimized {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  &-minimal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
 }
 
+// Cell Styles
 .matrix-cell {
-  aspect-ratio: 1;
   border: 1px dashed var(--surface-border);
   background-color: var(--surface-card);
   transition: all 0.2s;
@@ -33,7 +57,78 @@
   }
 }
 
-// Improve the appearance of the warning message
+// Canvas Preview
+.matrix-canvas {
+  border: 1px solid var(--surface-border);
+  background-color: var(--surface-ground);
+  border-radius: var(--border-radius);
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  display: block;
+  margin: 0 auto;
+}
+
+// Preview Header
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+// Preview Mode Selector
+.preview-mode-selector {
+  background-color: var(--surface-section);
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+
+  .preview-mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @media screen and (min-width: 576px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .p-radiobutton-label {
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+
+    .radio-label {
+      margin-right: 1rem;
+      cursor: pointer;
+    }
+  }
+}
+
+// Preview Message Overlay
+.preview-message {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+// Matrix Dimensions Label
+.matrix-dimensions {
+  display: block;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+// the appearance of the warning message
 .p-message-warning {
   border-radius: var(--border-radius);
   padding: 0.75rem;
@@ -48,14 +143,14 @@
   }
 }
 
-// Improve the appearance of the error messages
+//appearance of the error messages
 .p-error {
   display: block;
   margin-top: 0.25rem;
   font-size: 0.75rem;
 }
 
-// Improve the appearance of the input number controls
+//appearance of the input number controls
 :host ::ng-deep {
   .p-inputnumber {
     .p-inputnumber-button {
@@ -71,5 +166,31 @@
         outline: 0 none;
       }
     }
+  }
+
+  .p-radiobutton {
+    vertical-align: middle;
+
+    .p-radiobutton-box {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 576px) {
+  .preview-mode-selector .preview-mode-options {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .radio-label {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .matrix-preview {
+    min-height: 100px;
+    max-height: 200px;
   }
 }
