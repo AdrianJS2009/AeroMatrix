@@ -174,8 +174,6 @@
               *ngFor="let _ of getPreviewArray(); let i = index"
               class="matrix-cell"
               [ngStyle]="getCellStyle(i)"
-              [attr.data-x]="getCellPosition(i).x"
-              [attr.data-y]="getCellPosition(i).y"
             ></div>
 
             <!-- Overlay message for optimized mode -->

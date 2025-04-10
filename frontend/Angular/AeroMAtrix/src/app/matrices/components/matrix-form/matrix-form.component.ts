@@ -94,7 +94,7 @@ export class MatrixFormComponent implements OnInit {
   previewVisible = true;
   useCanvasPreview = false;
 
-  // For responsive design
+  // responsive
   screenSize: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'lg';
 
   constructor(
@@ -245,13 +245,13 @@ export class MatrixFormComponent implements OnInit {
     const newMaxX = this.matrixForm.get('maxX')?.value;
     const newMaxY = this.matrixForm.get('maxY')?.value;
 
-    // Find drones that would be out of bounds with new dimensions
+    // Find drones that would be out of bounds
     this.outOfBoundsDrones = this.matrixToEdit.drones.filter(
       (drone) => drone.x >= newMaxX || drone.y >= newMaxY
     );
   }
 
-  // Get formatted list of out-of-bounds drones for display
+  // Get formatted list of out-of-bounds drones
   getOutOfBoundsDronesMessage(): string {
     if (this.outOfBoundsDrones.length === 0) return '';
 
@@ -262,7 +262,7 @@ export class MatrixFormComponent implements OnInit {
     return `The following drones would be out of bounds: ${droneList}.`;
   }
 
-  // Handle form submission for creating or updating a matrix
+  // Handle form submission for creating or updating
   onSubmit(): void {
     this.submitted = true;
 
@@ -383,7 +383,7 @@ export class MatrixFormComponent implements OnInit {
     }
   }
 
-  // Get the cell style for a specific cell in the preview
+  // Get the cell style for a specific cell
   getCellStyle(index: number): any {
     const x = this.matrixForm.value.maxX || 3;
     const y = this.matrixForm.value.maxY || 3;
@@ -431,42 +431,7 @@ export class MatrixFormComponent implements OnInit {
     }
   }
 
-  // Get the position (x, y) for a cell in the preview
-  getCellPosition(index: number): { x: number; y: number } {
-    const maxX = this.matrixForm.value.maxX || 3;
-
-    if (this.previewMode === 'standard') {
-      return {
-        x: index % maxX,
-        y: Math.floor(index / maxX),
-      };
-    } else if (this.previewMode === 'optimized') {
-      // For optimized mode, we need to calculate the actual positions
-      const factor = Math.ceil(
-        (maxX * (this.matrixForm.value.maxY || 3)) / 100
-      );
-      const row = Math.floor(index / Math.ceil(maxX / factor));
-      const col = index % Math.ceil(maxX / factor);
-      return {
-        x: col * factor,
-        y: row * factor,
-      };
-    } else {
-      // minimal mode
-      if (index === 0) return { x: 0, y: 0 }; // top-left
-      if (index === 1) return { x: maxX - 1, y: 0 }; // top-right
-      if (index === 2)
-        return { x: 0, y: (this.matrixForm.value.maxY || 3) - 1 }; // bottom-left
-      if (index === 3)
-        return { x: maxX - 1, y: (this.matrixForm.value.maxY || 3) - 1 }; // bottom-right
-      return {
-        x: Math.floor(maxX / 2),
-        y: Math.floor((this.matrixForm.value.maxY || 3) / 2),
-      }; // center
-    }
-  }
-
-  // Draw matrix preview on canvas
+  // Draw matrix preview
   drawCanvasPreview(canvas: HTMLCanvasElement): void {
     if (!canvas) return;
 
@@ -479,12 +444,12 @@ export class MatrixFormComponent implements OnInit {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate cell size to fit canvas
+    // Calculate cell size to fit
     const cellWidth = canvas.width / maxX;
     const cellHeight = canvas.height / maxY;
     const cellSize = Math.min(cellWidth, cellHeight);
 
-    // Adjust canvas size if needed to maintain aspect ratio
+    // Adjust canvas size
     canvas.width = cellSize * maxX;
     canvas.height = cellSize * maxY;
 
@@ -516,7 +481,7 @@ export class MatrixFormComponent implements OnInit {
       }
     }
 
-    // Draw a border around the entire matrix
+    // Draw a border
     ctx.strokeStyle = 'var(--primary-color)';
     ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -532,7 +497,7 @@ export class MatrixFormComponent implements OnInit {
     return newMaxX < this.originalMaxX || newMaxY < this.originalMaxY;
   }
 
-  // Get validation error message for dimensions
+  // Get validation error message
   getDimensionErrorMessage(dimension: string): string {
     const control = this.matrixForm.get(dimension);
 
@@ -553,7 +518,7 @@ export class MatrixFormComponent implements OnInit {
     return '';
   }
 
-  // Toggle preview visibility
+  // Toggle preview
   togglePreview(): void {
     this.previewVisible = !this.previewVisible;
   }

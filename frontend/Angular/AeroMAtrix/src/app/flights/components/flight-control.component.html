@@ -19,11 +19,7 @@
     <span>Loading flight control system...</span>
   </div>
 
-  <div
-    *ngIf="!loading"
-    class="flight-control-content"
-    [ngClass]="{ 'dark-theme': darkMode }"
-  >
+  <div *ngIf="!loading" class="flight-control-content">
     <!-- Matrix Selection -->
     <div class="matrix-selection-container mb-3">
       <p-card>
