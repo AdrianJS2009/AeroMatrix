@@ -130,7 +130,7 @@ export class DroneListComponent implements OnInit {
   }
 
   openForm(drone?: Drone): void {
-    this.selectedDrone = drone;
+    this.selectedDrone = drone ? { ...drone } : undefined;
     this.formVisible = true;
   }
 

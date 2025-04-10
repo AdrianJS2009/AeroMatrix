@@ -137,7 +137,6 @@
         </div>
 
         <div class="field">
-          <label for="orientation" class="font-bold">Orientation</label>
           <p-dropdown
             id="orientation"
             [options]="orientationOptions"
@@ -147,7 +146,8 @@
             placeholder="Select orientation"
             [ngClass]="{
               'ng-invalid ng-dirty':
-                submitted && droneForm.controls['orientation'].invalid
+                submitted && droneForm.controls['orientation'].invalid,
+              'disabled-dropdown': droneToEdit
             }"
             aria-describedby="orientation-help"
           ></p-dropdown>
@@ -168,7 +168,6 @@
         <h3>Matrix Assignment</h3>
 
         <div class="field">
-          <label for="matrixId" class="font-bold">Matrix</label>
           <p-dropdown
             id="matrixId"
             [options]="matrixOptions"
@@ -178,12 +177,13 @@
             placeholder="Select matrix"
             [ngClass]="{
               'ng-invalid ng-dirty':
-                submitted && droneForm.controls['matrixId'].invalid
+                submitted && droneForm.controls['matrixId'].invalid,
+              'disabled-dropdown': droneToEdit
             }"
-            [filter]="true"
-            filterBy="label"
-            aria-describedby="matrix-help"
+            [filter]="false"
+            [showClear]="!droneToEdit"
             (onChange)="onMatrixChange()"
+            appendTo="body"
           ></p-dropdown>
           <small
             id="matrix-help"
@@ -199,11 +199,11 @@
           class="position-warning"
         >
           <i class="pi pi-exclamation-triangle"></i>
-          <span
-            >Warning: This position ({{ droneForm.get("x")?.value }},
+          <span>
+            Warning: This position ({{ droneForm.get("x")?.value }},
             {{ droneForm.get("y")?.value }}) is already occupied by another
-            drone.</span
-          >
+            drone.
+          </span>
         </div>
       </div>
     </div>

@@ -98,6 +98,9 @@ export class DroneFormComponent implements OnInit {
     this.droneForm
       .get('y')
       ?.valueChanges.subscribe(() => this.checkPositionOccupied());
+    this.droneForm
+      .get('matrixId')
+      ?.valueChanges.subscribe(() => this.onMatrixChange());
   }
 
   initForm(): void {
@@ -111,17 +114,8 @@ export class DroneFormComponent implements OnInit {
     });
 
     if (this.droneToEdit) {
-      this.droneForm.patchValue({
-        name: this.droneToEdit.name,
-        model: this.droneToEdit.model,
-        x: this.droneToEdit.x,
-        y: this.droneToEdit.y,
-        orientation: this.droneToEdit.orientation,
-        matrixId: this.droneToEdit.matrixId,
-      });
-
+      // We'll patch the form after matrices are loaded to ensure matrixId is properly set
       this.selectedMatrixId = this.droneToEdit.matrixId;
-      this.updateMatrixBounds();
     }
   }
 
@@ -133,13 +127,27 @@ export class DroneFormComponent implements OnInit {
       .subscribe({
         next: (matrices) => {
           this.matrices = matrices;
+          // Update the matrix options format to "Matrix ID: [ID] - [Dimensions]"
           this.matrixOptions = matrices.map((matrix) => ({
-            label: `Matrix ${matrix.id} (${matrix.maxX}x${matrix.maxY})`,
+            label: `Matrix ID: ${matrix.id} - ${matrix.maxX}x${matrix.maxY}`,
             value: matrix.id,
           }));
 
-          // If editing a drone, update matrix bounds
+          // If editing a drone, patch the form values after matrices are loaded
           if (this.droneToEdit) {
+            this.droneForm.patchValue({
+              name: this.droneToEdit.name,
+              model: this.droneToEdit.model,
+              x: this.droneToEdit.x,
+              y: this.droneToEdit.y,
+              orientation: this.droneToEdit.orientation,
+              matrixId: this.droneToEdit.matrixId,
+            });
+
+            // Disable matrix and orientation fields when editing
+            this.droneForm.get('matrixId')?.disable();
+            this.droneForm.get('orientation')?.disable();
+
             this.updateMatrixBounds();
             this.checkPositionOccupied();
           }
@@ -226,9 +234,14 @@ export class DroneFormComponent implements OnInit {
       return;
     }
 
+    // Create a copy of the form value that includes disabled controls
+    const formValues = {
+      ...this.droneForm.getRawValue(),
+    };
+
     const droneData: Drone = {
       id: this.droneToEdit?.id ?? 0,
-      ...this.droneForm.value,
+      ...formValues,
     };
 
     this.submitting = true;
