@@ -322,126 +322,42 @@ export class FlightControlComponent implements OnInit {
       };
     }
 
-    // Create a copy of the drone to simulate movement
+    const matrix = this.selectedMatrix;
     const simulatedDrone: Position = {
       x: drone.x,
       y: drone.y,
       orientation: drone.orientation,
     };
-
-    const collisions: {
-      x: number;
-      y: number;
-      droneName: string;
-      stepNumber?: number;
-    }[] = [];
-
+    const collisions: CommandValidationResult['collisions'] = [];
     const path: Position[] = [{ ...simulatedDrone }];
 
-    // Process each command
-    for (let i = 0; i < commands.toUpperCase().length; i++) {
-      const cmd = commands.toUpperCase()[i];
-      switch (cmd) {
-        case 'A': // Advance
-          let newX = simulatedDrone.x;
-          let newY = simulatedDrone.y;
+    for (let i = 0; i < commands.length; i++) {
+      const cmd = commands[i].toUpperCase();
 
-          // Calculate new position based on orientation
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              newY += 1;
-              break;
-            case 'S':
-              newY -= 1;
-              break;
-            case 'E':
-              newX += 1;
-              break;
-            case 'W':
-              newX -= 1;
-              break;
+      if (cmd === 'A') {
+        const advanceResult = this.processAdvanceStep(
+          simulatedDrone,
+          i,
+          matrix,
+          otherDrones
+        );
+
+        if (advanceResult.error) return advanceResult.error;
+
+        simulatedDrone.x = advanceResult.position.x;
+        simulatedDrone.y = advanceResult.position.y;
+        if ((advanceResult.collisions ?? []).length > 0) {
+          if (advanceResult.collisions) {
+            collisions.push(...advanceResult.collisions);
           }
-
-          // Check if new position is within matrix bounds
-          if (
-            newX < 0 ||
-            newY < 0 ||
-            newX >= this.selectedMatrix.maxX ||
-            newY >= this.selectedMatrix.maxY
-          ) {
-            // More detailed error message showing which boundary would be crossed
-            let boundaryMessage = '';
-            if (newX < 0) boundaryMessage = 'western boundary (x < 0)';
-            else if (newY < 0) boundaryMessage = 'southern boundary (y < 0)';
-            else if (newX >= this.selectedMatrix.maxX)
-              boundaryMessage = `eastern boundary (x ≥ ${this.selectedMatrix.maxX})`;
-            else if (newY >= this.selectedMatrix.maxY)
-              boundaryMessage = `northern boundary (y ≥ ${this.selectedMatrix.maxY})`;
-
-            return {
-              hasErrors: true,
-              errorMessage: `Command would move drone out of bounds at step ${
-                i + 1
-              } (${cmd}), crossing the ${boundaryMessage}`,
-              finalPosition: simulatedDrone,
-              stepWithError: i,
-            };
-          }
-
-          // Update position
-          simulatedDrone.x = newX;
-          simulatedDrone.y = newY;
-
-          // Check for collisions with other drones
-          for (const otherDrone of otherDrones) {
-            if (otherDrone.x === newX && otherDrone.y === newY) {
-              collisions.push({
-                x: newX,
-                y: newY,
-                droneName: otherDrone.name || `Drone ${otherDrone.id}`,
-                stepNumber: i + 1,
-              });
-            }
-          }
-
-          break;
-
-        case 'L': // Turn Left
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              simulatedDrone.orientation = 'W';
-              break;
-            case 'S':
-              simulatedDrone.orientation = 'E';
-              break;
-            case 'E':
-              simulatedDrone.orientation = 'N';
-              break;
-            case 'W':
-              simulatedDrone.orientation = 'S';
-              break;
-          }
-          break;
-
-        case 'R': // Turn Right
-          switch (simulatedDrone.orientation) {
-            case 'N':
-              simulatedDrone.orientation = 'E';
-              break;
-            case 'S':
-              simulatedDrone.orientation = 'W';
-              break;
-            case 'E':
-              simulatedDrone.orientation = 'S';
-              break;
-            case 'W':
-              simulatedDrone.orientation = 'N';
-              break;
-          }
-          break;
+        }
+      } else if (cmd === 'L' || cmd === 'R') {
+        simulatedDrone.orientation = this.rotate(
+          simulatedDrone.orientation,
+          cmd
+        );
       }
 
-      // Add current position to path
       path.push({ ...simulatedDrone });
     }
 
@@ -449,7 +365,82 @@ export class FlightControlComponent implements OnInit {
       hasErrors: false,
       finalPosition: simulatedDrone,
       collisions: collisions.length > 0 ? collisions : undefined,
-      path: path,
+      path,
+    };
+  }
+
+  // Validate if a pos is in the limits of the matrix
+  private calculateNextPosition(position: Position): Position {
+    const { x, y, orientation } = position;
+    switch (orientation) {
+      case 'N':
+        return { ...position, y: y + 1 };
+      case 'S':
+        return { ...position, y: y - 1 };
+      case 'E':
+        return { ...position, x: x + 1 };
+      case 'W':
+        return { ...position, x: x - 1 };
+      default:
+        return position;
+    }
+  }
+
+  // Get the error message for boundary violations
+  private getBoundaryErrorMessage(pos: Position, matrix: Matrix): string {
+    if (pos.x < 0) return 'western boundary (x < 0)';
+    if (pos.y < 0) return 'southern boundary (y < 0)';
+    if (pos.x >= matrix.maxX) return `eastern boundary (x ≥ ${matrix.maxX})`;
+    if (pos.y >= matrix.maxY) return `northern boundary (y ≥ ${matrix.maxY})`;
+    return '';
+  }
+
+  // Rotate the drone based on the command
+  private rotate(orientation: string, direction: 'L' | 'R'): string {
+    const leftMap: Record<string, string> = { N: 'W', W: 'S', S: 'E', E: 'N' };
+    const rightMap: Record<string, string> = { N: 'E', E: 'S', S: 'W', W: 'N' };
+    return direction === 'L' ? leftMap[orientation] : rightMap[orientation];
+  }
+
+  private processAdvanceStep(
+    position: Position,
+    stepIndex: number,
+    matrix: Matrix,
+    otherDrones: Drone[]
+  ): {
+    error?: CommandValidationResult;
+    position: Position;
+    collisions: CommandValidationResult['collisions'];
+  } {
+    const nextPos = this.calculateNextPosition(position);
+
+    if (this.isOutOfBounds(nextPos, matrix)) {
+      return {
+        error: {
+          hasErrors: true,
+          errorMessage: `Command would move drone out of bounds at step ${
+            stepIndex + 1
+          } (A), crossing the ${this.getBoundaryErrorMessage(nextPos, matrix)}`,
+          finalPosition: position,
+          stepWithError: stepIndex,
+        },
+        position,
+        collisions: [],
+      };
+    }
+
+    const collisions = otherDrones
+      .filter((d) => d.x === nextPos.x && d.y === nextPos.y)
+      .map((d) => ({
+        x: nextPos.x,
+        y: nextPos.y,
+        droneName: d.name || `Drone ${d.id}`,
+        stepNumber: stepIndex + 1,
+      }));
+
+    return {
+      position: nextPos,
+      collisions,
     };
   }
 
@@ -486,6 +477,12 @@ export class FlightControlComponent implements OnInit {
 
     // Check for collisions between drones
     this.detectGroupCollisions(simulatedPositions);
+  }
+
+  private isOutOfBounds(pos: Position, matrix: Matrix): boolean {
+    return (
+      pos.x < 0 || pos.y < 0 || pos.x >= matrix.maxX || pos.y >= matrix.maxY
+    );
   }
 
   // Generate the path a drone would take with given commands
@@ -555,41 +552,49 @@ export class FlightControlComponent implements OnInit {
   // Detect collisions between drones in group commands
   detectGroupCollisions(simulatedPositions: Map<number, Position[]>): void {
     this.groupCollisions = [];
-
     const droneIds = Array.from(simulatedPositions.keys());
 
-    // Compare each pair of drones
     for (let i = 0; i < droneIds.length; i++) {
-      const drone1Id = droneIds[i];
-      const drone1 = this.drones.find((d) => d.id === drone1Id);
-      const path1 = simulatedPositions.get(drone1Id) || [];
+      const id1 = droneIds[i];
+      const path1 = simulatedPositions.get(id1) || [];
 
       for (let j = i + 1; j < droneIds.length; j++) {
-        const drone2Id = droneIds[j];
-        const drone2 = this.drones.find((d) => d.id === drone2Id);
-        const path2 = simulatedPositions.get(drone2Id) || [];
+        const id2 = droneIds[j];
+        const path2 = simulatedPositions.get(id2) || [];
 
-        // Check for collisions at each step
-        const maxSteps = Math.max(path1.length, path2.length);
-
-        for (let step = 0; step < maxSteps; step++) {
-          const pos1 =
-            step < path1.length ? path1[step] : path1[path1.length - 1];
-          const pos2 =
-            step < path2.length ? path2[step] : path2[path2.length - 1];
-
-          if (pos1.x === pos2.x && pos1.y === pos2.y) {
-            this.groupCollisions.push({
-              x: pos1.x,
-              y: pos1.y,
-              drone1: drone1?.name ?? `Drone ${drone1Id}`,
-              drone2: drone2?.name ?? `Drone ${drone2Id}`,
-            });
-            break; // Only report the first collision between each pair
-          }
+        const collision = this.compareDronePaths(id1, id2, path1, path2);
+        if (collision) {
+          this.groupCollisions.push(collision);
         }
       }
     }
+  }
+
+  private compareDronePaths(
+    drone1Id: number,
+    drone2Id: number,
+    path1: Position[],
+    path2: Position[]
+  ): GroupCollision | null {
+    const drone1 = this.drones.find((d) => d.id === drone1Id);
+    const drone2 = this.drones.find((d) => d.id === drone2Id);
+    const maxSteps = Math.max(path1.length, path2.length);
+
+    for (let step = 0; step < maxSteps; step++) {
+      const pos1 = step < path1.length ? path1[step] : path1[path1.length - 1];
+      const pos2 = step < path2.length ? path2[step] : path2[path2.length - 1];
+
+      if (pos1.x === pos2.x && pos1.y === pos2.y) {
+        return {
+          x: pos1.x,
+          y: pos1.y,
+          drone1: drone1?.name ?? `Drone ${drone1Id}`,
+          drone2: drone2?.name ?? `Drone ${drone2Id}`,
+        };
+      }
+    }
+
+    return null;
   }
 
   // Check if there are any errors in group validation

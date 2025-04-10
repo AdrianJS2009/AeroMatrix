@@ -572,19 +572,6 @@
   }
 }
 
-.command-sequence {
-  display: flex;
-  gap: 0.25rem;
-
-  &.small {
-    .command-step {
-      width: 24px;
-      height: 24px;
-      font-size: 0.75rem;
-    }
-  }
-}
-
 .command-step {
   display: flex;
   align-items: center;

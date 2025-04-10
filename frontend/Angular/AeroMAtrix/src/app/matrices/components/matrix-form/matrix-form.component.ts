@@ -386,7 +386,6 @@ export class MatrixFormComponent implements OnInit {
   // Get the cell style for a specific cell in the preview
   getCellStyle(index: number): any {
     const x = this.matrixForm.value.maxX || 3;
-    const y = this.matrixForm.value.maxY || 3;
 
     if (this.previewMode === 'standard') {
       return {
