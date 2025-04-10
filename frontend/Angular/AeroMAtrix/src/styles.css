@@ -189,7 +189,7 @@ body {
   margin-left: auto;
 }
 
-/* Card styling */
+/* Card  */
 .p-card {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
@@ -206,7 +206,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Button styling  */
+/* Button   */
 .p-button {
   border-radius: var(--border-radius);
   transition: all var(--transition-normal);
@@ -239,7 +239,7 @@ body {
   border-radius: var(--border-radius-full);
 }
 
-/* Table styling  */
+/* Table   */
 .p-datatable .p-datatable-header {
   background: var(--surface-section);
   border: 1px solid var(--surface-border);
@@ -281,7 +281,7 @@ body {
   padding: 0.75rem 1rem;
 }
 
-/* Chip styling  */
+/* Chip   */
 .p-chip {
   background: var(--surface-hover);
   color: var(--text-color);
@@ -297,7 +297,7 @@ body {
   font-size: 0.75rem;
 }
 
-/* Dialog styling */
+/* Dialog  */
 .p-dialog {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-xl);
@@ -333,7 +333,7 @@ body {
   border-bottom-right-radius: var(--border-radius-lg);
 }
 
-/* Form styling  */
+/* Form   */
 .p-inputtext,
 .p-dropdown,
 .p-inputnumber,
@@ -397,7 +397,7 @@ body {
   color: var(--primary-700);
 }
 
-/* Tab styling - more refined */
+/* Tab  */
 .p-tabview .p-tabview-nav {
   border-width: 0 0 2px 0;
   border-color: var(--surface-border);
@@ -436,7 +436,7 @@ body {
   border-bottom-right-radius: var(--border-radius-md);
 }
 
-/* Toast styling  */
+/* Toast   */
 .p-toast {
   opacity: 0.98;
 }
@@ -481,7 +481,7 @@ body {
   color: var(--text-color-secondary);
 }
 
-/* Badge styling */
+/* Badge  */
 .p-badge {
   border-radius: var(--border-radius-full);
   font-weight: 600;

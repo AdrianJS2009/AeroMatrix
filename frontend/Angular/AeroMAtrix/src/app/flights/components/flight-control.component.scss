@@ -192,7 +192,7 @@
   }
 }
 
-// Command input styling
+// Command input
 .command-input-container {
   margin-bottom: 1.5rem;
 
@@ -227,7 +227,7 @@
   }
 }
 
-// Command validation styling
+// Command validation
 .command-validation-result {
   margin: 1rem 0;
   border-radius: 8px;
@@ -357,7 +357,7 @@
   }
 }
 
-// Batch commands table styling
+// Batch commands table
 .batch-commands-container {
   margin-bottom: 1.5rem;
 
@@ -390,7 +390,7 @@
   }
 }
 
-// Execute button styling
+// Execute button
 .execute-button {
   margin-top: auto;
   align-self: flex-end;
@@ -419,7 +419,7 @@
   }
 }
 
-// Batch actions styling
+// Batch actions
 .batch-actions {
   display: flex;
   justify-content: space-between;
@@ -427,7 +427,7 @@
   margin-top: 1rem;
 }
 
-// Flight history styling
+// Flight history
 .flight-history-section {
   margin-top: 2rem;
 
@@ -512,7 +512,6 @@
   color: var(--text-color-secondary);
 }
 
-/* Enhanced command step visualization */
 .command-sequence {
   display: flex;
   flex-wrap: wrap;

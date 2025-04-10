@@ -26,14 +26,14 @@
     }
   }
 
-  // Custom styling for our disabled-dropdown class
+  // Custom styling
   .p-dropdown.disabled-dropdown {
     .p-dropdown-label {
       color: var(--text-color-secondary, #6c757d);
     }
   }
 
-  // Matrix dropdown styling
+  // Matrix dropdown
   .p-dropdown {
     .p-dropdown-panel {
       .p-dropdown-items {
@@ -53,7 +53,7 @@
   }
 }
 
-// Form section styling
+// Form section
 .form-section {
   margin-bottom: 1.5rem;
 
@@ -88,7 +88,7 @@
   min-height: 200px;
 }
 
-// Position warning styling
+// Position warning
 .position-warning {
   display: flex;
   align-items: center;

@@ -12,7 +12,7 @@
   );
 }
 
-// FAQ Categories styling
+// FAQ Categories
 .faq-categories {
   background-color: var(--surface-ground);
   border-radius: var(--border-radius);
@@ -57,7 +57,7 @@
   background-color: var(--surface-ground);
 }
 
-// Emergency card header styling
+// Emergency card header stling
 .emergency-card ::ng-deep .p-card-header {
   background-color: #ef4444;
   color: white;
@@ -79,7 +79,7 @@
   padding: 1rem 1.5rem;
 }
 
-// Accordion styling for FAQ
+// Accordion  for FAQ
 :host ::ng-deep .faq-accordion .p-accordion-header-link {
   padding: 1.25rem;
 }

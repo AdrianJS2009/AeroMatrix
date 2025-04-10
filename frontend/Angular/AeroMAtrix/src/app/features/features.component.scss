@@ -1,4 +1,4 @@
-/* Hero section card styling */
+/* Hero section card  */
 .hero-card {
   background: linear-gradient(
     135deg,
@@ -7,7 +7,7 @@
   );
 }
 
-/* Feature card styling and hover effects */
+/* Feature card and hover effects */
 .feature-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -17,7 +17,7 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Header styling for feature cards */
+/* Header for feature cards */
 .feature-header {
   background-color: var(--surface-ground);
 }
@@ -31,7 +31,7 @@
   justify-content: center;
 }
 
-/* Feature image styling with hover scale effect */
+/* Feature image with hover scale effect */
 .feature-image {
   object-fit: cover;
   transition: transform 0.3s ease;
@@ -41,7 +41,7 @@
   transform: scale(1.05);
 }
 
-/* Call-to-action (CTA) card styling */
+/* Call-to-action (CTA) card  */
 .cta-card {
   background: linear-gradient(
     135deg,

@@ -191,7 +191,6 @@ export class FlightControlComponent implements OnInit {
     this.droneService.getAll().subscribe({
       next: (d) => {
         this.drones = d;
-        // Populate availableDrones for dropdown
         this.availableDrones = d.map((drone) => ({
           label: drone.name || `Drone ${drone.id}`,
           value: drone.id,
