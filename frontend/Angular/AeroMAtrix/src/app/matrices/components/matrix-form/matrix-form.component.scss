@@ -1,43 +1,75 @@
-:host ::ng-deep {
-  .matrix-preview {
-    min-height: 200px;
-    background-color: var(--surface-ground);
-    transition: all 0.3s ease;
+:host {
+  display: block;
+}
+
+.matrix-preview {
+  min-height: 150px;
+  max-height: 300px;
+  overflow: auto;
+  background-color: var(--surface-ground);
+}
+
+.matrix-cell {
+  aspect-ratio: 1;
+  border: 1px dashed var(--surface-border);
+  background-color: var(--surface-card);
+  transition: all 0.2s;
+  position: relative;
+
+  &:hover {
+    background-color: var(--primary-color);
+    opacity: 0.7;
   }
 
-  .matrix-cell {
-    aspect-ratio: 1;
-    border: 1px dashed var(--surface-border);
-    margin: 2px;
-    background-color: var(--surface-card);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    position: relative;
+  &::after {
+    content: attr(data-x) "," attr(data-y);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+  }
+}
 
-    &:hover {
-      background-color: var(--primary-color);
-      opacity: 0.7;
-      transform: scale(1.05);
-      z-index: 1;
+// Improve the appearance of the warning message
+.p-message-warning {
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
 
-      &::after {
-        content: attr(data-x) ", " attr(data-y);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 0.75rem;
-        color: var(--primary-contrast);
-        font-weight: bold;
+  .p-message-icon {
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+  }
+
+  .p-message-text {
+    font-size: 0.875rem;
+  }
+}
+
+// Improve the appearance of the error messages
+.p-error {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+
+// Improve the appearance of the input number controls
+:host ::ng-deep {
+  .p-inputnumber {
+    .p-inputnumber-button {
+      background-color: var(--surface-200);
+      color: var(--text-color);
+
+      &:hover {
+        background-color: var(--surface-300);
+      }
+
+      &:focus {
+        box-shadow: none;
+        outline: 0 none;
       }
     }
-  }
-
-  .custom-spinner .p-progress-spinner-circle {
-    stroke: var(--primary-color) !important;
-  }
-
-  .p-inputnumber-buttons-horizontal .p-inputnumber-input {
-    text-align: center;
   }
 }

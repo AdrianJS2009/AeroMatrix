@@ -39,7 +39,7 @@
             buttonLayout="horizontal"
             spinnerMode="horizontal"
             [min]="1"
-            [max]="20"
+            [max]="MAX_DIMENSION"
             decrementButtonClass="p-button-secondary"
             incrementButtonClass="p-button-secondary"
             incrementButtonIcon="pi pi-plus"
@@ -53,7 +53,7 @@
           <small
             *ngIf="submitted && matrixForm.get('maxX')?.invalid"
             class="p-error"
-            >Width is required and must be at least 1</small
+            >{{ getDimensionErrorMessage("maxX") }}</small
           >
         </div>
       </div>
@@ -68,7 +68,7 @@
             buttonLayout="horizontal"
             spinnerMode="horizontal"
             [min]="1"
-            [max]="20"
+            [max]="MAX_DIMENSION"
             decrementButtonClass="p-button-secondary"
             incrementButtonClass="p-button-secondary"
             incrementButtonIcon="pi pi-plus"
@@ -82,8 +82,19 @@
           <small
             *ngIf="submitted && matrixForm.get('maxY')?.invalid"
             class="p-error"
-            >Height is required and must be at least 1</small
+            >{{ getDimensionErrorMessage("maxY") }}</small
           >
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning message when reducing dimensions -->
+    <div *ngIf="matrixToEdit && isDimensionReduced()" class="field mt-2">
+      <div class="p-message p-message-warning">
+        <i class="pi pi-exclamation-triangle p-message-icon"></i>
+        <div class="p-message-text">
+          <strong>Warning:</strong> Reducing matrix dimensions may cause drones
+          to be out of bounds.
         </div>
       </div>
     </div>
@@ -134,3 +145,6 @@
     </div>
   </form>
 </p-dialog>
+
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
