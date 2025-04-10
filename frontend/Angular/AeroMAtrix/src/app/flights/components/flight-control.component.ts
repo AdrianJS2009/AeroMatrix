@@ -124,8 +124,6 @@ export class FlightControlComponent implements OnInit {
   drones: Drone[] = [];
   matrices: Matrix[] = [];
   loading = true;
-  darkMode = false;
-
   // Single
   selectedDrone?: Drone;
   selectedMatrix?: Matrix;
@@ -133,6 +131,7 @@ export class FlightControlComponent implements OnInit {
   commandsTextInvalid = false;
   executingSingle = false;
   commandValidationResult?: CommandValidationResult;
+  darkMode: boolean = false;
 
   // Group
   multiSelectedDrones: Drone[] = [];
@@ -319,7 +318,8 @@ export class FlightControlComponent implements OnInit {
     // Process each command
     for (const cmd of commands.toUpperCase()) {
       switch (cmd) {
-        case 'A': // Advance
+        case 'A': {
+          // Advance
           let newX = simulatedDrone.x;
           let newY = simulatedDrone.y;
 
@@ -369,6 +369,7 @@ export class FlightControlComponent implements OnInit {
           }
 
           break;
+        }
 
         case 'L': // Turn Left
           switch (simulatedDrone.orientation) {
@@ -545,10 +546,10 @@ export class FlightControlComponent implements OnInit {
             this.groupCollisions.push({
               x: pos1.x,
               y: pos1.y,
-              drone1: drone1?.name || `Drone ${drone1Id}`,
-              drone2: drone2?.name || `Drone ${drone2Id}`,
+              drone1: drone1?.name ?? `Drone ${drone1Id}`,
+              drone2: drone2?.name ?? `Drone ${drone2Id}`,
             });
-            break; // Only report the first collision between each pair
+            break;
           }
         }
       }
@@ -661,8 +662,8 @@ export class FlightControlComponent implements OnInit {
             this.batchCollisions.push({
               x: pos1.x,
               y: pos1.y,
-              drone1: drone1?.name || `Drone ${drone1Id}`,
-              drone2: drone2?.name || `Drone ${drone2Id}`,
+              drone1: drone1?.name ?? `Drone ${drone1Id}`,
+              drone2: drone2?.name ?? `Drone ${drone2Id}`,
             });
             break; // Only report the first collision between each pair
           }
@@ -784,7 +785,7 @@ export class FlightControlComponent implements OnInit {
         severity: 'error',
         summary: 'Invalid Commands',
         detail:
-          this.commandValidationResult.errorMessage ||
+          this.commandValidationResult.errorMessage ??
           'Commands would cause an error',
         life: 5000,
       });
@@ -856,7 +857,7 @@ export class FlightControlComponent implements OnInit {
 
           // Add to flight history with failed status
           this.addToFlightHistory(
-            this.selectedDrone?.name || `Drone ${droneId}`,
+            this.selectedDrone?.name ?? `Drone ${droneId}`,
             this.commandsText,
             initialPosition,
             'N/A',
@@ -1205,10 +1206,6 @@ export class FlightControlComponent implements OnInit {
       const days = Math.floor(diffInSeconds / 86400);
       return `${days} day${days > 1 ? 's' : ''} ago`;
     }
-  }
-
-  toggleDarkMode(): void {
-    this.darkMode = !this.darkMode;
   }
 
   mapCommand(char: string): string | null {

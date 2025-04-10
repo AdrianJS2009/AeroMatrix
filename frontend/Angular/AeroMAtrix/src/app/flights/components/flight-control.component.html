@@ -6,13 +6,7 @@
         <p>Control and monitor drone movements in real-time</p>
       </div>
       <div class="header-actions">
-        <p-inputSwitch
-          id="darkModeSwitch"
-          [(ngModel)]="darkMode"
-          (onChange)="toggleDarkMode()"
-          class="mr-2"
-        ></p-inputSwitch>
-        <label for="darkModeSwitch" class="dark-mode-label">Dark Mode</label>
+        <!-- Dark mode toggle removed to avoid duplication with global header control -->
       </div>
     </div>
   </div>
@@ -44,7 +38,8 @@
               placeholder="Select a matrix"
               [showClear]="false"
               (onChange)="onMatrixSelect()"
-              styleClass="w-full"
+              styleClass="w-full dropdown-fix"
+              appendTo="body"
             ></p-dropdown>
           </div>
           <div class="col-12 md:col-6">
@@ -57,7 +52,8 @@
               placeholder="Select a drone"
               [showClear]="true"
               (onChange)="onDroneSelect()"
-              styleClass="w-full"
+              styleClass="w-full dropdown-fix"
+              appendTo="body"
               [disabled]="!selectedMatrixId || droneOptions.length === 0"
             ></p-dropdown>
           </div>
@@ -258,7 +254,8 @@
                   optionValue="value"
                   [filter]="true"
                   placeholder="Select drones for group flight"
-                  styleClass="w-full"
+                  styleClass="w-full dropdown-fix"
+                  appendTo="body"
                   [disabled]="!selectedMatrixId"
                   (onChange)="updateMultiSelectedDrones()"
                 ></p-multiSelect>
@@ -424,7 +421,8 @@
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select drone"
-                        styleClass="w-full"
+                        styleClass="w-full dropdown-fix"
+                        appendTo="body"
                         [disabled]="!selectedMatrixId"
                         (onChange)="validateBatchCommand(i)"
                       ></p-dropdown>
