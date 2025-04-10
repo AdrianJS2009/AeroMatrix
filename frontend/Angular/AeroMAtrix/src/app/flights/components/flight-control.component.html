@@ -372,8 +372,11 @@
             <p-tabPanel header="Group Flight" leftIcon="pi pi-users">
               <!-- Drone selection -->
               <div class="mb-3">
-                <label class="block mb-2 font-medium">Select Drones</label>
+                <label for="multiSelectDrones" class="block mb-2 font-medium"
+                  >Select Drones</label
+                >
                 <p-multiSelect
+                  id="multiSelectDrones"
                   [options]="droneOptions"
                   [(ngModel)]="multiSelectedDroneIds"
                   optionLabel="label"
