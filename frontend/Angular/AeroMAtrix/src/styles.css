@@ -484,7 +484,6 @@ body {
 /* Badge styling */
 .p-badge {
   border-radius: var(--border-radius-full);
-  padding: 0.25rem 0.75rem;
   font-weight: 600;
   font-size: 0.75rem;
   letter-spacing: 0.025em;

@@ -4,8 +4,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  type OnChanges,
   type OnInit,
   Output,
+  type SimpleChanges,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -56,11 +58,12 @@ import { DroneService } from '../../services/drone.service';
     ]),
   ],
 })
-export class DroneFormComponent implements OnInit {
+export class DroneFormComponent implements OnInit, OnChanges {
   @Input() visible = false;
   @Input() droneToEdit?: Drone;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() saved = new EventEmitter<Drone>();
+  @Output() close = new EventEmitter<void>();
 
   droneForm!: FormGroup;
   matrices: Matrix[] = [];
@@ -103,6 +106,25 @@ export class DroneFormComponent implements OnInit {
       ?.valueChanges.subscribe(() => this.onMatrixChange());
   }
 
+  // Fix for Issue #4: Edit Modal Re-opening
+  // Implement OnChanges to react to input changes
+  ngOnChanges(changes: SimpleChanges): void {
+    // If the visibility or droneToEdit changes, reinitialize the form
+    if (
+      (changes['visible'] && changes['visible'].currentValue) ||
+      (changes['droneToEdit'] && !changes['droneToEdit'].firstChange)
+    ) {
+      if (this.droneForm) {
+        this.initForm();
+
+        // If matrices are already loaded, update the form with drone data
+        if (this.matrices.length > 0 && this.droneToEdit) {
+          this.patchFormWithDroneData();
+        }
+      }
+    }
+  }
+
   initForm(): void {
     this.droneForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -114,9 +136,29 @@ export class DroneFormComponent implements OnInit {
     });
 
     if (this.droneToEdit) {
-      // We'll patch the form after matrices are loaded to ensure matrixId is properly set
       this.selectedMatrixId = this.droneToEdit.matrixId;
     }
+  }
+
+  // Helper method to patch form with drone data
+  patchFormWithDroneData(): void {
+    if (!this.droneToEdit) return;
+
+    this.droneForm.patchValue({
+      name: this.droneToEdit.name,
+      model: this.droneToEdit.model,
+      x: this.droneToEdit.x,
+      y: this.droneToEdit.y,
+      orientation: this.droneToEdit.orientation,
+      matrixId: this.droneToEdit.matrixId,
+    });
+
+    // Disable matrix and orientation fields when editing
+    this.droneForm.get('matrixId')?.disable();
+    this.droneForm.get('orientation')?.disable();
+
+    this.updateMatrixBounds();
+    this.checkPositionOccupied();
   }
 
   loadMatrices(): void {
@@ -127,7 +169,7 @@ export class DroneFormComponent implements OnInit {
       .subscribe({
         next: (matrices) => {
           this.matrices = matrices;
-          // Update the matrix options format to "Matrix ID: [ID] - [Dimensions]"
+          // Format matrix options as "Matrix ID: [ID] - [Dimensions]"
           this.matrixOptions = matrices.map((matrix) => ({
             label: `Matrix ID: ${matrix.id} - ${matrix.maxX}x${matrix.maxY}`,
             value: matrix.id,
@@ -135,21 +177,7 @@ export class DroneFormComponent implements OnInit {
 
           // If editing a drone, patch the form values after matrices are loaded
           if (this.droneToEdit) {
-            this.droneForm.patchValue({
-              name: this.droneToEdit.name,
-              model: this.droneToEdit.model,
-              x: this.droneToEdit.x,
-              y: this.droneToEdit.y,
-              orientation: this.droneToEdit.orientation,
-              matrixId: this.droneToEdit.matrixId,
-            });
-
-            // Disable matrix and orientation fields when editing
-            this.droneForm.get('matrixId')?.disable();
-            this.droneForm.get('orientation')?.disable();
-
-            this.updateMatrixBounds();
-            this.checkPositionOccupied();
+            this.patchFormWithDroneData();
           }
         },
         error: (err) => {
@@ -263,6 +291,7 @@ export class DroneFormComponent implements OnInit {
   onCancel(): void {
     this.visible = false;
     this.visibleChange.emit(false);
+    this.close.emit();
     this.submitted = false;
     this.droneForm.reset({
       orientation: 'N',

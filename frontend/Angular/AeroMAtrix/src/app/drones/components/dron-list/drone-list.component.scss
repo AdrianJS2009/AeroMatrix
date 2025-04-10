@@ -3,83 +3,98 @@
 }
 
 .page-header {
-  margin-bottom: 2rem;
-}
+  margin-bottom: 1.5rem;
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-.page-header h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-color);
-}
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
 
-.page-header p {
-  color: var(--text-color-secondary);
-  font-size: 1.1rem;
+    p {
+      margin: 0.5rem 0 0;
+      color: var(--text-color-secondary);
+    }
+  }
 }
 
 .card-container {
   margin-bottom: 2rem;
 }
 
-:host ::ng-deep .drone-list-card .p-card-body,
-:host ::ng-deep .drone-list-card .p-card-content {
-  padding: 0;
-}
-
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--surface-border);
+  margin-bottom: 1rem;
   flex-wrap: wrap;
   gap: 1rem;
-}
 
-.table-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-.table-title h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
+    i {
+      font-size: 1.25rem;
+      color: var(--primary-color);
+    }
 
-.table-title i {
-  font-size: 1.25rem;
-  color: var(--primary-color);
-}
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
 
-.search-input {
-  width: 100%;
-  max-width: 300px;
+    .drone-count {
+      margin-left: 0.5rem;
+    }
+  }
+
+  /* Fix for Issue #1: Search Input Overlay */
+  .search-input {
+    position: relative;
+
+    i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-color-secondary);
+      z-index: 1;
+    }
+
+    input {
+      padding-left: 2.5rem;
+      min-width: 250px;
+    }
+  }
 }
 
 .drone-name {
-  font-weight: 600;
-  color: var(--primary-700);
+  font-weight: 500;
+}
+
+/* Fix for Issue #3: Matrix ID Display */
+.matrix-id-cell {
+  text-align: center;
+
+  .matrix-badge {
+    display: inline-flex;
+    justify-content: center;
+    min-width: 2rem;
+  }
 }
 
 .action-buttons {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-}
-
-:host ::ng-deep .drone-count {
-  margin-left: 0.5rem;
-}
-
-:host ::ng-deep .matrix-badge {
-  background-color: var(--primary-600);
+  gap: 0.25rem;
 }
 
 .empty-message {
@@ -88,21 +103,64 @@
   align-items: center;
   gap: 1rem;
   padding: 2rem;
+
+  .empty-icon {
+    font-size: 2rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+  }
 }
 
-.empty-icon {
-  font-size: 3rem;
-  color: var(--surface-500);
+/* Fix for Issue #2: Pagination Dropdown Alignment */
+:host ::ng-deep {
+  .p-paginator {
+    .p-dropdown {
+      .p-dropdown-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0.5rem;
+      }
+    }
+
+    .p-paginator-rpp-options {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .paginator-dropdown-container {
+    display: flex;
+    align-items: center;
+
+    .rows-per-page-label {
+      margin-right: 0.5rem;
+      color: var(--text-color-secondary);
+      font-size: 0.875rem;
+    }
+  }
 }
 
 @media screen and (max-width: 768px) {
+  .page-header .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    button {
+      align-self: flex-start;
+    }
+  }
+
   .table-header {
     flex-direction: column;
     align-items: flex-start;
-  }
 
-  .search-input {
-    width: 100%;
-    max-width: none;
+    .search-input {
+      width: 100%;
+
+      input {
+        width: 100%;
+      }
+    }
   }
 }

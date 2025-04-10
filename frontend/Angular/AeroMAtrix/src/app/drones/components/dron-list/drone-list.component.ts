@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
@@ -129,14 +129,20 @@ export class DroneListComponent implements OnInit {
     });
   }
 
+  // Fix for Issue #4: Edit Modal Re-opening
   openForm(drone?: Drone): void {
+    // Create a deep copy of the drone to avoid reference issues
     this.selectedDrone = drone ? { ...drone } : undefined;
-    this.formVisible = true;
+
+    // Force a small delay to ensure the modal state is reset properly
+    setTimeout(() => {
+      this.formVisible = true;
+    }, 0);
   }
 
   closeForm(): void {
-    this.selectedDrone = undefined;
     this.formVisible = false;
+    this.selectedDrone = undefined;
   }
 
   onSearch(event: Event): void {
