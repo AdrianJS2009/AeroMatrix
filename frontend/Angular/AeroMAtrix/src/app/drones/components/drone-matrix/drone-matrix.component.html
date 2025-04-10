@@ -33,15 +33,6 @@
           tooltipPosition="bottom"
           aria-label="Reset View"
         ></button>
-        <button
-          pButton
-          icon="pi pi-search"
-          class="p-button-rounded p-button-outlined p-button-success"
-          (click)="fitAllDrones()"
-          pTooltip="Fit All Drones"
-          tooltipPosition="bottom"
-          aria-label="Fit All Drones"
-        ></button>
       </div>
       <div class="view-options">
         <button
@@ -75,7 +66,7 @@
 
   <p-divider></p-divider>
 
-  <!-- 2D Matrix View  -->
+  <!-- 2D Matrix View -->
   <div
     class="matrix-viewport"
     #viewport
@@ -84,9 +75,7 @@
     (mousemove)="pan($event)"
     (mouseup)="endPan()"
     (mouseleave)="endPan()"
-    (wheel)="onWheelInside($event)"
     [attr.aria-label]="'Matrix grid with ' + (drones.length || 0) + ' drones'"
-    (keydown)="handleKeyboardNavigation($event)"
   >
     <div
       class="matrix-grid"
@@ -165,9 +154,7 @@
             'drone-north': drone.orientation === 'N',
             'drone-south': drone.orientation === 'S',
             'drone-east': drone.orientation === 'E',
-            'drone-west':
-              drone.orientation === 'W' || drone.orientation === 'O',
-            'drone-selectable': isInteractive
+            'drone-west': drone.orientation === 'W' || drone.orientation === 'O'
           }"
           [style.left.px]="drone.x * cellSize"
           [style.top.px]="(matrix!.maxY - 1 - drone.y) * cellSize"
@@ -186,10 +173,6 @@
           "
           [attr.aria-selected]="drone.id === selectedDroneId"
           (keydown.enter)="selectDrone(drone)"
-          pTooltip="{{ drone.name }} ({{ drone.x }}, {{ drone.y }}) facing {{
-            getOrientationLabel(drone.orientation)
-          }}"
-          tooltipPosition="top"
           @scaleIn
         >
           <div class="drone-body">
@@ -209,10 +192,6 @@
             </div>
           </div>
           <div class="position-marker" *ngIf="enhancedGrid"></div>
-          <div
-            class="selection-ring"
-            *ngIf="drone.id === selectedDroneId"
-          ></div>
         </div>
       </ng-container>
 
@@ -220,97 +199,50 @@
       <div class="grid-coordinates" *ngIf="showCoordinates">
         <span>{{ currentCoordinates }}</span>
       </div>
+    </div>
+  </div>
 
-      <!-- Matrix Navigation Assistance -->
-      <div class="matrix-navigation-assistance">
-        <div class="mini-map" *ngIf="drones.length > 1">
-          <div
-            class="mini-map-content"
-            [style.width.px]="100"
-            [style.height.px]="100"
-          >
-            <div
-              class="mini-map-viewport"
-              [style.left.%]="getMiniMapViewportLeft()"
-              [style.top.%]="getMiniMapViewportTop()"
-              [style.width.%]="getMiniMapViewportWidth()"
-              [style.height.%]="getMiniMapViewportHeight()"
-            ></div>
-            <div
-              class="mini-map-drone"
-              *ngFor="let drone of drones"
-              [style.left.%]="(drone.x / (matrix?.maxX || 1)) * 100"
-              [style.top.%]="
-                ((matrix!.maxY - 1 - drone.y) / (matrix?.maxY || 1)) * 100
-              "
-              [ngClass]="{ 'mini-map-selected': drone.id === selectedDroneId }"
-            ></div>
-          </div>
-        </div>
+  <!-- 3D Matrix View -->
+  <div
+    class="matrix-3d-container"
+    #container3d
+    *ngIf="view3D"
+    [attr.aria-label]="
+      '3D Matrix visualization with ' + (drones.length || 0) + ' drones'
+    "
+  >
+    <div class="matrix-3d-controls">
+      <div class="control-hint">
+        <i class="pi pi-info-circle"></i>
+        <span>Use mouse to rotate, zoom and pan the 3D view</span>
       </div>
     </div>
+  </div>
 
-    <!-- 3D Matrix View with improved accessibility -->
-    <div
-      class="matrix-3d-container"
-      #container3d
-      *ngIf="view3D"
-      [attr.aria-label]="
-        '3D Matrix visualization with ' + (drones.length || 0) + ' drones'
-      "
-    >
-      <div class="matrix-3d-controls">
-        <div class="control-hint">
-          <i class="pi pi-info-circle"></i>
-          <span>Use mouse to rotate, zoom and pan the 3D view</span>
-        </div>
-        <button
-          pButton
-          icon="pi pi-search"
-          label="Fit All Drones"
-          class="p-button-sm p-button-outlined p-button-success"
-          (click)="fit3DAllDrones()"
-          pTooltip="Center view on all drones"
-          tooltipPosition="bottom"
-          title="Center"
-        ></button>
-      </div>
+  <!-- Matrix Information -->
+  <div class="matrix-info">
+    <div class="info-item">
+      <span class="info-label">Matrix:</span>
+      <span class="info-value">{{ matrix?.id || "None" }}</span>
     </div>
-
-    <!-- Matrix Information with improved accessibility -->
-    <div class="matrix-info">
-      <div class="info-item">
-        <span class="info-label">Matrix:</span>
-        <span class="info-value">{{ matrix?.id || "None" }}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Dimensions:</span>
-        <span class="info-value"
-          >{{ matrix?.maxX || 0 }}x{{ matrix?.maxY || 0 }}</span
-        >
-      </div>
-      <div class="info-item">
-        <span class="info-label">Drones:</span>
-        <p-badge
-          [value]="(drones.length || 0).toString()"
-          severity="info"
-        ></p-badge>
-      </div>
-      <div class="info-item" *ngIf="selectedDroneId">
-        <span class="info-label">Selected:</span>
-        <span class="info-value selected-drone">{{
-          getSelectedDroneName()
-        }}</span>
-        <button
-          pButton
-          icon="pi pi-times"
-          class="p-button-rounded p-button-text p-button-sm"
-          (click)="clearSelection()"
-          pTooltip="Clear selection"
-          tooltipPosition="right"
-          aria-label="Clear drone selection"
-        ></button>
-      </div>
+    <div class="info-item">
+      <span class="info-label">Dimensions:</span>
+      <span class="info-value"
+        >{{ matrix?.maxX || 0 }}x{{ matrix?.maxY || 0 }}</span
+      >
+    </div>
+    <div class="info-item">
+      <span class="info-label">Drones:</span>
+      <p-badge
+        [value]="(drones.length || 0).toString()"
+        severity="info"
+      ></p-badge>
+    </div>
+    <div class="info-item" *ngIf="selectedDroneId">
+      <span class="info-label">Selected:</span>
+      <span class="info-value selected-drone">{{
+        getSelectedDroneName()
+      }}</span>
     </div>
   </div>
 </div>

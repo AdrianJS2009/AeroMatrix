@@ -1,4 +1,4 @@
-/* Import PrimeNG base theme  */
+/* Import PrimeNG base theme - the specific theme will be loaded dynamically */
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
@@ -8,7 +8,7 @@
 
 /* Light theme variables (default) */
 :root {
-  /* color palette */
+  /* Modern color palette */
   --primary-50: #eef6ff;
   --primary-100: #d9eaff;
   --primary-200: #bcd9ff;
@@ -397,7 +397,7 @@ body {
   color: var(--primary-700);
 }
 
-/* Tab styling */
+/* Tab styling - more refined */
 .p-tabview .p-tabview-nav {
   border-width: 0 0 2px 0;
   border-color: var(--surface-border);

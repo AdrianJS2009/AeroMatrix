@@ -1,9 +1,7 @@
 {
   "HEADER": {
     "TOGGLE_THEME": "Toggle theme",
-    "TOGGLE_SIDEBAR": "Toggle sidebar",
-    "LANGUAGE": "Change language",
-    "NOTIFICATIONS": "Notifications"
+    "LANGUAGE": "Change language"
   },
   "SIDEBAR": {
     "NAVIGATION": "Navigation",
@@ -49,8 +47,6 @@
     "CREATED_BY": "Created by Adrián Jiménez Santiago as an educational activity."
   },
   "DRONE_MATRIX": {
-    "TITLE": "Drone Matrix Visualization",
-    "SUBTITLE": "Interactive grid for monitoring drone positions and movements",
     "MATRIX": "Matrix",
     "DIMENSIONS": "Dimensions",
     "DRONES": "Drones",
@@ -62,59 +58,7 @@
     "3D_VIEW": "3D View",
     "2D_VIEW": "2D View",
     "SHOW_LABELS": "Show Labels",
-    "HIDE_LABELS": "Hide Labels",
-    "ENHANCED_GRID": "Enhanced Grid",
-    "FIT_ALL_DRONES": "Fit All Drones",
-    "HELP": "Help"
-  },
-  "FLIGHT_CONTROL": {
-    "TITLE": "Flight Control Center",
-    "SUBTITLE": "Control and monitor drone movements in real-time",
-    "SELECT_MATRIX": "Select Matrix",
-    "SELECT_DRONE": "Select Drone",
-    "DARK_MODE": "Dark Mode",
-    "SINGLE_DRONE": "Single Drone",
-    "GROUP_FLIGHT": "Group Flight",
-    "BATCH_FLIGHTS": "Batch Flights",
-    "FLIGHT_COMMANDS": "Flight Commands",
-    "COMMANDS_HINT": "Use A (Advance), L (Left), R (Right)",
-    "QUICK_COMMANDS": "Quick Commands",
-    "MOVE_FORWARD": "Move Forward",
-    "TURN_LEFT": "Turn Left",
-    "TURN_RIGHT": "Turn Right",
-    "CLEAR_COMMANDS": "Clear Commands",
-    "COMMAND_VALIDATION": "Command Validation",
-    "VALID_COMMANDS": "Commands are valid and will move the drone within matrix boundaries.",
-    "FINAL_POSITION": "Final position",
-    "FACING": "facing",
-    "POTENTIAL_COLLISIONS": "Potential collisions detected:",
-    "EXECUTE_FLIGHT": "Execute Flight",
-    "SELECT_DRONES": "Select Drones",
-    "GROUP_FLIGHT_COMMANDS": "Group Flight Commands",
-    "GROUP_COMMANDS_HINT": "These commands will be executed by all selected drones",
-    "GROUP_VALIDATION": "Group Command Validation",
-    "VALID_GROUP_COMMANDS": "Commands are valid for all selected drones.",
-    "INVALID_GROUP_COMMANDS": "Some drones will encounter issues with these commands.",
-    "GROUP_COLLISIONS": "Potential collisions detected between drones:",
-    "EXECUTE_GROUP_FLIGHT": "Execute Group Flight",
-    "BATCH_COMMANDS": "Batch Commands",
-    "NO_BATCH_COMMANDS": "No batch commands added",
-    "BATCH_VALIDATION": "Batch Validation Issues",
-    "BATCH_COLLISIONS": "Potential collisions detected in batch execution:",
-    "ADD_FLIGHT": "Add Flight",
-    "EXECUTE_ALL_FLIGHTS": "Execute All Flights",
-    "RECENT_ACTIVITY": "Recent Flight Activity",
-    "COMMANDS": "Commands",
-    "FROM": "From",
-    "TO": "To",
-    "MATRIX_HELP": "Matrix Navigation Help",
-    "MATRIX_CONTROLS": "Matrix Controls",
-    "KEYBOARD_SHORTCUTS": "Keyboard Shortcuts",
-    "PAN": "Pan: Click and drag the matrix or use arrow keys",
-    "ZOOM": "Zoom: Use mouse wheel or pinch gesture (touch)",
-    "SELECT_DRONE_HELP": "Select Drone: Click on a drone to select it",
-    "VIEW_ALL_DRONES": "View All Drones: Click the \"Fit All Drones\" button to show all drones",
-    "CLOSE": "Close"
+    "HIDE_LABELS": "Hide Labels"
   },
   "SETTINGS": {
     "TITLE": "System Settings",
@@ -129,12 +73,7 @@
       "LANGUAGE": "Language",
       "LANGUAGE_DESC": "Select your preferred language",
       "NOTIFICATIONS": "Notifications",
-      "NOTIFICATIONS_DESC": "Enable system notifications",
-      "DATA_DISPLAY": "Data Display",
-      "ITEMS_PER_PAGE": "Items Per Page",
-      "ITEMS_PER_PAGE_DESC": "Number of items to display per page in lists",
-      "DATE_FORMAT": "Date Format",
-      "DATE_FORMAT_DESC": "Format for displaying dates throughout the application"
+      "NOTIFICATIONS_DESC": "Enable system notifications"
     },
     "DRONE": {
       "TITLE": "Drone Control",
@@ -166,23 +105,12 @@
       "API_KEY": "API Key",
       "API_KEY_DESC": "Authentication key for API access",
       "TOKEN_REFRESH": "Auto Token Refresh",
-      "TOKEN_REFRESH_DESC": "Automatically refresh authentication tokens",
-      "VALIDATION_ERROR": "Validation Error",
-      "VALIDATION_SUCCESS": "Validation Success",
-      "URL_REQUIRED": "Please enter an API URL",
-      "INVALID_URL": "Invalid URL format",
-      "URL_VALID": "API URL format is valid",
-      "CONNECTION_SUCCESS": "Connection Successful",
-      "CONNECTION_SUCCESS_DETAIL": "API connection test completed successfully."
+      "TOKEN_REFRESH_DESC": "Automatically refresh authentication tokens"
     },
     "ACTIONS": {
       "RESET": "Reset to Defaults",
       "SAVE": "Save Changes",
-      "TEST_CONNECTION": "Test Connection",
-      "SAVE_SUCCESS": "Settings Saved",
-      "SAVE_SUCCESS_DETAIL": "{{section}} settings have been updated successfully.",
-      "RESET_SUCCESS": "Settings Reset",
-      "RESET_SUCCESS_DETAIL": "{{section}} settings have been reset to defaults."
+      "TEST_CONNECTION": "Test Connection"
     }
   },
   "sidebar": {
@@ -206,26 +134,5 @@
     "technicalInfo": "Technical Information",
     "technicalMessage": "The requested URL was not found on this server. If you entered the URL manually, please check your spelling and try again.",
     "requestedUrl": "Requested URL"
-  },
-  "ERROR": {
-    "PAGE_NOT_FOUND": "Page Not Found",
-    "PAGE_NOT_FOUND_MESSAGE": "The page you are looking for doesn't exist or has been moved.",
-    "RETURN_HOME": "Return Home",
-    "GO_BACK": "Go Back",
-    "TECHNICAL_INFO": "Technical Information",
-    "TECHNICAL_MESSAGE": "The requested URL was not found on this server. If you entered the URL manually, please check your spelling and try again.",
-    "REQUESTED_URL": "Requested URL"
-  },
-  "ORIENTATIONS": {
-    "NORTH": "North",
-    "SOUTH": "South",
-    "EAST": "East",
-    "WEST": "West"
-  },
-  "STATUS": {
-    "COMPLETED": "Completed",
-    "FAILED": "Failed",
-    "PENDING": "Pending",
-    "IN_PROGRESS": "In Progress"
   }
 }

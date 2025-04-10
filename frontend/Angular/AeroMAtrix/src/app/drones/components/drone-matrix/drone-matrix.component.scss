@@ -1,545 +1,439 @@
-:host {
-  display: block;
+.matrix-container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  background-color: var(--surface-card);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
 
-  .matrix-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: var(--surface-ground);
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
+.matrix-header {
+  padding: 1.25rem 1.5rem;
+  background-color: var(--surface-section);
+}
+
+.matrix-title {
+  margin-bottom: 1rem;
+}
+
+.matrix-title h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.matrix-title p {
+  margin: 0;
+  color: var(--text-color-secondary);
+}
+
+.matrix-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.control-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-options {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.p-inputswitch-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.switch-label {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+.matrix-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-ground);
+  cursor: grab;
+}
+
+.matrix-viewport:active {
+  cursor: grabbing;
+}
+
+.matrix-3d-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-ground);
+}
+
+.matrix-3d-controls {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.matrix-grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.grid-line {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .grid-line {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.grid-line.horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+.grid-line.vertical {
+  height: 100%;
+  width: 1px;
+}
+
+/* Enhanced grid styling */
+.grid-lines.enhanced .grid-line {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .grid-lines.enhanced .grid-line {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.grid-lines.enhanced .grid-line.axis-line {
+  background-color: var(--primary-400);
+  opacity: 0.5;
+  width: 2px;
+  height: 2px;
+  z-index: 1;
+}
+
+.grid-cells {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.grid-cell {
+  position: absolute;
+}
+
+.grid-cell.alternate-row {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.grid-cell.alternate-column {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .grid-cell.alternate-row,
+[data-theme="dark"] .grid-cell.alternate-column {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.coordinate-label {
+  position: absolute;
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .coordinate-label {
+  background-color: rgba(30, 30, 30, 0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.drone {
+  position: absolute;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.drone:focus {
+  outline: none;
+}
+
+.drone:focus .drone-body {
+  box-shadow: 0 0 0 3px var(--primary-300), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.drone-body {
+  position: relative;
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  background-color: var(--primary-500);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.drone:hover .drone-body {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.drone.selected .drone-body {
+  background-color: var(--primary-700);
+  box-shadow: 0 0 0 3px var(--primary-300), 0 8px 16px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.drone-propeller {
+  position: absolute;
+  width: 30%;
+  height: 5%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+}
+
+.propeller-1 {
+  top: 10%;
+  left: 35%;
+  animation: spin 0.5s linear infinite;
+}
+
+.propeller-2 {
+  top: 47.5%;
+  left: 10%;
+  transform: rotate(90deg);
+  animation: spin 0.5s linear infinite;
+}
+
+.propeller-3 {
+  top: 85%;
+  left: 35%;
+  animation: spin 0.5s linear infinite;
+}
+
+.propeller-4 {
+  top: 47.5%;
+  left: 60%;
+  transform: rotate(90deg);
+  animation: spin 0.5s linear infinite;
+}
+
+.drone-direction-indicator {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  transition: all 0.3s ease;
+}
+
+.drone-north .drone-direction-indicator {
+  border-width: 0 8px 16px 8px;
+  border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.drone-south .drone-direction-indicator {
+  border-width: 16px 8px 0 8px;
+  border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.drone-east .drone-direction-indicator {
+  border-width: 8px 0 8px 16px;
+  border-color: transparent transparent transparent rgba(255, 255, 255, 0.9);
+  top: 50%;
+  right: 10%;
+  transform: translateY(-50%);
+}
+
+.drone-west .drone-direction-indicator {
+  border-width: 8px 16px 8px 0;
+  border-color: transparent rgba(255, 255, 255, 0.9) transparent transparent;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+}
+
+.drone-info {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+.drone-info.visible,
+.drone:hover .drone-info,
+.drone.selected .drone-info {
+  opacity: 1;
+}
+
+/* Position marker for enhanced grid */
+.position-marker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border: 2px dashed var(--primary-300);
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.drone:hover .position-marker,
+.drone.selected .position-marker {
+  opacity: 0.7;
+}
+
+/* Grid coordinates overlay */
+.grid-coordinates {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.matrix-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--surface-section);
+  border-top: 1px solid var(--surface-border);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--text-color-secondary);
+}
+
+.info-value {
+  color: var(--text-color);
+  background-color: var(--surface-hover);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.info-value.selected-drone {
+  background-color: var(--primary-100);
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 3px var(--primary-300), 0 8px 16px rgba(0, 0, 0, 0.3);
   }
+  50% {
+    box-shadow: 0 0 0 6px var(--primary-200), 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 3px var(--primary-300), 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+}
 
+@keyframes spin {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .matrix-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .view-options {
+    width: 100%;
+    justify-content: space-between;
+  }
   .matrix-header {
     padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    background-color: var(--surface-card);
-    border-bottom: 1px solid var(--surface-border);
-
-    .matrix-title {
-      h2 {
-        margin: 0 0 0.25rem 0;
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-
-      p {
-        margin: 0;
-        color: var(--text-color-secondary);
-        font-size: 0.875rem;
-      }
-    }
-
-    .matrix-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .control-group {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .view-options {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-
-        .p-inputswitch-container {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-
-          .switch-label {
-            font-size: 0.875rem;
-            color: var(--text-color-secondary);
-          }
-        }
-      }
-    }
   }
-
-  .matrix-viewport {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--surface-section);
-    cursor: grab;
-
-    &:active {
-      cursor: grabbing;
-    }
-
-    &:focus {
-      outline: 2px solid var(--primary-400);
-      outline-offset: -2px;
-    }
-  }
-
-  .matrix-grid {
-    position: absolute;
-    transform-origin: 0 0;
-    will-change: transform;
-
-    .grid-lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-
-      &.enhanced {
-        .grid-line {
-          opacity: 0.3;
-        }
-      }
-
-      .grid-line {
-        position: absolute;
-        background-color: var(--surface-border);
-        opacity: 0.15;
-
-        &.horizontal {
-          width: 100%;
-          height: 1px;
-        }
-
-        &.vertical {
-          width: 1px;
-          height: 100%;
-        }
-
-        &.axis-line {
-          opacity: 0.4;
-          background-color: var(--primary-300);
-        }
-      }
-
-      .grid-cells {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-
-        .grid-cell {
-          position: absolute;
-
-          &.alternate-row {
-            background-color: rgba(0, 0, 0, 0.02);
-          }
-
-          &.alternate-column {
-            background-color: rgba(0, 0, 0, 0.02);
-          }
-        }
-      }
-    }
-  }
-
-  .coordinate-label {
-    position: absolute;
-    font-size: 0.75rem;
-    color: var(--text-color-secondary);
-    text-align: center;
-    pointer-events: none;
-
-    &.x-label {
-      transform: translateX(-50%);
-    }
-
-    &.y-label {
-      transform: translateY(-50%);
-    }
-  }
-
-  .drone {
-    position: absolute;
-    transform-origin: center;
-    transition: transform 0.2s ease;
-
-    &.drone-selectable {
-      cursor: pointer;
-
-      &:hover {
-        z-index: 10;
-        transform: scale(1.1);
-
-        .drone-info {
-          opacity: 1;
-          visibility: visible;
-        }
-      }
-    }
-
-    &.selected {
-      z-index: 20;
-
-      .drone-body {
-        background-color: var(--primary-600);
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
-      }
-
-      .drone-info {
-        opacity: 1;
-        visibility: visible;
-        background-color: var(--primary-600);
-      }
-
-      .selection-ring {
-        position: absolute;
-        top: -8px;
-        left: -8px;
-        right: -8px;
-        bottom: -8px;
-        border: 2px dashed var(--primary-400);
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-        pointer-events: none;
-      }
-    }
-
-    .drone-body {
-      position: relative;
-      width: 70%;
-      height: 70%;
-      margin: 15% auto;
-      background-color: var(--primary-500);
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .drone-propeller {
-      position: absolute;
-      width: 20%;
-      height: 5%;
-      background-color: #ffffff;
-      border-radius: 2px;
-      animation: spin 1s linear infinite;
-
-      &.propeller-1 {
-        top: 20%;
-        left: 10%;
-      }
-
-      &.propeller-2 {
-        top: 20%;
-        right: 10%;
-      }
-
-      &.propeller-3 {
-        bottom: 20%;
-        left: 10%;
-      }
-
-      &.propeller-4 {
-        bottom: 20%;
-        right: 10%;
-      }
-    }
-
-    .drone-direction-indicator {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      transition: all 0.3s ease;
-    }
-
-    &.drone-north .drone-direction-indicator {
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(-50%);
-      border-width: 0 8px 12px 8px;
-      border-color: transparent transparent #ffffff transparent;
-    }
-
-    &.drone-south .drone-direction-indicator {
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(50%);
-      border-width: 12px 8px 0 8px;
-      border-color: #ffffff transparent transparent transparent;
-    }
-
-    &.drone-east .drone-direction-indicator {
-      top: 50%;
-      right: 0;
-      transform: translateY(-50%) translateX(50%);
-      border-width: 8px 0 8px 12px;
-      border-color: transparent transparent transparent #ffffff;
-    }
-
-    &.drone-west .drone-direction-indicator {
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%) translateX(-50%);
-      border-width: 8px 12px 8px 0;
-      border-color: transparent #ffffff transparent transparent;
-    }
-
-    .drone-info {
-      position: absolute;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--primary-500);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 30;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-      &.visible {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .drone-id {
-        font-weight: 600;
-        display: block;
-        text-align: center;
-      }
-
-      .drone-position {
-        font-size: 0.7rem;
-        opacity: 0.9;
-      }
-    }
-
-    .position-marker {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: rgba(59, 130, 246, 0.3);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-  }
-
-  .grid-coordinates {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .matrix-3d-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--surface-section);
-
-    .matrix-3d-controls {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      .control-hint {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 0.875rem;
-
-        i {
-          font-size: 1rem;
-        }
-      }
-    }
-  }
-
-  .matrix-info {
-    padding: 0.75rem 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    background-color: var(--surface-card);
-    border-top: 1px solid var(--surface-border);
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .info-label {
-        font-size: 0.875rem;
-        color: var(--text-color-secondary);
-      }
-
-      .info-value {
-        font-weight: 500;
-
-        &.selected-drone {
-          color: var(--primary-600);
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
-  .matrix-help-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-
-    .help-content {
-      background-color: var(--surface-card);
-      border-radius: 8px;
-      padding: 1.5rem;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-
-      h3 {
-        margin-top: 0;
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-        color: var(--text-color);
-      }
-
-      ul {
-        margin: 0 0 1.5rem 0;
-        padding-left: 1.5rem;
-
-        li {
-          margin-bottom: 0.5rem;
-          color: var(--text-color-secondary);
-
-          strong {
-            color: var(--text-color);
-          }
-        }
-      }
-    }
-  }
-
-  .matrix-navigation-assistance {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    .navigation-hint {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      transition: opacity 0.3s ease;
-    }
-
-    .mini-map {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 4px;
-      padding: 4px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-      .mini-map-content {
-        position: relative;
-        background-color: var(--surface-ground);
-        border: 1px solid var(--surface-border);
-        border-radius: 2px;
-        overflow: hidden;
-      }
-
-      .mini-map-viewport {
-        position: absolute;
-        border: 2px solid var(--primary-500);
-        background-color: rgba(59, 130, 246, 0.1);
-        pointer-events: none;
-      }
-
-      .mini-map-drone {
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        background-color: var(--primary-500);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-
-        &.mini-map-selected {
-          background-color: var(--primary-700);
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-        }
-      }
-    }
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.6;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.4;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0.6;
-    }
-  }
-
-  // Responsive adjustments
-  @media screen and (max-width: 768px) {
-    .matrix-header {
-      flex-direction: column;
-      align-items: flex-start;
-
-      .matrix-controls {
-        width: 100%;
-        justify-content: space-between;
-      }
-    }
-
-    .matrix-viewport {
-      touch-action: none; // Prevent browser handling of touch events
-    }
+  .matrix-title h2 {
+    font-size: 1.25rem;
   }
 }

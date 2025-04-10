@@ -44,9 +44,7 @@
               placeholder="Select a matrix"
               [showClear]="false"
               (onChange)="onMatrixSelect()"
-              styleClass="w-full dropdown-responsive"
-              [autoDisplayFirst]="false"
-              appendTo="body"
+              styleClass="w-full"
             ></p-dropdown>
           </div>
           <div class="col-12 md:col-6">
@@ -59,10 +57,8 @@
               placeholder="Select a drone"
               [showClear]="true"
               (onChange)="onDroneSelect()"
-              styleClass="w-full dropdown-responsive"
+              styleClass="w-full"
               [disabled]="!selectedMatrixId || droneOptions.length === 0"
-              [autoDisplayFirst]="false"
-              appendTo="body"
             ></p-dropdown>
           </div>
         </div>
@@ -71,57 +67,14 @@
 
     <div class="grid">
       <!-- Matrix Visualization -->
-      <div class="col-12 lg:col-6 xl:col-7 matrix-visualization-wrapper">
+      <div class="col-12 lg:col-6 xl:col-7">
         <div class="matrix-container">
           <app-drone-matrix
             [matrix]="selectedMatrix"
             [drones]="selectedMatrix?.drones || []"
             [selectedDroneId]="selectedDroneId"
-            [autoFitDrones]="true"
             (droneSelected)="onMatrixDroneSelect($event)"
           ></app-drone-matrix>
-        </div>
-        <div class="matrix-controls">
-          <button
-            pButton
-            pRipple
-            icon="pi pi-search-plus"
-            class="p-button-rounded p-button-text"
-            (click)="zoomIn()"
-            pTooltip="Zoom In"
-            tooltipPosition="top"
-            title="as"
-          ></button>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-search-minus"
-            class="p-button-rounded p-button-text"
-            (click)="zoomOut()"
-            pTooltip="Zoom Out"
-            tooltipPosition="top"
-            title="as"
-          ></button>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-arrows-alt"
-            class="p-button-rounded p-button-text"
-            (click)="fitAllDrones()"
-            pTooltip="Fit All Drones"
-            tooltipPosition="top"
-            title="as"
-          ></button>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-question-circle"
-            class="p-button-rounded p-button-text"
-            (click)="toggleHelp()"
-            pTooltip="Help"
-            tooltipPosition="top"
-            title="as"
-          ></button>
         </div>
       </div>
 
@@ -297,24 +250,17 @@
             <p-tabPanel header="Group Flight" leftIcon="pi pi-users">
               <!-- Drone selection -->
               <div class="mb-3">
-                <label for="groupDronesSelect" class="block mb-2 font-medium"
-                  >Select Drones</label
-                >
+                <label class="block mb-2 font-medium">Select Drones</label>
                 <p-multiSelect
-                  id="groupDronesSelect"
                   [options]="droneOptions"
                   [(ngModel)]="multiSelectedDroneIds"
                   optionLabel="label"
                   optionValue="value"
                   [filter]="true"
                   placeholder="Select drones for group flight"
-                  styleClass="w-full multiselect-responsive"
+                  styleClass="w-full"
                   [disabled]="!selectedMatrixId"
                   (onChange)="updateMultiSelectedDrones()"
-                  appendTo="body"
-                  [maxSelectedLabels]="3"
-                  selectedItemsLabel="{0} drones selected"
-                  display="chip"
                 ></p-multiSelect>
               </div>
 
@@ -478,11 +424,9 @@
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select drone"
-                        styleClass="w-full dropdown-responsive"
+                        styleClass="w-full"
                         [disabled]="!selectedMatrixId"
                         (onChange)="validateBatchCommand(i)"
-                        appendTo="body"
-                        [autoDisplayFirst]="false"
                       ></p-dropdown>
                     </div>
                     <div class="col-12 md:col-5">
@@ -513,9 +457,7 @@
                         {{ command.validationResult.errorMessage }}
                       </small>
                     </div>
-                    <div
-                      class="col-12 md:col-2 text-right batch-command-actions"
-                    >
+                    <div class="col-12 md:col-2 text-right">
                       <button
                         pButton
                         pRipple
@@ -663,65 +605,5 @@
     </div>
   </div>
 </div>
-
-<!-- Help Dialog -->
-<p-dialog
-  [(visible)]="showHelpDialog"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  header="Matrix Navigation Help"
-  [style]="{ width: '90%', maxWidth: '500px' }"
-  [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
-  [closeOnEscape]="true"
-  [dismissableMask]="true"
->
-  <div class="help-content">
-    <h3>Matrix Controls</h3>
-    <ul>
-      <li><strong>Pan:</strong> Click and drag the matrix or use arrow keys</li>
-      <li><strong>Zoom:</strong> Use mouse wheel or pinch gesture (touch)</li>
-      <li><strong>Select Drone:</strong> Click on a drone to select it</li>
-      <li>
-        <strong>View All Drones:</strong> Click the "Fit All Drones" button to
-        show all drones
-      </li>
-    </ul>
-
-    <h3>Keyboard Shortcuts</h3>
-    <div class="keyboard-shortcuts">
-      <div class="shortcut">
-        <span class="key">↑ ↓ ← →</span>
-        <span class="description">Pan the matrix</span>
-      </div>
-      <div class="shortcut">
-        <span class="key">+</span>
-        <span class="description">Zoom in</span>
-      </div>
-      <div class="shortcut">
-        <span class="key">-</span>
-        <span class="description">Zoom out</span>
-      </div>
-      <div class="shortcut">
-        <span class="key">F</span>
-        <span class="description">Fit all drones</span>
-      </div>
-      <div class="shortcut">
-        <span class="key">Esc</span>
-        <span class="description">Deselect drone</span>
-      </div>
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      label="Close"
-      icon="pi pi-check"
-      (click)="showHelpDialog = false"
-      title="as"
-    ></button>
-  </ng-template>
-</p-dialog>
 
 <p-toast></p-toast>
