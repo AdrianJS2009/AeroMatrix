@@ -109,20 +109,45 @@ Proyecto_FCT/
 │           ├── resources/                # 🧪 Test-specific configuration/resources
 │           └── services/                 # 🧪 Application/service layer tests
 │
-├── frontend/drone-flight-control/
-│   ├── public/                         # 🌐 Static files
-│   ├── src/
-│   │   ├── api/                        # 🔌 API calls and interfaces
-│   │   ├── components/                 # 🧩 Reusable UI components
-│   │   ├── context/                    # 🧠 Global context and providers
-│   │   ├── pages/                      # 📄 Application routes and views
-│   │   └── types/                      # 📝 TypeScript types and interfaces
-│   ├── .env.local                      # 🔐 Local environment variables
-│   ├── index.html                      # 🏠 HTML entry point
-│   ├── package.json                    # 📦 Project dependencies and scripts
-│   ├── tsconfig.json                   # ⚙️ TypeScript configuration
-│   ├── tailwind.config.js              # 🎨 Tailwind CSS configuration
-│   └── vite.config.ts                  # ⚡ Vite build configuration
+├── frontend/
+│   ├── app/
+│   │   ├── about/                      # ℹ️ About page module
+│   │   ├── analytics/                  # 📊 Analytics and statistics
+│   │   ├── config/                     # ⚙️ App configuration
+│   │   ├── core/
+│   │   │   └── services/               # 🔧 Core services (interceptors, guards, etc.)
+│   │   ├── drones/
+│   │   │   ├── components/
+│   │   │   │   ├── dron-list/          # 📃 List of drones
+│   │   │   │   ├── drone-form/         # 📝 Drone creation/edit form
+│   │   │   │   └── drone-matrix/       # 🗺️ Matrix with drone positions
+│   │   │   ├── models/                 # 📦 Drone-related models
+│   │   │   └── services/               # 📡 Drone API communication
+│   │   ├── features/                   # 🌟 Additional feature modules
+│   │   ├── flights/
+│   │   │   ├── components/             # ✈️ UI components for flight management
+│   │   │   └── services/               # ✈️ Flight service API logic
+│   │   ├── landing-page/              # 🏠 Landing or home page
+│   │   ├── layout/
+│   │   │   ├── header/                 #  Top navigation
+│   │   │   ├── shell/                  #  Shell layout wrapper
+│   │   │   └── sidebar/                #  Sidebar navigation
+│   │   ├── matrices/
+│   │   │   ├── components/
+│   │   │   │   ├── matrix-form/        # 📐 Create/edit matrix form
+│   │   │   │   └── matrix-list/        # 📋 Matrix listing UI
+│   │   │   ├── models/                 # 📦 Matrix-related models
+│   │   │   └── services/               # 📡 Matrix service API logic
+│   │   ├── not-found/                 # ❌ 404 Not Found page
+│   │   ├── settings/                  # ⚙️ Web Application settings
+│   │   ├── shared/                    # ♻️ Shared components, directives, pipes
+│   │   └── support/                   # 💬 Help and support
+│   ├── assets/
+│   │   ├── i18n/                      # 🌍 Translations for i18n
+│   │   └── themes/                    # 🎨 Theme customization
+│   │       ├── lara-dark-blue/
+│   │       └── lara-light-blue/
+│   └── environments/                 # 🌐 Environment config files#
 ```
 
 ---
