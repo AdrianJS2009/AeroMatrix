@@ -1,4 +1,3 @@
-
 # 🚁 AeroMatrix
 
 ## 📋 Table of Contents
@@ -108,8 +107,7 @@ Proyecto_FCT/
 │           ├── exception/                # 🧪 Exception handling tests
 │           ├── repositories/             # 🧪 Repository layer tests
 │           ├── resources/                # 🧪 Test-specific configuration/resources
-│           └── services/                 # 🧪 Appl
-│
+│           └── services/                 # 🧪 Application/service layer tests
 │
 ├── frontend/drone-flight-control/
 │   ├── public/                         # 🌐 Static files
@@ -125,19 +123,22 @@ Proyecto_FCT/
 │   ├── tsconfig.json                   # ⚙️ TypeScript configuration
 │   ├── tailwind.config.js              # 🎨 Tailwind CSS configuration
 │   └── vite.config.ts                  # ⚡ Vite build configuration
-
 ```
 
 ---
 
 ## 🌐 API Endpoints
 
-### Matrices
+### 🧱 Matrices
 
-- **Create a matrix:**
-
+- **List all matrices**
   ```http
-  POST /api/matrices-flight/create
+  GET /api/matrices
+  ```
+
+- **Create a matrix**
+  ```http
+  POST /api/matrices
   ```
 
   ```json
@@ -147,16 +148,14 @@ Proyecto_FCT/
   }
   ```
 
-- **Get matrix by ID:**
-
+- **Get matrix by ID**
   ```http
-  GET /api/matrices-flight/get/{id}
+  GET /api/matrices/{matrixId}
   ```
 
-- **Update a matrix:**
-
+- **Update a matrix**
   ```http
-  PUT /api/matrices-flight/update/{id}
+  PUT /api/matrices/{matrixId}
   ```
 
   ```json
@@ -166,16 +165,21 @@ Proyecto_FCT/
   }
   ```
 
-- **Delete a matrix:**
-
+- **Delete a matrix**
   ```http
-  DELETE /api/matrices-flight/delete/{id}
+  DELETE /api/matrices/{matrixId}
   ```
 
-### Drones
+---
 
-- **Create a drone:**
+### 🚁 Drones
 
+- **List all drones**
+  ```http
+  GET /api/drones
+  ```
+
+- **Create a drone**
   ```http
   POST /api/drones
   ```
@@ -191,20 +195,19 @@ Proyecto_FCT/
   }
   ```
 
-- **Get drone by ID:**
-
+- **Get drone by ID**
   ```http
   GET /api/drones/{droneId}
   ```
 
-- **Update a drone:**
-
+- **Update a drone**
   ```http
   PUT /api/drones/{droneId}
   ```
 
   ```json
   {
+    "matrixId": 1,
     "name": "Drone1",
     "model": "ModelX",
     "x": 1,
@@ -213,18 +216,18 @@ Proyecto_FCT/
   }
   ```
 
-- **Delete a drone:**
-
+- **Delete a drone**
   ```http
   DELETE /api/drones/{droneId}
   ```
 
-### Flights
+---
 
-- **Execute commands on a drone:**
+### ✈️ Flights
 
+- **Execute a sequence of commands on a single drone**
   ```http
-  POST /api/flights/drone/{droneId}/commands
+  POST /api/flights/drones/{droneId}/commands
   ```
 
   ```json
@@ -233,23 +236,20 @@ Proyecto_FCT/
   }
   ```
 
-- **Execute commands on multiple drones:**
-
+- **Execute the same sequence on multiple drones**
   ```http
-  POST /api/flights/drones/commands
+  POST /api/flights/drones/commands?droneIds=1&droneIds=2
   ```
 
   ```json
   {
-    "droneIds": [1, 2],
     "commands": ["TURN_LEFT", "MOVE_FORWARD"]
   }
   ```
 
-- **Execute multiple command sequences on multiple drones:**
-
+- **Execute different sequences on multiple drones**
   ```http
-  POST /api/flights/drones/batch-commands
+  POST /api/flights/batch-commands
   ```
 
   ```json
@@ -266,3 +266,9 @@ Proyecto_FCT/
     ]
   }
   ```
+
+---
+
+## 🗄️ Database Configuration
+
+Make sure to configure your `application.properties` or `application.yml` with the correct database credentials. See [How to Clone and Run the Application](#-how-to-clone-and-run-the-application) for more info.
