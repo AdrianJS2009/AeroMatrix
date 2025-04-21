@@ -87,20 +87,29 @@ Proyecto_FCT/
 │   └── src/
 │       ├── main/
 │       │   ├── java/com/drones/fct/
-│       │   │   ├── config/              # ⚙️ Global configuration classes
-│       │   │   ├── controller/          # 🌍 REST Controllers
-│       │   │   ├── domain/              # 🧠 Domain entities (models)
-│       │   │   ├── dto/                 # 📦 Data Transfer Objects
-│       │   │   ├── exception/           # 🚨 Custom exceptions and global handlers
-│       │   │   ├── repository/          # 🗃️ JPA Repositories (data access layer)
-│       │   │   ├── service/             # 🔧 Business logic and services
-│       │   │   └── FctApplication.java  # 🚀 Main Spring Boot application class
-│       │   └── resources/               # ⚙️ Application properties, configs, etc.
+│       │   │   ├── api/
+│       │   │   │   ├── controller/       # 🌍 REST Controllers
+│       │   │   │   ├── dto/              # 📦 Data Transfer Objects
+│       │   │   │   └── exception/        # 🚨 Custom exceptions and global handlers
+│       │   │   ├── application/          # 🧠 Application services and orchestrators
+│       │   │   ├── domain/
+│       │   │   │   ├── model/            # 🧬 Domain entities (Aggregates, VOs)
+│       │   │   │   └── repository/       # 🗃️ Domain repository interfaces
+│       │   │   ├── infrastructure/
+│       │   │   │   └── config/           # ⚙️ Spring and application configuration
+│       │   │   └── FctApplication.java   # 🚀 Main Spring Boot application class
+│       │   └── resources/
+│       │       └── static/
+│       │           └── custom/           # 🖼️ Custom static resources (if any)
 │       └── test/java/com/drones/fct/
-│           ├── service/                # 🧪 Unit tests for services
-│           ├── controller/             # 🧪 Integration tests for controllers
-│           ├── repository/             # 🧪 Repository layer tests
-│           └── exception/              # 🧪 Exception handling tests
+│           ├── controllers/              # 🧪 Integration tests for controllers
+│           ├── domain/                   # 🧪 Domain model unit tests
+│           ├── dto/                      # 🧪 DTO mapping and validation tests
+│           ├── exception/                # 🧪 Exception handling tests
+│           ├── repositories/             # 🧪 Repository layer tests
+│           ├── resources/                # 🧪 Test-specific configuration/resources
+│           └── services/                 # 🧪 Appl
+│
 │
 ├── frontend/drone-flight-control/
 │   ├── public/                         # 🌐 Static files
