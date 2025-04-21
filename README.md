@@ -48,7 +48,7 @@
 
 ## 🚀 How to Run the Frontend (Angular)
 
-The frontend is built with **Angular 18** and uses **PrimeNG 19** for UI components and **@ngx-translate/core** for internationalization.
+The frontend is built with **Angular 18** and uses **PrimeNG 19** for UI components.
 
 ### 📦 Install dependencies
 
