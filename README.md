@@ -43,6 +43,40 @@
 
 ---
 
+
+---
+
+## 🚀 How to Run the Frontend (Angular)
+
+The frontend is built with **Angular 18** and uses **PrimeNG 19** for UI components and **@ngx-translate/core** for internationalization.
+
+### 📦 Install dependencies
+
+Make sure you have Node.js and Angular CLI installed. Then run:
+
+```bash
+cd frontend
+npm install
+```
+
+### ▶️ Run the development server
+
+```bash
+ng serve
+```
+
+The application will be available at [http://localhost:4200](http://localhost:4200)
+
+### 🌐 Environment Configuration
+
+You can edit the environment variables in:
+
+```bash
+src/environments/environment.ts
+```
+
+Make sure the backend API URL is correctly set if needed for development.
+
 ## 🏛️ Architecture and Design Patterns
 
 The project follows a combination of **Domain-Driven Design (DDD)** and **Hexagonal Architecture**, organized in layers with clear responsibilities:
@@ -129,9 +163,9 @@ Proyecto_FCT/
 │   │   │   └── services/               # ✈️ Flight service API logic
 │   │   ├── landing-page/              # 🏠 Landing or home page
 │   │   ├── layout/
-│   │   │   ├── header/                 #  Top navigation
-│   │   │   ├── shell/                  #  Shell layout wrapper
-│   │   │   └── sidebar/                #  Sidebar navigation
+│   │   │   ├── header/                 # 🧭 Top navigation
+│   │   │   ├── shell/                  # 💠 Shell layout wrapper
+│   │   │   └── sidebar/                # 📚 Sidebar navigation
 │   │   ├── matrices/
 │   │   │   ├── components/
 │   │   │   │   ├── matrix-form/        # 📐 Create/edit matrix form
@@ -139,7 +173,7 @@ Proyecto_FCT/
 │   │   │   ├── models/                 # 📦 Matrix-related models
 │   │   │   └── services/               # 📡 Matrix service API logic
 │   │   ├── not-found/                 # ❌ 404 Not Found page
-│   │   ├── settings/                  # ⚙️ Web Application settings
+│   │   ├── settings/                  # ⚙️ Application settings
 │   │   ├── shared/                    # ♻️ Shared components, directives, pipes
 │   │   └── support/                   # 💬 Help and support
 │   ├── assets/
@@ -147,7 +181,7 @@ Proyecto_FCT/
 │   │   └── themes/                    # 🎨 Theme customization
 │   │       ├── lara-dark-blue/
 │   │       └── lara-light-blue/
-│   └── environments/                 # 🌐 Environment config files#
+│   └── environments/                 # 🌐 Environment config files# ⚡ Vite build configuration
 ```
 
 ---
