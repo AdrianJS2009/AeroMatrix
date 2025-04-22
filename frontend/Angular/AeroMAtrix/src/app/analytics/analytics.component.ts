@@ -63,7 +63,6 @@ import { TableModule } from 'primeng/table';
   ],
 })
 export class AnalyticsComponent implements OnInit {
-  // Time range options for the dropdown
   timeRanges = [
     { label: 'Last 7 Days', value: '7d' },
     { label: 'Last 30 Days', value: '30d' },
@@ -72,13 +71,11 @@ export class AnalyticsComponent implements OnInit {
   ];
   selectedTimeRange = this.timeRanges[0];
 
-  // Stats variables
   activeCount = 12;
   flightCount = 287;
   matrixCount = 5;
   errorRate = 2.4;
 
-  // Graph data and options
   flightActivityData: any;
   flightActivityOptions: any;
 
@@ -91,7 +88,6 @@ export class AnalyticsComponent implements OnInit {
   errorTypesData: any;
   errorTypesOptions: any;
 
-  // Table data
   recentFlights = [
     {
       drone: 'Drone #1',
@@ -170,7 +166,6 @@ export class AnalyticsComponent implements OnInit {
     );
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-    // Configuration for the flight activity chart
     this.flightActivityData = {
       labels: [
         'Monday',
@@ -233,7 +228,6 @@ export class AnalyticsComponent implements OnInit {
       animation: { duration: 1000, easing: 'easeOutQuart' },
     };
 
-    // Graph configuration for drone distribution
     this.droneDistributionData = {
       labels: ['Matrix 1', 'Matrix 2', 'Matrix 3', 'Matrix 4', 'Matrix 5'],
       datasets: [
@@ -291,7 +285,6 @@ export class AnalyticsComponent implements OnInit {
       },
     };
 
-    // Graph configuration for command usage
     this.commandUsageData = {
       labels: ['Advance (A)', 'Turn Left (L)', 'Turn Right (R)'],
       datasets: [
@@ -347,7 +340,6 @@ export class AnalyticsComponent implements OnInit {
       animation: { duration: 1000, easing: 'easeOutQuart' },
     };
 
-    // Graph configuration for error types
     this.errorTypesData = {
       labels: [
         'Boundary Violation',
@@ -412,7 +404,6 @@ export class AnalyticsComponent implements OnInit {
   }
 
   updateCharts() {
-    // Update stats based on the selected time range
     if (this.selectedTimeRange.value === '7d') {
       this.activeCount = 12;
       this.flightCount = 287;
@@ -431,14 +422,12 @@ export class AnalyticsComponent implements OnInit {
       this.errorRate = 2.2;
     }
 
-    // Update flight activity data with random values
     const randomFactor = Math.random() * 0.5 + 0.75;
     this.flightActivityData.datasets[0].data =
       this.flightActivityData.datasets[0].data.map((val: number) =>
         Math.round(val * randomFactor)
       );
 
-    // Force chart to re-render
     this.flightActivityData = { ...this.flightActivityData };
     this.droneDistributionData = { ...this.droneDistributionData };
     this.commandUsageData = { ...this.commandUsageData };

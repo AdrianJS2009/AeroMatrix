@@ -24,10 +24,6 @@ export class MatrixService {
 
   constructor(private readonly apiService: ApiService) {}
 
-  /**
-   * Retrieve all matrices.
-   * @returns Observable emitting an array of matrices.
-   */
   getAll(): Observable<Matrix[]> {
     return this.apiService
       .get<Matrix[]>(this.path)
@@ -42,11 +38,6 @@ export class MatrixService {
       );
   }
 
-  /**
-   * Retrieve a matrix by its ID.
-   * @param id Matrix identifier.
-   * @returns Observable emitting the matrix.
-   */
   getById(id: number): Observable<Matrix> {
     return this.apiService
       .get<Matrix>(`${this.path}/${id}`)
@@ -61,11 +52,6 @@ export class MatrixService {
       );
   }
 
-  /**
-   * Create a new matrix.
-   * @param data CreateMatrixRequest containing matrix dimensions.
-   * @returns Observable emitting the newly created matrix.
-   */
   create(data: CreateMatrixRequest): Observable<Matrix> {
     return this.apiService
       .post<Matrix, CreateMatrixRequest>(this.path, data)
@@ -80,12 +66,6 @@ export class MatrixService {
       );
   }
 
-  /**
-   * Update an existing matrix.
-   * @param id Matrix identifier.
-   * @param data UpdateMatrixRequest containing the new dimensions.
-   * @returns Observable emitting the updated matrix.
-   */
   update(id: number, data: UpdateMatrixRequest): Observable<Matrix> {
     return this.apiService
       .put<Matrix, UpdateMatrixRequest>(`${this.path}/${id}`, data)
@@ -100,11 +80,6 @@ export class MatrixService {
       );
   }
 
-  /**
-   * Delete a matrix by its ID.
-   * @param id Matrix identifier.
-   * @returns Observable emitting void.
-   */
   delete(id: number): Observable<void> {
     return this.apiService
       .delete<void>(`${this.path}/${id}`)
@@ -119,15 +94,6 @@ export class MatrixService {
       );
   }
 
-  /**
-   * Private method to handle API errors.
-   * Logs the error and returns an observable error with a user-friendly message.
-   *
-   * @param error Error object caught from the API call.
-   * @param consoleMsg Message to log in the console.
-   * @param defaultMsg Default error message for the user.
-   * @returns Observable error.
-   */
   private handleError(error: any, consoleMsg: string, defaultMsg: string) {
     console.error(consoleMsg, error);
     const message = error?.error?.message || defaultMsg;

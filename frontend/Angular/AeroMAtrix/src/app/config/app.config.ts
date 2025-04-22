@@ -4,7 +4,6 @@ import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Enabling event coalescing improves performance by reducing change detection calls
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
   ],

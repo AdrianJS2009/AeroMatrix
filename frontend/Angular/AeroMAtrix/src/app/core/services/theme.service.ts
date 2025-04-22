@@ -17,7 +17,6 @@ export class ThemeService {
 
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
-    // Apply the current theme on initialization
     this.applyTheme(this.currentThemeSubject.value);
     // Listen to system theme changes
     this.listenForSystemThemeChanges();
@@ -30,14 +29,13 @@ export class ThemeService {
     this.setTheme(newTheme);
   }
 
-  // Set and persist
   setTheme(theme: Theme): void {
     localStorage.setItem(this.themeKey, theme);
     this.currentThemeSubject.next(theme);
     this.applyTheme(theme);
   }
 
-  // Retrieve the initial theme, checking localStorage and system preferences
+  // checking localStorage and system preferences
   private getInitialTheme(): Theme {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme;
     if (savedTheme) {
@@ -69,7 +67,7 @@ export class ThemeService {
     }
   }
 
-  // Dynamically update the PrimeNG theme CSS file
+  // update the PrimeNG theme CSS file
   private updatePrimeNGTheme(themeName: string): void {
     let themeLink = document.getElementById('app-theme') as HTMLLinkElement;
 
@@ -83,7 +81,7 @@ export class ThemeService {
     themeLink.href = `assets/themes/${themeName}/theme.css`;
   }
 
-  // Listen for changes in system theme preferences and apply them if no user preference is stored
+  // Listen for changes in system theme preferences and apply them
   private listenForSystemThemeChanges(): void {
     if (window.matchMedia) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

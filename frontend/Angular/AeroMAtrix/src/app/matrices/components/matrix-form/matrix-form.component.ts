@@ -74,11 +74,9 @@ export class MatrixFormComponent implements OnInit {
   submitted = false;
   Math = Math; // Add Math object for use in template
 
-  // Track original dimensions when editing
   originalMaxX = 0;
   originalMaxY = 0;
 
-  // Track out-of-bounds drones
   outOfBoundsDrones: Drone[] = [];
 
   // Constants for validation
@@ -155,7 +153,6 @@ export class MatrixFormComponent implements OnInit {
     const maxY = this.matrixForm.get('maxY')?.value || 3;
     const totalCells = maxX * maxY;
 
-    // Use canvas for very large matrices
     this.useCanvasPreview = totalCells > 50;
 
     // Choose preview mode based on total cells
@@ -183,7 +180,6 @@ export class MatrixFormComponent implements OnInit {
     }
   }
 
-  // Initialize the form with default or edit values
   initForm(): void {
     this.matrixForm = this.fb.group({
       maxX: [
@@ -214,7 +210,6 @@ export class MatrixFormComponent implements OnInit {
         maxY: this.matrixToEdit.maxY,
       });
 
-      // Add value change listeners to check for out-of-bounds drones when editing
       this.matrixForm.get('maxX')?.valueChanges.subscribe((newValue) => {
         if (this.matrixToEdit && newValue < this.originalMaxX) {
           this.checkForOutOfBoundsDrones();
@@ -336,13 +331,11 @@ export class MatrixFormComponent implements OnInit {
     });
   }
 
-  // Cancel the form and close the dialog
   onCancel(): void {
     this.submitted = false;
     this.close.emit();
   }
 
-  // Generate an array for the matrix preview grid based on dimensions
   getPreviewArray(): number[] {
     const x = this.matrixForm.value.maxX || 3;
     const y = this.matrixForm.value.maxY || 3;
@@ -350,7 +343,6 @@ export class MatrixFormComponent implements OnInit {
     if (this.previewMode === 'standard') {
       return Array(x * y).fill(0);
     } else if (this.previewMode === 'optimized') {
-      // Create a subset of cells to represent the matrix
       const maxCells = 100;
       const totalCells = x * y;
       const factor = Math.ceil(totalCells / maxCells);
@@ -363,8 +355,6 @@ export class MatrixFormComponent implements OnInit {
       }
       return result;
     } else {
-      // minimal mode
-      // Just show corner cells and some in between
       const result = [
         0, // top-left
         x - 1, // top-right
@@ -372,7 +362,6 @@ export class MatrixFormComponent implements OnInit {
         (y - 1) * x + (x - 1), // bottom-right
       ];
 
-      // Add some cells in the middle if matrix is large enough
       if (x > 2 && y > 2) {
         const midX = Math.floor(x / 2);
         const midY = Math.floor(y / 2);

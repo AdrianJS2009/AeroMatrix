@@ -9,7 +9,6 @@ import { DividerModule } from 'primeng/divider';
 import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 
-// Interfaces for feature and feature category data
 export interface Feature {
   id: string;
   title: string;
@@ -52,7 +51,6 @@ export interface FeatureCategory {
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
-        // Fade in animation
         style({ opacity: 0, transform: 'translateY(20px)' }),
         animate(
           '0.5s ease-out',
@@ -62,7 +60,6 @@ export interface FeatureCategory {
     ]),
     trigger('staggered', [
       transition(':enter', [
-        // Staggered animation for list items
         style({ opacity: 0, transform: 'translateY(30px)' }),
         animate(
           '0.5s {{delay}}ms ease-out',
@@ -76,7 +73,7 @@ export class FeaturesComponent implements OnInit {
   featureCategories: FeatureCategory[] = [];
 
   ngOnInit() {
-    // Initialize feature categories with sample data
+    // Initialize feature categories with dummy data
     this.featureCategories = [
       {
         name: 'Drone Management',
@@ -297,17 +294,14 @@ export class FeaturesComponent implements OnInit {
     ];
   }
 
-  // TrackBy function for feature categories using category name
   trackCategory(index: number, category: FeatureCategory): string {
     return category.name;
   }
 
-  // TrackBy function for features using feature id
   trackFeature(index: number, feature: Feature): string {
     return feature.id;
   }
 
-  // TrackBy function for benefits using the benefit text
   trackBenefit(index: number, benefit: string): string {
     return benefit;
   }

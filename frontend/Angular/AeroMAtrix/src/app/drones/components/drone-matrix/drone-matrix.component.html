@@ -66,7 +66,7 @@
 
   <p-divider></p-divider>
 
-  <!-- 2D Matrix View -->
+  <!-- 2D Matrix -->
   <div
     class="matrix-viewport"
     #viewport
@@ -104,7 +104,7 @@
           ></div>
         </div>
 
-        <!-- Grid Cells for enhanced view -->
+        <!-- Grid Cells -->
         <div class="grid-cells" *ngIf="enhancedGrid">
           <div
             class="grid-cell"
@@ -195,14 +195,14 @@
         </div>
       </ng-container>
 
-      <!-- Grid Coordinates Overlay -->
+      <!-- Grid Coordinates  -->
       <div class="grid-coordinates" *ngIf="showCoordinates">
         <span>{{ currentCoordinates }}</span>
       </div>
     </div>
   </div>
 
-  <!-- 3D Matrix View -->
+  <!-- 3D Matrix  -->
   <div
     class="matrix-3d-container"
     #container3d

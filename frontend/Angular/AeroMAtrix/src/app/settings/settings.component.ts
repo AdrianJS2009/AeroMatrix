@@ -53,7 +53,7 @@ import {
   ],
 })
 export class SettingsComponent {
-  // Settings object stores all app settings
+
   settings = {
     // General settings
     darkMode: false,
@@ -94,7 +94,7 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
-  // Add this property to the class
+
   hideApiKey = true;
 
   constructor(
@@ -105,29 +105,29 @@ export class SettingsComponent {
     // Initialize language options from translation service
     this.languageOptions = this.translationService.availableLanguages;
 
-    // Subscribe to theme changes and update settings accordingly
+ 
     this.themeService.currentTheme$.subscribe((theme) => {
       this.settings.darkMode = theme === 'dark';
     });
 
-    // Subscribe to language changes and update settings accordingly
+    /
     this.translationService.currentLanguage$.subscribe((language) => {
       this.settings.language = language;
     });
   }
 
-  /** Update the theme based on the darkMode setting */
+
   onThemeChange(): void {
     const theme: Theme = this.settings.darkMode ? 'dark' : 'light';
     this.themeService.setTheme(theme);
   }
 
-  /** Update the current language setting */
+
   onLanguageChange(): void {
     this.translationService.setLanguage(this.settings.language);
   }
 
-  /** Simulate save action and show a success message for the specified section */
+  // Simulate save action
   saveSettings(section: string): void {
     this.messageService.add({
       severity: 'success',
@@ -139,7 +139,7 @@ export class SettingsComponent {
     });
   }
 
-  /** Reset general settings to default values */
+  // Reset general settings to default values
   resetGeneralSettings(): void {
     this.settings.darkMode = false;
     this.themeService.setTheme('light');
@@ -160,7 +160,7 @@ export class SettingsComponent {
     });
   }
 
-  /** Reset drone-related settings to default values */
+  // Reset drone settings to default values
   resetDroneSettings(): void {
     this.settings.defaultOrientation = { value: 'N', label: 'North (N)' };
     this.settings.autoPosition = true;
@@ -177,7 +177,7 @@ export class SettingsComponent {
     });
   }
 
-  /** Reset API settings to default values */
+  // Reset API settings to default values
   resetApiSettings(): void {
     this.settings.apiUrl = 'http://localhost:8080/api';
     this.settings.apiTimeout = 5000;
@@ -205,7 +205,7 @@ export class SettingsComponent {
     }, 1500);
   }
 
-  // Add this method to the class
+
   validateApiUrl(): void {
     if (!this.settings.apiUrl) {
       this.messageService.add({

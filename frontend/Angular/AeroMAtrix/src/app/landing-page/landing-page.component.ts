@@ -20,7 +20,6 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix/drone-ma
     DroneMatrixComponent,
   ],
   animations: [
-    // Fade in animation for smooth entrance
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(20px)' }),
@@ -30,7 +29,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix/drone-ma
         ),
       ]),
     ]),
-    // Slide in animation from left
+
     trigger('slideIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(-50px)' }),
@@ -40,7 +39,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix/drone-ma
         ),
       ]),
     ]),
-    // Slide in from right animation
+
     trigger('slideInRight', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(50px)' }),
@@ -50,7 +49,7 @@ import { DroneMatrixComponent } from '../drones/components/drone-matrix/drone-ma
         ),
       ]),
     ]),
-    // Scale in animation for zoom effect
+
     trigger('scaleIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'scale(0.9)' }),
@@ -116,7 +115,6 @@ export class LandingPageComponent implements OnInit {
   constructor(private readonly router: Router) {}
 
   ngOnInit() {
-    // Start animating demo drones after component initialization
     this.animateDemoDrones();
   }
 
@@ -125,7 +123,7 @@ export class LandingPageComponent implements OnInit {
     this.router.navigate([route]);
   }
 
-  // Simulate drone movements using different patterns and ensuring boundary constraints
+  // Simulate drone movements
   animateDemoDrones(): void {
     let step = 0;
     setInterval(() => {
@@ -138,7 +136,6 @@ export class LandingPageComponent implements OnInit {
         y: drone.y,
       }));
 
-      // Drone 1: Circular pattern movement
       newPositions[0].x = 2 + Math.floor(Math.sin(step / 10) * 2);
       newPositions[0].y = 3 + Math.floor(Math.cos(step / 10) * 2);
       newPositions[0].x = Math.max(
@@ -150,7 +147,6 @@ export class LandingPageComponent implements OnInit {
         Math.min(newPositions[0].y, this.demoMatrix.maxY - 1)
       );
 
-      // Drone 2: Figure-8 pattern movement
       newPositions[1].x = 5 + Math.floor(Math.cos(step / 15) * 3);
       newPositions[1].y = 7 + Math.floor(Math.sin((step / 15) * 2) * 2);
       newPositions[1].x = Math.max(
@@ -162,7 +158,6 @@ export class LandingPageComponent implements OnInit {
         Math.min(newPositions[1].y, this.demoMatrix.maxY - 1)
       );
 
-      // Drone 3: Vertical oscillation movement
       newPositions[2].x = 8 + Math.floor(Math.sin(step / 20) * 1);
       newPositions[2].y = 2 + Math.floor(Math.cos(step / 20) * 3);
       newPositions[2].x = Math.max(
@@ -174,7 +169,6 @@ export class LandingPageComponent implements OnInit {
         Math.min(newPositions[2].y, this.demoMatrix.maxY - 1)
       );
 
-      // Drone 4: Diagonal movement pattern
       newPositions[3].x = 4 + Math.floor(Math.cos(step / 12) * 2);
       newPositions[3].y = 5 + Math.floor(Math.sin(step / 12) * 2);
       newPositions[3].x = Math.max(
@@ -186,7 +180,7 @@ export class LandingPageComponent implements OnInit {
         Math.min(newPositions[3].y, this.demoMatrix.maxY - 1)
       );
 
-      // Collision detection: adjust positions if two drones overlap
+      p;
       for (let i = 0; i < newPositions.length; i++) {
         for (let j = i + 1; j < newPositions.length; j++) {
           if (

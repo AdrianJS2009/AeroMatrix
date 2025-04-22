@@ -4,7 +4,6 @@ import { catchError } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
 import { Drone } from '../../drones/models/drone.model';
 
-/** Interfaces for command requests */
 export interface CommandsRequest {
   commands: string[];
 }
@@ -26,12 +25,6 @@ export class FlightService {
 
   constructor(private readonly apiService: ApiService) {}
 
-  /**
-   * Sends commands to a specific drone.
-   * @param droneId Drone ID.
-   * @param commands Array of commands in string format.
-   * @returns Observable emitting the updated drone.
-   */
   sendCommands(droneId: number, commands: string[]): Observable<Drone> {
     return this.apiService
       .post<Drone, CommandsRequest>(`${this.path}/drones/${droneId}/commands`, {
@@ -48,12 +41,6 @@ export class FlightService {
       );
   }
 
-  /**
-   * Sends the same commands to multiple drones.
-   * @param droneIds Drone IDs.
-   * @param commands Array of commands.
-   * @returns Observable emitting void.
-   */
   sendCommandsToMany(droneIds: number[], commands: string[]): Observable<void> {
     const params = new URLSearchParams();
     droneIds.forEach((id) => params.append('droneIds', id.toString()));
@@ -74,11 +61,6 @@ export class FlightService {
       );
   }
 
-  /**
-   * Sends a batch of commands to different drones.
-   * @param batch Array of BatchCommandRequest.
-   * @returns Observable emitting void.
-   */
   sendBatchCommands(batch: BatchCommandRequest[]): Observable<void> {
     return this.apiService
       .post<void, BatchDroneCommandRequest>(`${this.path}/batch-commands`, {
@@ -95,14 +77,6 @@ export class FlightService {
       );
   }
 
-  /**
-   * Private function for error handling.
-   *
-   * @param error
-   * @param consolePrefix
-   * @param defaultMessage Default message
-   * @returns Error Observable.
-   */
   private handleError(
     error: any,
     consolePrefix: string,

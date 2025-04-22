@@ -3,13 +3,13 @@ import { LandingPageComponent } from '../landing-page/landing-page.component';
 import { ShellComponent } from '../layout/shell/shell.component';
 
 export const routes: Routes = [
-  // Landing page route for the root path
+  // Landing
   {
     path: '',
     component: LandingPageComponent,
     pathMatch: 'full',
   },
-  // Shell route layout for the main application
+  // Shell route layout
   {
     path: '',
     component: ShellComponent,
@@ -64,7 +64,7 @@ export const routes: Routes = [
       },
     ],
   },
-  // Not found route
+  // Not found
   {
     path: '404',
     loadComponent: () =>

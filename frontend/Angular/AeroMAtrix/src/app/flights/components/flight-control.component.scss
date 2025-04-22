@@ -192,7 +192,6 @@
   }
 }
 
-// Command input
 .command-input-container {
   margin-bottom: 1.5rem;
 
@@ -227,7 +226,6 @@
   }
 }
 
-// Command validation
 .command-validation-result {
   margin: 1rem 0;
   border-radius: 8px;
@@ -299,12 +297,10 @@
   }
 }
 
-// Batch validation summary
 .batch-validation-summary {
   margin-bottom: 1.5rem;
 }
 
-// Command buttons
 .command-buttons-container {
   h4 {
     margin-top: 0;
@@ -357,7 +353,6 @@
   }
 }
 
-// Batch commands table
 .batch-commands-container {
   margin-bottom: 1.5rem;
 
@@ -390,7 +385,6 @@
   }
 }
 
-// Execute button
 .execute-button {
   margin-top: auto;
   align-self: flex-end;
@@ -419,7 +413,6 @@
   }
 }
 
-// Batch actions
 .batch-actions {
   display: flex;
   justify-content: space-between;
@@ -623,7 +616,6 @@
   }
 }
 
-// Dark mode toggle
 .header-actions {
   display: flex;
   align-items: center;
@@ -634,7 +626,6 @@
   }
 }
 
-// Responsive adjustments
 @media screen and (max-width: 768px) {
   .flight-history-item {
     flex-direction: column;

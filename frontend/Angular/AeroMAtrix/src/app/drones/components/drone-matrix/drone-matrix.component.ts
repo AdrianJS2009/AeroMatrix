@@ -25,7 +25,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Matrix } from '../../../matrices/models/matrix.model';
 import { Drone } from '../../models/drone.model';
 
-// Import Three.js and OrbitControls
 import * as THREE from 'three';
 // @ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -73,7 +72,7 @@ export class DroneMatrixComponent
 
   // 2D view properties
   cellSize = 80; // Size of each cell in pixels
-  scale = 1; // Current zoom level for 2D view
+  scale = 1; // Current zoom level for 2D
   panX = 0; // Current pan X position
   panY = 0; // Current pan Y position
   isPanning = false; // Whether user is panning
@@ -139,23 +138,19 @@ export class DroneMatrixComponent
     }
   }
 
-  // Utility: Create an array of numbers from 0 to size - 1
   getArrayFromSize(size: number): number[] {
     return Array.from({ length: size }, (_, i) => i);
   }
 
-  // Emit the selected drone
   selectDrone(drone: Drone): void {
     this.droneSelected.emit(drone);
   }
 
-  // Return the name of the selected drone
   getSelectedDroneName(): string {
     const drone = this.drones.find((d) => d.id === this.selectedDroneId);
     return drone ? drone.name : '';
   }
 
-  // Return a label string for drone orientation
   getOrientationLabel(orientation: string): string {
     const orientations: Record<string, string> = {
       N: 'North',
@@ -291,7 +286,7 @@ export class DroneMatrixComponent
     this.lastPanY = this.panY;
   }
 
-  // Toggle between 2D and 3D views
+  // Toggle between 2D and 3D
   toggleView(): void {
     this.view3D = !this.view3D;
     if (this.view3D) {

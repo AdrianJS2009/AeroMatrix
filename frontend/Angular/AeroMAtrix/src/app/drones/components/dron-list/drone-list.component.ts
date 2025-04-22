@@ -129,12 +129,11 @@ export class DroneListComponent implements OnInit {
     });
   }
 
-  // Fix for Issue #4: Edit Modal Re-opening
   openForm(drone?: Drone): void {
-    // Create a deep copy of the drone to avoid reference issues
+    // Create a low level copy of the drone to avoid reference issues
     this.selectedDrone = drone ? { ...drone } : undefined;
 
-    // Force a small delay to ensure the modal state is reset properly
+    // Force a small delay
     setTimeout(() => {
       this.formVisible = true;
     }, 0);
@@ -183,7 +182,6 @@ export class DroneListComponent implements OnInit {
   }
 
   getAvatarColor(id: number): string {
-    // Generate a consistent color based on drone ID
     const colors = [
       '#3B82F6', // primary
       '#10B981', // green

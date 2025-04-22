@@ -20,7 +20,6 @@ export class TranslationService {
     { code: 'de', name: 'Deutsch' },
   ];
 
-  // BehaviorSubject for current language to allow reactive updates
   private readonly currentLanguageSubject = new BehaviorSubject<Language>({
     code: 'en',
     name: 'English',
@@ -28,7 +27,7 @@ export class TranslationService {
   currentLanguage$ = this.currentLanguageSubject.asObservable();
 
   constructor(private readonly translate: TranslateService) {
-    // Determine the initial language based on stored value or browser language
+    // Determine the initial language
     const initialLang = this.getInitialLanguage();
 
     this.translate.addLangs(this.availableLanguages.map((lang) => lang.code));
@@ -44,7 +43,7 @@ export class TranslationService {
     this.currentLanguageSubject.next(language);
   }
 
-  // Retrieve the initial language from localStorage or browser preference
+  // Retrieve the initial language from localStorage or browser
   private getInitialLanguage(): Language {
     const savedLanguage = localStorage.getItem(this.languageKey);
     if (savedLanguage) {

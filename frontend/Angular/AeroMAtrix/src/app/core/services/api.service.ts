@@ -13,7 +13,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
-  private readonly timeoutDuration = 30000; // Duration in milliseconds
+  private readonly timeoutDuration = 30000; // milliseconds
 
   constructor(private readonly http: HttpClient) {}
 
@@ -45,7 +45,7 @@ export class ApiService {
     );
   }
 
-  // Error handler that logs and transforms HTTP errors into user-friendly messages
+  // Error handler
   private handleError(
     error: HttpErrorResponse,
     operation: string
@@ -53,7 +53,7 @@ export class ApiService {
     let errorMessage = 'An unknown error occurred';
 
     if (error.error instanceof ErrorEvent) {
-      // Client-side or network error occurred
+      // network error occurred
       errorMessage = `Network error: ${error.error.message}`;
       console.error('Client-side error:', error.error.message);
     } else if (
@@ -61,10 +61,10 @@ export class ApiService {
       typeof error.error === 'object' &&
       'message' in error.error
     ) {
-      // Server error with a message
+      // Server error
       errorMessage = error.error.message as string;
     } else if (error.status) {
-      // Server error without detailed message
+      // Server error without message
       switch (error.status) {
         case 0:
           errorMessage = 'Server is unreachable. Please check your connection.';
@@ -94,7 +94,7 @@ export class ApiService {
       }
     }
 
-    // Log the detailed error for debugging purposes
+    // debug
     console.error(`${operation} failed:`, error);
 
     return throwError(() => new Error(errorMessage));

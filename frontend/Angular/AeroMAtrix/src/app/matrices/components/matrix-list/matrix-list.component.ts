@@ -79,7 +79,6 @@ export class MatrixListComponent implements OnInit {
     this.loadMatrices();
   }
 
-  // Load matrices from the API
   loadMatrices(): void {
     this.loading = true;
     this.matrixService.getAll().subscribe({
@@ -99,7 +98,6 @@ export class MatrixListComponent implements OnInit {
     });
   }
 
-  // Confirm deletion of a matrix
   confirmDelete(matrix: Matrix): void {
     if (matrix.drones.length > 0) {
       this.messageService.add({
@@ -118,7 +116,6 @@ export class MatrixListComponent implements OnInit {
     });
   }
 
-  // Delete a matrix by id
   deleteMatrix(id: number): void {
     this.matrixService.delete(id).subscribe({
       next: () => {
@@ -141,13 +138,11 @@ export class MatrixListComponent implements OnInit {
     });
   }
 
-  // Open the matrix form dialog for create or edit
   openForm(matrix?: Matrix): void {
     this.selectedMatrix = matrix;
     this.formVisible = true;
   }
 
-  // Close the matrix form dialog
   closeForm(): void {
     this.selectedMatrix = undefined;
     this.formVisible = false;

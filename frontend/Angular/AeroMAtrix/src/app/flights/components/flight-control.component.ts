@@ -127,11 +127,9 @@ interface BatchCommand {
   ],
 })
 export class FlightControlComponent implements OnInit {
-  // Properties
   drones: Drone[] = [];
   matrices: Matrix[] = [];
   loading = true;
-  // Single
   selectedDrone?: Drone;
   selectedMatrix?: Matrix;
   commandsText = '';
@@ -185,7 +183,6 @@ export class FlightControlComponent implements OnInit {
     this.initializeMatrixOptions();
   }
 
-  // Load drones and matrices from services
   loadDrones(): void {
     this.loading = true;
     this.droneService.getAll().subscribe({
@@ -249,13 +246,11 @@ export class FlightControlComponent implements OnInit {
 
   // Validation of commands
   validateCommands(): void {
-    // Clear validation result if no drone selected, no commands, or invalid format
     if (!this.selectedDrone || !this.commandsText) {
       this.commandValidationResult = undefined;
       return;
     }
 
-    // Check command format first
     if (!this.validateCommandFormat(this.commandsText)) {
       this.commandsTextInvalid = true;
       this.commandValidationResult = {
@@ -385,7 +380,6 @@ export class FlightControlComponent implements OnInit {
     }
   }
 
-  // Get the error message for boundary violations
   private getBoundaryErrorMessage(pos: Position, matrix: Matrix): string {
     if (pos.x < 0) return 'western boundary (x < 0)';
     if (pos.y < 0) return 'southern boundary (y < 0)';
@@ -474,7 +468,6 @@ export class FlightControlComponent implements OnInit {
       }
     }
 
-    // Check for collisions between drones
     this.detectGroupCollisions(simulatedPositions);
   }
 
@@ -493,7 +486,7 @@ export class FlightControlComponent implements OnInit {
 
     for (const cmd of commands.toUpperCase()) {
       switch (cmd) {
-        case 'A': // Advance
+        case 'A':
           switch (simulatedDrone.orientation) {
             case 'N':
               simulatedDrone.y += 1;
@@ -509,7 +502,7 @@ export class FlightControlComponent implements OnInit {
               break;
           }
           break;
-        case 'L': // Turn Left
+        case 'L':
           switch (simulatedDrone.orientation) {
             case 'N':
               simulatedDrone.orientation = 'W';
@@ -525,7 +518,7 @@ export class FlightControlComponent implements OnInit {
               break;
           }
           break;
-        case 'R': // Turn Right
+        case 'R':
           switch (simulatedDrone.orientation) {
             case 'N':
               simulatedDrone.orientation = 'E';
@@ -596,7 +589,6 @@ export class FlightControlComponent implements OnInit {
     return null;
   }
 
-  // Check if there are any errors in group validation
   hasGroupValidationErrors(): boolean {
     if (this.groupCollisions.length > 0) {
       return true;
@@ -650,7 +642,6 @@ export class FlightControlComponent implements OnInit {
       this.selectedMatrix?.drones.filter((d) => d.id !== drone.id) || []
     );
 
-    // After validating individual commands, check for batch collisions
     this.validateBatchCollisions();
   }
 
@@ -705,7 +696,7 @@ export class FlightControlComponent implements OnInit {
               drone1: drone1?.name ?? `Drone ${drone1Id}`,
               drone2: drone2?.name ?? `Drone ${drone2Id}`,
             });
-            break; // Only report the first collision between each pair
+            break; // Only first collision
           }
         }
       }
@@ -714,12 +705,10 @@ export class FlightControlComponent implements OnInit {
 
   // Check if there are any errors in batch validation
   hasBatchValidationErrors(): boolean {
-    // Check for collisions
     if (this.batchCollisions.length > 0) {
       return true;
     }
 
-    // Check for individual command errors
     for (const command of this.batchCommands) {
       if (command.validationResult?.hasErrors) {
         return true;
@@ -729,12 +718,10 @@ export class FlightControlComponent implements OnInit {
     return false;
   }
 
-  // Check if there are any collisions in batch commands
   hasBatchCollisions(): boolean {
     return this.batchCollisions.length > 0;
   }
 
-  // Get all batch collisions
   getBatchCollisions(): GroupCollision[] {
     return this.batchCollisions;
   }
@@ -756,13 +743,11 @@ export class FlightControlComponent implements OnInit {
           next: (matrices) => {
             this.matrices = matrices;
 
-            // Update matrix options
             this.matrixOptions = matrices.map((matrix) => ({
               label: `Matrix ${matrix.id} (${matrix.maxX}x${matrix.maxY})`,
               value: matrix.id,
             }));
 
-            // Update selected matrix if it exists
             if (this.selectedMatrixId) {
               const updatedMatrix = matrices.find(
                 (m) => m.id === this.selectedMatrixId
@@ -770,13 +755,11 @@ export class FlightControlComponent implements OnInit {
               if (updatedMatrix) {
                 this.selectedMatrix = updatedMatrix;
 
-                // Update drone options for this matrix
                 this.droneOptions = updatedMatrix.drones.map((drone) => ({
                   label: drone.name || `Drone ${drone.id}`,
                   value: drone.id,
                 }));
 
-                // Revalidate commands if needed
                 if (this.selectedDrone && this.commandsText) {
                   this.validateCommands();
                 }
@@ -815,7 +798,6 @@ export class FlightControlComponent implements OnInit {
       return;
     }
 
-    // Validate commands before execution
     if (!this.commandValidationResult) {
       this.validateCommands();
     }
@@ -832,7 +814,6 @@ export class FlightControlComponent implements OnInit {
       return;
     }
 
-    // Warn about collisions but allow execution
     if (
       this.commandValidationResult?.collisions &&
       this.commandValidationResult.collisions.length > 0
@@ -856,7 +837,6 @@ export class FlightControlComponent implements OnInit {
 
     this.executingSingle = true;
 
-    // Store initial position for history
     const initialPosition = `(${this.selectedDrone.x}, ${
       this.selectedDrone.y
     }) ${this.getOrientationLabel(this.selectedDrone.orientation)}`;
@@ -935,7 +915,7 @@ export class FlightControlComponent implements OnInit {
       return;
     }
 
-    // Warn about collisions but allow execution
+    // Warn about collisions
     if (this.hasGroupCollisions()) {
       this.messageService.add({
         severity: 'warn',
@@ -1001,7 +981,6 @@ export class FlightControlComponent implements OnInit {
               err.message || 'An error occurred while executing group commands',
           });
 
-          // Add to flight history with failed status
           this.addToFlightHistory(
             `Group (${droneIds.length} drones)`,
             this.commandsGroupText,
@@ -1016,12 +995,10 @@ export class FlightControlComponent implements OnInit {
   executeBatch(): void {
     if (this.batchCommands.length === 0) return;
 
-    // Validate all batch commands
     for (let i = 0; i < this.batchCommands.length; i++) {
       this.validateBatchCommand(i);
     }
 
-    // Check for validation errors
     if (this.hasBatchValidationErrors()) {
       this.messageService.add({
         severity: 'error',
@@ -1032,7 +1009,7 @@ export class FlightControlComponent implements OnInit {
       return;
     }
 
-    // Warn about collisions but allow execution
+    // Warn about collisions
     if (this.hasBatchCollisions()) {
       this.messageService.add({
         severity: 'warn',
@@ -1140,7 +1117,7 @@ export class FlightControlComponent implements OnInit {
   removeBatchCommand(index: number): void {
     if (index >= 0 && index < this.batchCommands.length) {
       this.batchCommands.splice(index, 1);
-      // If no batch commands left, add an empty one
+
       if (this.batchCommands.length === 0) {
         this.addBatchCommand();
       }

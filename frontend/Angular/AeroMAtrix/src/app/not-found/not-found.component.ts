@@ -19,7 +19,6 @@ import { RippleModule } from 'primeng/ripple';
     TranslateModule,
   ],
   animations: [
-    // Fade in animation for smooth element entrance
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(20px)' }),

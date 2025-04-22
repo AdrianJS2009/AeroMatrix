@@ -94,7 +94,7 @@ export class DroneFormComponent implements OnInit, OnChanges {
     this.initForm();
     this.loadMatrices();
 
-    // Add value change listeners for position validation
+    // Add value change listeners for validation
     this.droneForm
       .get('x')
       ?.valueChanges.subscribe(() => this.checkPositionOccupied());
@@ -106,8 +106,6 @@ export class DroneFormComponent implements OnInit, OnChanges {
       ?.valueChanges.subscribe(() => this.onMatrixChange());
   }
 
-  // Fix for Issue #4: Edit Modal Re-opening
-  // Implement OnChanges to react to input changes
   ngOnChanges(changes: SimpleChanges): void {
     // If the visibility or droneToEdit changes, reinitialize the form
     if (
@@ -140,7 +138,7 @@ export class DroneFormComponent implements OnInit, OnChanges {
     }
   }
 
-  // Helper method to patch form with drone data
+  // Helper
   patchFormWithDroneData(): void {
     if (!this.droneToEdit) return;
 
@@ -169,13 +167,12 @@ export class DroneFormComponent implements OnInit, OnChanges {
       .subscribe({
         next: (matrices) => {
           this.matrices = matrices;
-          // Format matrix options as "Matrix ID: [ID] - [Dimensions]"
+          // Format matrix options
           this.matrixOptions = matrices.map((matrix) => ({
             label: `Matrix ID: ${matrix.id} - ${matrix.maxX}x${matrix.maxY}`,
             value: matrix.id,
           }));
 
-          // If editing a drone, patch the form values after matrices are loaded
           if (this.droneToEdit) {
             this.patchFormWithDroneData();
           }

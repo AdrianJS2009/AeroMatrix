@@ -3,15 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    // Pipes y componentes reutilizables
-  ],
+  declarations: [],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    // Pipes y componentes reutilizables
-  ],
+  exports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class SharedModule {}

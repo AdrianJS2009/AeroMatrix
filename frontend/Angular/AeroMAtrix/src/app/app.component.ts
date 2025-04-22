@@ -122,18 +122,15 @@ export class AppComponent implements OnInit {
         this.currentRoute = event.url;
       });
 
-    // Listen to theme changes.
     this.themeService.currentTheme$.subscribe((theme) => {
       this.isDarkTheme = theme === 'dark';
     });
 
-    // Listen to language changes.
     this.translationService.currentLanguage$.subscribe((language) => {
       this.currentLanguage = language;
     });
   }
 
-  // Toggle the sidebar open/close state.
   toggleSidebar(): void {
     if (this.sidebarCollapsed) {
       this.sidebarCollapsed = false;
@@ -143,19 +140,16 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // Collapse the sidebar.
   collapseSidebar(): void {
     this.sidebarVisible = false;
     this.sidebarCollapsed = true;
   }
 
-  // Expand the collapsed sidebar.
   expandSidebar(): void {
     this.sidebarCollapsed = false;
     this.sidebarVisible = true;
   }
 
-  // Navigate to a given route and close sidebar on mobile.
   navigateTo(route: string | undefined): void {
     if (route) {
       this.router.navigate([route]);
@@ -165,12 +159,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // Navigate to the home route.
   navigateHome(): void {
     this.router.navigate(['/']);
   }
 
-  // Check if the current route matches the provided route.
   isActive(route: string | undefined): boolean {
     if (!route) return false;
     return (
@@ -179,12 +171,10 @@ export class AppComponent implements OnInit {
     );
   }
 
-  // Toggle the application theme.
   toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 
-  // Change the current language.
   setLanguage(language: Language): void {
     this.translationService.setLanguage(language);
   }

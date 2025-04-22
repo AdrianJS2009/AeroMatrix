@@ -2,7 +2,6 @@
   display: block;
 }
 
-// Matrix Preview Base Styles
 .matrix-preview {
   position: relative;
   min-height: 150px;
@@ -33,7 +32,6 @@
   }
 }
 
-// Cell Styles
 .matrix-cell {
   border: 1px dashed var(--surface-border);
   background-color: var(--surface-card);
@@ -57,7 +55,6 @@
   }
 }
 
-// Canvas Preview
 .matrix-canvas {
   border: 1px solid var(--surface-border);
   background-color: var(--surface-ground);
@@ -69,7 +66,6 @@
   margin: 0 auto;
 }
 
-// Preview Header
 .preview-header {
   display: flex;
   justify-content: space-between;
@@ -77,7 +73,6 @@
   margin-bottom: 0.5rem;
 }
 
-// Preview Mode Selector
 .preview-mode-selector {
   background-color: var(--surface-section);
   border-radius: var(--border-radius);
@@ -107,7 +102,6 @@
   }
 }
 
-// Preview Message Overlay
 .preview-message {
   position: absolute;
   bottom: 0;
@@ -121,14 +115,12 @@
   pointer-events: none;
 }
 
-// Matrix Dimensions Label
 .matrix-dimensions {
   display: block;
   text-align: center;
   margin-top: 0.5rem;
 }
 
-// the appearance of the warning message
 .p-message-warning {
   border-radius: var(--border-radius);
   padding: 0.75rem;
@@ -143,14 +135,12 @@
   }
 }
 
-//appearance of the error messages
 .p-error {
   display: block;
   margin-top: 0.25rem;
   font-size: 0.75rem;
 }
 
-//appearance of the input number controls
 :host ::ng-deep {
   .p-inputnumber {
     .p-inputnumber-button {
