@@ -180,7 +180,6 @@ export class LandingPageComponent implements OnInit {
         Math.min(newPositions[3].y, this.demoMatrix.maxY - 1)
       );
 
-      p;
       for (let i = 0; i < newPositions.length; i++) {
         for (let j = i + 1; j < newPositions.length; j++) {
           if (

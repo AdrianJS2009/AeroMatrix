@@ -53,7 +53,6 @@ import {
   ],
 })
 export class SettingsComponent {
-
   settings = {
     // General settings
     darkMode: false,
@@ -94,7 +93,6 @@ export class SettingsComponent {
     { value: 'W', label: 'West (W)' },
   ];
 
-
   hideApiKey = true;
 
   constructor(
@@ -105,23 +103,19 @@ export class SettingsComponent {
     // Initialize language options from translation service
     this.languageOptions = this.translationService.availableLanguages;
 
- 
     this.themeService.currentTheme$.subscribe((theme) => {
       this.settings.darkMode = theme === 'dark';
     });
 
-    /
     this.translationService.currentLanguage$.subscribe((language) => {
       this.settings.language = language;
     });
   }
 
-
   onThemeChange(): void {
     const theme: Theme = this.settings.darkMode ? 'dark' : 'light';
     this.themeService.setTheme(theme);
   }
-
 
   onLanguageChange(): void {
     this.translationService.setLanguage(this.settings.language);
@@ -204,7 +198,6 @@ export class SettingsComponent {
       });
     }, 1500);
   }
-
 
   validateApiUrl(): void {
     if (!this.settings.apiUrl) {
